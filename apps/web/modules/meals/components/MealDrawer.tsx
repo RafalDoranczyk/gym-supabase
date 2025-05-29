@@ -8,9 +8,9 @@ import type { Ingredient, Meal, MealTag } from "@repo/schemas";
 import { useTransition } from "react";
 
 import { createMeal } from "../actions/createMeal";
+import { handleCreateMealError } from "../forms/errorHandlers";
 import { useMealForm } from "../forms/useMealForm";
 import { MealIngredientsTable } from "./MealIngredientsTable";
-import { handleCreateMealError } from "../forms/errorHandlers";
 
 type MealDrawerProps = {
   ingredients: Ingredient[];

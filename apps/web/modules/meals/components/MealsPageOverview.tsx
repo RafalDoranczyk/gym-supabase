@@ -18,12 +18,12 @@ import {
 import type { Ingredient, Meal, MealTag } from "@repo/schemas";
 import { useTransition } from "react";
 
+import { deleteMeal } from "../actions/deleteMeal";
 import { useMealsFilters } from "../hooks/useMealsFilters";
 import { useMealsPagination } from "../hooks/useMealsPagination";
 import { useMealsUI } from "../hooks/useMealsUI";
 import { MealDrawer } from "./MealDrawer";
 import { MealsTable } from "./MealsTable";
-import { deleteMeal } from "../actions/deleteMeal";
 
 type MealsPageOverviewProps = {
   ingredients: Ingredient[];

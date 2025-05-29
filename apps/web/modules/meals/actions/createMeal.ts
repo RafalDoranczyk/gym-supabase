@@ -2,7 +2,7 @@
 
 import { getUser } from "@/actions";
 import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
-import { MealSchema, type CreateMealPayload } from "@repo/schemas";
+import { type CreateMealPayload, MealSchema } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function createMeal(payload: CreateMealPayload) {

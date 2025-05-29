@@ -1,4 +1,3 @@
-import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type CreateMealPayload,
@@ -7,6 +6,7 @@ import {
   type MealTag,
 } from "@repo/schemas";
 import { useMemo } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 
 const getDefaultValues = (meal: Meal | null): CreateMealPayload => ({
   description: meal?.description ?? "",
