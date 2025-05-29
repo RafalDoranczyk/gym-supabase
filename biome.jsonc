@@ -23,6 +23,6 @@
     "enabled": true
   },
   "files": {
-    "ignore": ["node_modules/**", "dist/**", "build/**", "coverage/**"]
+    "ignore": ["node_modules/**", ".next/**", "dist/**", "build/**", "coverage/**"]
   }
 }

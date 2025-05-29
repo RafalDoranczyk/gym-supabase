@@ -1,0 +1,1 @@
+export const INGREDIENTS_FETCH_LIMIT = 50;
