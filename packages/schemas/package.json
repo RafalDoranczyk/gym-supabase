@@ -21,6 +21,5 @@
   "devDependencies": {
     "@repo/config-typescript": "*",
     "typescript": "5.7.2"
-
   }
 }

@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { CreatedAt, MacroNumber, SupabaseId } from '../shared';
-import { validationMessages } from '../shared/validationMessages';
-import { INGREDIENT_NAME_MAX_LENGTH, INGREDIENT_NAME_MIN_LENGTH } from './const';
-import { INGREDIENT_UNIT_TYPES, IngredientUnitType } from './enums';
+import { CreatedAt, MacroNumber, SupabaseId } from "../shared";
+import { validationMessages } from "../shared/validationMessages";
+import { INGREDIENT_NAME_MAX_LENGTH, INGREDIENT_NAME_MIN_LENGTH } from "./const";
+import { INGREDIENT_UNIT_TYPES, type IngredientUnitType } from "./enums";
 
 // Base ingredient schema (used for create/update payloads)
 export const BaseIngredientSchema = z.object({
@@ -14,22 +14,22 @@ export const BaseIngredientSchema = z.object({
   name: z
     .string()
     .min(INGREDIENT_NAME_MIN_LENGTH, {
-      message: validationMessages.string.min('Name', INGREDIENT_NAME_MIN_LENGTH),
+      message: validationMessages.string.min("Name", INGREDIENT_NAME_MIN_LENGTH),
     })
     .max(INGREDIENT_NAME_MAX_LENGTH, {
-      message: validationMessages.string.max('Name', INGREDIENT_NAME_MAX_LENGTH),
+      message: validationMessages.string.max("Name", INGREDIENT_NAME_MAX_LENGTH),
     }),
   price: z.coerce
     .number()
     .min(0, {
-      message: validationMessages.number.min('Price', 0),
+      message: validationMessages.number.min("Price", 0),
     })
     .optional(),
   protein: MacroNumber,
   unit_type: z.enum(
     Object.keys(INGREDIENT_UNIT_TYPES) as [IngredientUnitType, ...IngredientUnitType[]],
     {
-      message: validationMessages.enum('Unit type', INGREDIENT_UNIT_TYPES),
+      message: validationMessages.enum("Unit type", INGREDIENT_UNIT_TYPES),
     },
   ),
 });

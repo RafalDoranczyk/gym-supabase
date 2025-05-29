@@ -13,6 +13,7 @@
     "module": "esnext",
     "noEmit": true,
     "resolveJsonModule": true,
-    "target": "ES2019","strict": true
+    "target": "ES2019",
+    "strict": true
   }
 }

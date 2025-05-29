@@ -1,13 +1,9 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { IngredientSchema } from '../ingredient';
-import { MealTagSchema } from '../mealTag/schemas';
-import { CreatedAt, SupabaseId, validationMessages } from '../shared';
-import {
-  MEAL_DESCRIPTION_MAX_LENGTH,
-  MEAL_NAME_MAX_LENGTH,
-  MEAL_NAME_MIN_LENGTH,
-} from './consts';
+import { IngredientSchema } from "../ingredient";
+import { MealTagSchema } from "../mealTag/schemas";
+import { CreatedAt, SupabaseId, validationMessages } from "../shared";
+import { MEAL_DESCRIPTION_MAX_LENGTH, MEAL_NAME_MAX_LENGTH, MEAL_NAME_MIN_LENGTH } from "./consts";
 
 // Minimal Ingredient shape used inside MealIngredient (picked from full schema)
 const MinimalIngredientSchema = IngredientSchema.pick({
@@ -24,7 +20,7 @@ const MinimalIngredientSchema = IngredientSchema.pick({
 // Ingredient used in meal
 const MealIngredientSchema = z.object({
   amount: z.number().positive({
-    message: validationMessages.number.positive('Amount'),
+    message: validationMessages.number.positive("Amount"),
   }),
   ingredient: MinimalIngredientSchema,
 });
@@ -34,16 +30,16 @@ export type MealIngredient = z.infer<typeof MealIngredientSchema>;
 export const BaseMealSchema = z.object({
   description: z
     .string({
-      message: validationMessages.string.max('Description', MEAL_DESCRIPTION_MAX_LENGTH),
+      message: validationMessages.string.max("Description", MEAL_DESCRIPTION_MAX_LENGTH),
     })
     .optional(),
   name: z
     .string()
     .min(MEAL_NAME_MIN_LENGTH, {
-      message: validationMessages.string.min('Name', MEAL_NAME_MIN_LENGTH),
+      message: validationMessages.string.min("Name", MEAL_NAME_MIN_LENGTH),
     })
     .max(MEAL_NAME_MAX_LENGTH, {
-      message: validationMessages.string.max('Name', MEAL_NAME_MAX_LENGTH),
+      message: validationMessages.string.max("Name", MEAL_NAME_MAX_LENGTH),
     }),
 });
 

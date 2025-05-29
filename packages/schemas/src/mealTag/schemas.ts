@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { SupabaseId } from '../shared';
+import { SupabaseId } from "../shared";
 
 export const MealTagSchema = z.object({
   id: SupabaseId,

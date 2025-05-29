@@ -1,13 +1,13 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { CreatedAt, SupabaseId, validationMessages } from '../shared';
+import { CreatedAt, SupabaseId, validationMessages } from "../shared";
 
 export const MeasurementsSchema = z.object({
   created_at: CreatedAt,
   id: SupabaseId,
   user_id: SupabaseId,
   weight: z.number().min(0, {
-    message: validationMessages.number.min('Weight', 0),
+    message: validationMessages.number.min("Weight", 0),
   }),
 });
 export type Measurements = z.infer<typeof MeasurementsSchema>;
