@@ -1,9 +1,11 @@
+# Format and lint
 pre-commit:
-  parallel: true
   commands:
     check:
-      run: echo "🧼 Running formatter/linter..." && npm run check:fix -- -- --staged --no-errors-on-unmatched && git update-index --again
-
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      stage_fixed: true
+      
 # Validate commit messages
 commit-msg:
   commands:
