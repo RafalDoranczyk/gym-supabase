@@ -2,12 +2,6 @@ import { ControlledTextField } from "@/components";
 import type { CreateIngredientPayload, IngredientUnitType } from "@repo/schemas";
 import type { Control, FieldErrors } from "react-hook-form";
 
-type IngredientNumberFieldsProps = {
-  control: Control<CreateIngredientPayload>;
-  errors: FieldErrors<CreateIngredientPayload>;
-  unitType: IngredientUnitType;
-};
-
 const numberFields: (keyof CreateIngredientPayload)[] = [
   "calories",
   "carbs",
@@ -15,6 +9,12 @@ const numberFields: (keyof CreateIngredientPayload)[] = [
   "fat",
   "price",
 ];
+
+type IngredientNumberFieldsProps = {
+  control: Control<CreateIngredientPayload>;
+  errors: FieldErrors<CreateIngredientPayload>;
+  unitType: IngredientUnitType;
+};
 
 export function IngredientNumberFields({ control, errors, unitType }: IngredientNumberFieldsProps) {
   return numberFields.map((key) => (

@@ -1,3 +1,4 @@
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type CreateMealPayload,
@@ -6,40 +7,32 @@ import {
   type MealTag,
 } from "@repo/schemas";
 import { useMemo } from "react";
-import { useForm } from "react-hook-form";
 
 const getDefaultValues = (meal: Meal | null): CreateMealPayload => ({
   description: meal?.description ?? "",
   ingredients:
-    meal?.meal_ingredients.map(({ amount, ingredient }) => ({
+    meal?.meal_ingredients?.map(({ amount, ingredient }) => ({
       amount,
       ingredient_id: ingredient.id,
     })) ?? [],
   name: meal?.name ?? "",
-  tags: meal?.tags?.map((tag) => tag.id) ?? [],
 });
 
 export function useMealForm(meal: Meal | null, availableTags: MealTag[]) {
   const defaultValues = useMemo(() => getDefaultValues(meal), [meal]);
 
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    setError,
-    watch,
-  } = useForm<CreateMealPayload>({
-    defaultValues,
+  const methods = useForm<CreateMealPayload>({
+    values: defaultValues,
     resolver: zodResolver(CreateMealPayloadSchema),
   });
 
+  const fieldArray = useFieldArray({
+    control: methods.control,
+    name: "ingredients",
+  });
+
   return {
-    control,
-    errors,
-    handleSubmit,
-    reset,
-    setError,
-    watch,
+    ...methods,
+    fieldArray,
   };
 }

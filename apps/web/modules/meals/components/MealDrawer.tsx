@@ -10,6 +10,7 @@ import { useTransition } from "react";
 import { createMeal } from "../actions/createMeal";
 import { useMealForm } from "../forms/useMealForm";
 import { MealIngredientsTable } from "./MealIngredientsTable";
+import { handleCreateMealError } from "../forms/errorHandlers";
 
 type MealDrawerProps = {
   ingredients: Ingredient[];
@@ -23,9 +24,12 @@ export function MealDrawer({ ingredients, meal, mealTags, onClose, open }: MealD
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const { control, errors, handleSubmit, reset, setError, watch } = useMealForm(meal, mealTags);
+  const { control, formState, handleSubmit, reset, fieldArray, setError } = useMealForm(
+    meal,
+    mealTags,
+  );
 
-  const onSubmit = handleSubmit(async (payload) => {
+  const onSubmit = handleSubmit((payload) => {
     startTransition(() => {
       createMeal(payload)
         .then(() => {
@@ -34,7 +38,7 @@ export function MealDrawer({ ingredients, meal, mealTags, onClose, open }: MealD
           onClose();
         })
         .catch((error) => {
-          console.log(error);
+          handleCreateMealError(error, setError);
         });
     });
   });
@@ -46,33 +50,32 @@ export function MealDrawer({ ingredients, meal, mealTags, onClose, open }: MealD
       open={open}
       size="lg"
     >
-      <Typography p={1} textTransform="uppercase" variant="h6">
-        {meal ? "Edit Meal" : "New Meal"}
-      </Typography>
-
-      <Box bgcolor={(theme) => theme.palette.background.paper} p={3}>
+      <Box p={3}>
+        <Typography p={1} textTransform="uppercase" variant="h6">
+          {meal ? "Edit Meal" : "New Meal"}
+        </Typography>
         <Stack spacing={4}>
           <ControlledTextField
             control={control}
-            helperText={errors.name?.message}
-            label="Name"
+            helperText={formState.errors.name?.message}
+            label="Meal name"
             name="name"
           />
 
           <ControlledTextField
             control={control}
-            helperText={errors.description?.message}
-            label="Description"
+            helperText={formState.errors.description?.message}
+            label="Meal description"
             multiline
             name="description"
             rows={4}
           />
 
           <Paper elevation={2} sx={{ backgroundColor: "background.default", p: 2 }}>
-            <MealIngredientsTable ingredients={ingredients} />
+            <MealIngredientsTable ingredients={ingredients} fieldArray={fieldArray} />
           </Paper>
 
-          <Stack spacing={1}>
+          <Stack spacing={2}>
             <LoadingButton loading={isPending} onClick={onSubmit} variant="contained">
               Save
             </LoadingButton>

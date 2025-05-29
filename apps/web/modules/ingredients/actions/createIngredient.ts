@@ -25,9 +25,7 @@ export async function createIngredient(
     throw mapSupabaseErrorToAppError(error);
   }
 
-  const ingredient = assertZodParse(IngredientSchema, data);
-
   revalidatePath("/dashboard/ingredients");
 
-  return ingredient;
+  return assertZodParse(IngredientSchema, data);
 }

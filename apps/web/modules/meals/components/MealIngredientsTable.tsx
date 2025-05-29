@@ -12,47 +12,53 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import type { Ingredient, MealIngredient } from "@repo/schemas";
-import { useRef, useState } from "react";
+import type { CreateMealPayload, Ingredient } from "@repo/schemas";
+import type { UseFieldArrayReturn } from "react-hook-form";
 
 import {
   calculateMealIngredientNutrition,
   calculateMealNutrition,
 } from "../utils/calculateMealNutrition";
 
-interface MealIngredientsTableProps {
+type MealIngredientsTableProps = {
   ingredients: Ingredient[];
-}
+  fieldArray: UseFieldArrayReturn<CreateMealPayload, "ingredients">;
+};
 
-export function MealIngredientsTable({ ingredients }: MealIngredientsTableProps) {
-  const [autoKey, setAutoKey] = useState(0);
+export function MealIngredientsTable({ ingredients, fieldArray }: MealIngredientsTableProps) {
+  const { fields, append, remove, update } = fieldArray;
 
-  const [mealIngredients, setMealIngredients] = useState<MealIngredient[]>([]);
+  const findIngredientById = (id: string) => ingredients.find((ing) => ing.id === id);
 
-  const handleAddIngredient = (option: Ingredient | null) => {
-    if (!option) return;
-    if (mealIngredients.find((mi) => mi.ingredient.id === option.id)) return;
-
-    const defaultAmount = option.unit_type === "g" ? 100 : option.unit_type === "kg" ? 0.1 : 1;
-
-    setMealIngredients((prev) => [...prev, { amount: defaultAmount, ingredient: option }]);
-    setAutoKey((prev) => prev + 1);
-  };
-
-  const handleAmountChange = (id: string, newAmount: number) => {
-    setMealIngredients((prev) =>
-      prev.map((mi) => (mi.ingredient.id === id ? { ...mi, amount: newAmount } : mi)),
-    );
-  };
+  const mealIngredients = fields
+    .map(({ amount, ingredient_id }) => {
+      const ingredient = findIngredientById(ingredient_id);
+      return ingredient ? { amount, ingredient } : null;
+    })
+    .filter(Boolean) as { amount: number; ingredient: Ingredient }[];
 
   const totals = calculateMealNutrition(mealIngredients);
 
+  const handleAddIngredient = (option: Ingredient | null) => {
+    if (!option) return;
+    if (fields.some((f) => f.ingredient_id === option.id)) return;
+
+    const defaultAmount = option.unit_type === "g" ? 100 : option.unit_type === "kg" ? 0.1 : 1;
+
+    append({ amount: defaultAmount, ingredient_id: option.id });
+  };
+
+  const handleAmountChange = (index: number, newAmount: number) => {
+    const field = fields[index];
+    if (!field) return;
+    update(index, { ...field, amount: newAmount });
+  };
+
   return (
     <Stack gap={3}>
-      <Typography>Ingredients</Typography>
+      <Typography>Meal ingredients</Typography>
       <Autocomplete
         getOptionLabel={({ name }) => name}
-        key={autoKey}
         onChange={(_, newValue) => handleAddIngredient(newValue)}
         options={ingredients}
         renderInput={(params) => (
@@ -74,36 +80,32 @@ export function MealIngredientsTable({ ingredients }: MealIngredientsTableProps)
           </TableRow>
         </TableHead>
         <TableBody>
-          {mealIngredients.map(({ amount, ingredient }) => {
-            const { id, name, unit_type } = ingredient;
+          {fields.map(({ id, ingredient_id, amount }, index) => {
+            const ingredient = findIngredientById(ingredient_id);
+            if (!ingredient) return null;
+
             const macros = calculateMealIngredientNutrition({ amount, ingredient });
 
             return (
               <TableRow key={id}>
-                <TableCell>{name}</TableCell>
+                <TableCell>{ingredient.name}</TableCell>
                 <TableCell>
                   <TextField
                     inputProps={{ min: 0 }}
-                    onChange={(e) => handleAmountChange(id, Number.parseFloat(e.target.value))}
+                    onChange={(e) => handleAmountChange(index, Number(e.target.value))}
                     size="small"
                     sx={{ width: "100px" }}
                     type="number"
                     value={amount}
                   />
                 </TableCell>
-                <TableCell>{unit_type}</TableCell>
+                <TableCell>{ingredient.unit_type}</TableCell>
                 <TableCell>{macros.protein} g</TableCell>
                 <TableCell>{macros.carbs} g</TableCell>
                 <TableCell>{macros.fat} g</TableCell>
                 <TableCell>{macros.calories} kcal</TableCell>
                 <TableCell align="right">
-                  <IconButton
-                    onClick={() =>
-                      setMealIngredients((prev) =>
-                        prev.filter((i) => i.ingredient.id !== ingredient.id),
-                      )
-                    }
-                  >
+                  <IconButton onClick={() => remove(index)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -112,7 +114,7 @@ export function MealIngredientsTable({ ingredients }: MealIngredientsTableProps)
           })}
         </TableBody>
 
-        {mealIngredients.length > 0 && (
+        {fields.length > 0 && (
           <TableFooter>
             <TableRow>
               <TableCell colSpan={3}>

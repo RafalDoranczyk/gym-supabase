@@ -6,13 +6,14 @@ import { type GetNutritionGroupResponse, GetNutritionGroupResponseSchema } from 
 export async function fetchIngredientGroups(): Promise<GetNutritionGroupResponse> {
   const supabase = await createServerClient();
 
-  const { data, error } = await supabase.from("ingredient_groups").select("*");
+  const { data, error } = await supabase
+    .from("ingredient_groups")
+    .select("*")
+    .order("name", { ascending: true });
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);
   }
 
-  const groups = assertZodParse(GetNutritionGroupResponseSchema, data);
-
-  return groups;
+  return assertZodParse(GetNutritionGroupResponseSchema, data);
 }

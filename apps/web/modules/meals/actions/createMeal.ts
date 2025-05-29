@@ -1,40 +1,45 @@
 "use server";
 
 import { getUser } from "@/actions";
-import { createServerClient, mapSupabaseErrorToAppError } from "@/utils";
-import type { Meal } from "@repo/schemas";
+import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { MealSchema, type CreateMealPayload } from "@repo/schemas";
+import { revalidatePath } from "next/cache";
 
-export async function createMeal(mealData: Meal) {
+export async function createMeal(payload: CreateMealPayload) {
   const user = await getUser();
   const supabase = await createServerClient();
 
-  const { data: meal, error: mealError } = await supabase
-    .from("meal")
+  const { data: meal, error: insertMealError } = await supabase
+    .from("meals")
     .insert({
-      description: mealData.description,
-      name: mealData.name,
+      name: payload.name,
+      description: payload.description,
       user_id: user.id,
     })
     .select()
     .single();
 
-  if (mealError || !meal) {
-    throw mapSupabaseErrorToAppError(mealError);
+  if (insertMealError || !meal) {
+    throw mapSupabaseErrorToAppError(insertMealError);
   }
 
-  console.log(meal);
-
-  const mappedIngredients = mealData.meal_ingredients.map((ing) => ({
-    amount: ing.amount,
-    ingredient_id: ing.ingredient.id,
+  const mealIngredients = payload.ingredients.map((i) => ({
     meal_id: meal.id,
+    ingredient_id: i.ingredient_id,
+    amount: i.amount,
   }));
 
-  const { error: linkError } = await supabase.from("meal_ingredients").insert(mappedIngredients);
+  const { error: insertIngredientsError } = await supabase
+    .from("meal_ingredients")
+    .insert(mealIngredients);
 
-  if (linkError) {
-    throw mapSupabaseErrorToAppError(linkError);
+  if (insertIngredientsError) {
+    throw mapSupabaseErrorToAppError(insertIngredientsError);
   }
 
-  return meal;
+  const validated = assertZodParse(MealSchema, meal);
+
+  revalidatePath("/dashboard/meals");
+
+  return validated;
 }

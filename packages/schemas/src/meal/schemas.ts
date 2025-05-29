@@ -47,7 +47,7 @@ export const BaseMealSchema = z.object({
 export const MealSchema = BaseMealSchema.extend({
   created_at: CreatedAt,
   id: SupabaseId,
-  meal_ingredients: z.array(MealIngredientSchema),
+  meal_ingredients: z.array(MealIngredientSchema).optional(),
   tags: z.array(MealTagSchema).optional(),
   user_id: SupabaseId,
 });
@@ -74,9 +74,7 @@ export type UpdateMealPayload = z.infer<typeof UpdateMealPayloadSchema>;
 export type UpdateMealResponse = Meal;
 
 // Remove
-export const RemoveMealPayloadSchema = z.object({
-  id: SupabaseId,
-});
+const RemoveMealPayloadSchema = SupabaseId;
 export type RemoveMealPayload = z.infer<typeof RemoveMealPayloadSchema>;
 export type RemoveMealResponse = Meal;
 

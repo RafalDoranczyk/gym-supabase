@@ -46,11 +46,7 @@ export function IngredientsPageOverview({
     setIngredientToRemove,
   } = useIngredientsUI();
 
-  const onRowClick = (ingredient: Ingredient) => {
-    openDrawer(ingredient);
-  };
-
-  const handleRemoveIngredient = async () => {
+  const handleRemoveIngredient = () => {
     if (ingredientToRemove) {
       startTransition(() => {
         deleteIngredient(ingredientToRemove.id)
@@ -92,21 +88,23 @@ export function IngredientsPageOverview({
 
       <IngredientsTable
         ingredients={ingredients}
-        onRowClick={onRowClick}
+        onRowClick={(ingredient) => openDrawer(ingredient)}
         onSort={handleSortChange}
         order={order}
         orderBy={orderBy}
         setIngredientToRemove={setIngredientToRemove}
       />
 
-      <TablePagination
-        component="div"
-        count={total}
-        onPageChange={(_event, newPage) => onPageChange(newPage)}
-        onRowsPerPageChange={(e) => onParamsChange([{ param: "limit", value: +e.target.value }])}
-        page={page}
-        rowsPerPage={limitParam}
-      />
+      {ingredients.length > 0 && (
+        <TablePagination
+          component="div"
+          count={total}
+          onPageChange={(_event, newPage) => onPageChange(newPage)}
+          onRowsPerPageChange={(e) => onParamsChange([{ param: "limit", value: +e.target.value }])}
+          page={page}
+          rowsPerPage={limitParam}
+        />
+      )}
 
       <IngredientDrawer
         ingredient={drawerState.ingredient}

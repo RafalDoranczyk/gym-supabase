@@ -62,7 +62,7 @@ export function MealsTable({
       <TableBody>
         {meals.map((meal) => {
           const { calories, carbs, fat, price, protein } = calculateMealNutrition(
-            meal.meal_ingredients,
+            meal.meal_ingredients ?? [],
           );
 
           return (

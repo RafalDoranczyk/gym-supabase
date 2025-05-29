@@ -25,24 +25,8 @@ const getDefaultValues = (
 export function useIngredientForm(ingredient: Ingredient | null, groups: NutritionGroup[]) {
   const defaultValues = useMemo(() => getDefaultValues(ingredient, groups), [ingredient, groups]);
 
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    setError,
-    watch,
-  } = useForm<CreateIngredientPayload>({
+  return useForm<CreateIngredientPayload>({
     resolver: zodResolver(CreateIngredientPayloadSchema),
     values: defaultValues,
   });
-
-  return {
-    control,
-    errors,
-    handleSubmit,
-    reset,
-    setError,
-    watch,
-  };
 }

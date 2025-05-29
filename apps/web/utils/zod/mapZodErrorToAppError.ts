@@ -3,9 +3,15 @@ import { AppErrorCodes } from "@/core";
 import type { ZodError } from "zod";
 
 export function mapZodErrorToAppError(error: ZodError): AppError {
-  return new AppError(
-    AppErrorCodes.VALIDATION_ERROR,
-    error.errors?.[0]?.message ?? "Invalid data format",
-    error.flatten(),
-  );
+  const formattedErrors = error.errors.map((err) => {
+    const path = err.path.length > 0 ? err.path.join(".") : "root";
+    return `• ${path}: ${err.message}`;
+  });
+
+  const message =
+    formattedErrors.length > 0
+      ? `Validation failed:\n${formattedErrors.join("\n")}`
+      : "Invalid data format";
+
+  return new AppError(AppErrorCodes.VALIDATION_ERROR, message, error.flatten());
 }

@@ -23,6 +23,7 @@ import { useMealsPagination } from "../hooks/useMealsPagination";
 import { useMealsUI } from "../hooks/useMealsUI";
 import { MealDrawer } from "./MealDrawer";
 import { MealsTable } from "./MealsTable";
+import { deleteMeal } from "../actions/deleteMeal";
 
 type MealsPageOverviewProps = {
   ingredients: Ingredient[];
@@ -55,22 +56,20 @@ export function MealsPageOverview({ ingredients, meals, mealTags, total }: Meals
     setMealToRemove,
   } = useMealsUI();
 
-  const onRowClick = (meal: Meal) => {};
-
   const handleRemoveMeal = async () => {
-    // if (mealToRemove) {
-    //   startTransition(() => {
-    //     deleteIngredient(mealToRemove.id)
-    //       .then(() => {
-    //         toast.success(`Meal ${mealToRemove.name} removed successfully`);
-    //         closeConfirmDialog();
-    //       })
-    //       .catch(error => {
-    //         toast.error(`Failed to remove meal: ${error.message}`);
-    //         closeConfirmDialog();
-    //       });
-    //   });
-    // }
+    if (mealToRemove) {
+      startTransition(() => {
+        deleteMeal(mealToRemove.id)
+          .then(() => {
+            toast.success(`Meal ${mealToRemove.name} removed successfully`);
+            closeConfirmDialog();
+          })
+          .catch((error) => {
+            toast.error(`Failed to remove meal: ${error.message}`);
+            closeConfirmDialog();
+          });
+      });
+    }
   };
 
   return (
@@ -124,7 +123,7 @@ export function MealsPageOverview({ ingredients, meals, mealTags, total }: Meals
 
       <MealsTable
         meals={meals}
-        onRowClick={onRowClick}
+        onRowClick={(meal) => openDrawer(meal)}
         onSort={handleSortChange}
         order={order}
         orderBy={orderBy}

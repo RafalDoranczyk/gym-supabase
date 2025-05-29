@@ -10,8 +10,13 @@ import { useTransition } from "react";
 import { createIngredient } from "../actions/createIngredient";
 import { updateIngredient } from "../actions/updateIngredient";
 import { useIngredientForm } from "../forms/useIngredientForm";
-import { handleCreateIngredientError } from "../utils/handleCreateIngredientError";
+import { handleCreateIngredientError } from "../forms/errorHandlers";
 import { IngredientNumberFields } from "./IngredientNumberFields";
+
+const unitTypeOptions = Object.entries(INGREDIENT_UNIT_TYPES).map(([id, name]) => ({
+  id,
+  name,
+}));
 
 type IngredientDrawerProps = {
   ingredient: Ingredient | null;
@@ -29,7 +34,7 @@ export function IngredientDrawer({
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const { control, errors, handleSubmit, reset, setError, watch } = useIngredientForm(
+  const { control, formState, handleSubmit, reset, setError, watch } = useIngredientForm(
     ingredient,
     ingredientGroups,
   );
@@ -64,11 +69,6 @@ export function IngredientDrawer({
     });
   });
 
-  const unitTypeOptions = Object.entries(INGREDIENT_UNIT_TYPES).map(([id, name]) => ({
-    id,
-    name,
-  }));
-
   return (
     <Drawer.Root
       BackdropProps={{
@@ -84,12 +84,12 @@ export function IngredientDrawer({
         <Stack spacing={3}>
           <ControlledTextField
             control={control}
-            helperText={errors.name?.message}
+            helperText={formState.errors.name?.message}
             label="Name"
             name="name"
           />
 
-          <IngredientNumberFields control={control} errors={errors} unitType={unitType} />
+          <IngredientNumberFields control={control} errors={formState.errors} unitType={unitType} />
 
           <ControlledSelect
             control={control}

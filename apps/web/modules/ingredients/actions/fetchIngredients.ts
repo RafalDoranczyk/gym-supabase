@@ -4,11 +4,46 @@ import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "
 import {
   type GetIngredientsResponse,
   GetIngredientsResponseSchema,
+  INGREDIENTS_FETCH_LIMIT,
   type IngredientSearchParams,
   type NutritionGroup,
 } from "@repo/schemas";
 
-import { INGREDIENTS_FETCH_LIMIT } from "../const";
+// Helper function to build query filters
+function buildIngredientsQuery(
+  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  params: {
+    groupId?: string;
+    search?: string;
+    limit: number;
+    offset: number;
+    orderBy: string;
+    order: "asc" | "desc";
+  },
+) {
+  let query = supabase.from("ingredients").select("*", { count: "exact" });
+
+  // Apply filters
+  if (params.groupId) {
+    query = query.eq("group_id", params.groupId);
+  }
+
+  if (params.search?.trim()) {
+    // More flexible search - could be extended to search multiple fields
+    query = query.ilike("name", `%${params.search.trim()}%`);
+  }
+
+  // Apply pagination and sorting
+  return query
+    .range(params.offset, params.offset + params.limit - 1)
+    .order(params.orderBy, { ascending: params.order === "asc" });
+}
+
+// Helper to find group ID
+function findGroupId(groupName: string, ingredientGroups?: NutritionGroup[]): string | undefined {
+  if (!ingredientGroups) return undefined;
+  return ingredientGroups.find((g) => g.name === groupName)?.id;
+}
 
 export async function fetchIngredients(
   params?: IngredientSearchParams,
@@ -16,6 +51,7 @@ export async function fetchIngredients(
 ): Promise<GetIngredientsResponse> {
   const supabase = await createServerClient();
 
+  // Extract and validate parameters
   const {
     group,
     limit = INGREDIENTS_FETCH_LIMIT,
@@ -25,33 +61,30 @@ export async function fetchIngredients(
     search,
   } = params ?? {};
 
-  const groupId =
-    group && ingredientGroups ? ingredientGroups.find((g) => g.name === group)?.id : undefined;
+  // Validate limit bounds
+  const safeLimit = Math.min(Math.max(1, limit), INGREDIENTS_FETCH_LIMIT);
+  const safeOffset = Math.max(0, offset);
 
-  let ingredientsQuery = supabase.from("ingredients").select("*", { count: "exact" });
+  const groupId = group ? findGroupId(group, ingredientGroups) : undefined;
 
-  if (groupId) {
-    ingredientsQuery = ingredientsQuery.eq("group_id", groupId);
-  }
+  // Build and execute query
+  const query = buildIngredientsQuery(supabase, {
+    groupId,
+    search,
+    limit: safeLimit,
+    offset: safeOffset,
+    orderBy,
+    order,
+  });
 
-  if (search) {
-    ingredientsQuery = ingredientsQuery.ilike("name", `%${search}%`);
-  }
-
-  ingredientsQuery = ingredientsQuery
-    .range(offset, offset + limit - 1)
-    .order(orderBy, { ascending: order === "asc" });
-
-  const { count, data, error } = await ingredientsQuery;
+  const { count, data, error } = await query;
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);
   }
 
-  const parsed = assertZodParse(GetIngredientsResponseSchema, {
-    count,
-    data,
+  return assertZodParse(GetIngredientsResponseSchema, {
+    count: count ?? 0,
+    data: data ?? [],
   });
-
-  return parsed;
 }
