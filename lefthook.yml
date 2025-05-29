@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    check:
+      run: echo "🧼 Running formatter/linter..." && npm run check:fix -- --staged --no-errors-on-unmatched && git update-index --again
+
+# Validate commit messages
+commit-msg:
+  commands:
+    "lint commit message":
+      run: npm run commitlint -- --edit {1}
