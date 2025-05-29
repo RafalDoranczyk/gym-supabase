@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { SearchString } from '../shared';
+import { SearchString } from "../shared"
 
 export const MealSearchParamsSchema = z.object({
   limit: z.coerce.number().optional(),
