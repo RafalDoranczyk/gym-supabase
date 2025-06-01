@@ -3,6 +3,7 @@ pre-commit:
   commands:
     check:
       run: npm run check:fix --no-errors-on-unmatched
+      stage_fixed: true
 
 # Validate commit messages
 commit-msg:
