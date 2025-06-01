@@ -1,11 +1,11 @@
 "use server";
 
-import { assertZodParse, mapSupabaseErrorToAppError, DB_TABLES, getUserScopedQuery } from "@/utils";
+import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 
 import {
-  IngredientSchema,
   type DeleteIngredientPayload,
   type DeleteIngredientResponse,
+  IngredientSchema,
 } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 

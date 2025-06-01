@@ -10,9 +10,9 @@ import { useTransition } from "react";
 import { createMeal } from "../actions/createMeal";
 import { updateMeal } from "../actions/updateMeal";
 
+import { handleFormErrors } from "@/utils";
 import { useMealForm } from "../forms/useMealForm";
 import { MealIngredientsTable } from "./MealIngredientsTable";
-import { handleFormErrors } from "@/utils";
 
 type MealDrawerProps = {
   ingredients: Ingredient[];

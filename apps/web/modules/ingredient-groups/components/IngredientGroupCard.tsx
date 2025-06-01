@@ -1,7 +1,7 @@
-import type React from "react";
-import { Box, Typography, Card, CardContent, IconButton, Chip, Stack } from "@mui/material";
-import { MoreVert, Add } from "@mui/icons-material";
+import { Add, MoreVert } from "@mui/icons-material";
+import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
 import type { NutritionGroupWithExamples } from "@repo/schemas";
+import type React from "react";
 
 type IngredientGroupCardProps = {
   group: NutritionGroupWithExamples;

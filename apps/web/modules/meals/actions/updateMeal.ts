@@ -1,7 +1,7 @@
 "use server";
 
-import { assertZodParse, DB_TABLES, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
-import { type UpdateMealPayload, type UpdateMealResponse, MealSchema } from "@repo/schemas";
+import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { MealSchema, type UpdateMealPayload, type UpdateMealResponse } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMealResponse> {

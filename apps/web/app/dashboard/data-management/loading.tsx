@@ -1,4 +1,4 @@
-import { Box, Stack, Skeleton, Grid, Card, CardContent, Divider } from "@mui/material";
+import { Box, Card, CardContent, Divider, Grid, Skeleton, Stack } from "@mui/material";
 
 const CARDS_PER_SECTION = 8; // 4 per row, 2 rows
 

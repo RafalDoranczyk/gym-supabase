@@ -12,13 +12,13 @@ import { Button, Stack, TablePagination, Toolbar } from "@mui/material";
 import type { Ingredient, Meal, MealTag } from "@repo/schemas";
 import { useTransition } from "react";
 
+import { Add, FilterList } from "@mui/icons-material";
 import { deleteMeal } from "../actions/deleteMeal";
 import { useMealsFilters } from "../hooks/useMealsFilters";
 import { useMealsPagination } from "../hooks/useMealsPagination";
 import { useMealsUI } from "../hooks/useMealsUI";
 import { MealDrawer } from "./MealDrawer";
 import { MealsTable } from "./MealsTable";
-import { Add, FilterList } from "@mui/icons-material";
 
 type MealsPageOverviewProps = {
   ingredients: Ingredient[];

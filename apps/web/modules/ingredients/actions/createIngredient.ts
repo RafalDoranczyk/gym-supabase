@@ -1,6 +1,6 @@
 "use server";
 
-import { assertZodParse, mapSupabaseErrorToAppError, DB_TABLES, getUserScopedQuery } from "@/utils";
+import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 
 import {
   type CreateIngredientPayload,

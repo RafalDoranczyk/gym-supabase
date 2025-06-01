@@ -3,9 +3,9 @@ import {
   FormControl,
   InputLabel,
   ListItemText,
+  Select as MaterialSelect,
   MenuItem,
   OutlinedInput,
-  Select as MaterialSelect,
   type SelectChangeEvent,
 } from "@mui/material";
 

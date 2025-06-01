@@ -1,6 +1,6 @@
 "use server";
 
-import { assertZodParse, createServerClient, DB_TABLES, mapSupabaseErrorToAppError } from "@/utils";
+import { DB_TABLES, assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type GetMealsResponse,
   GetMealsResponseSchema,

@@ -1,6 +1,6 @@
 import { loginWithGithub, loginWithGoogle } from "@/actions";
-import { GitHub, Google, FitnessCenter, Restaurant, Analytics } from "@mui/icons-material";
-import { Box, Button, Container, Typography, Stack, Paper, Chip } from "@mui/material";
+import { Analytics, FitnessCenter, GitHub, Google, Restaurant } from "@mui/icons-material";
+import { Box, Button, Chip, Container, Paper, Stack, Typography } from "@mui/material";
 
 export default function HomePage() {
   return (

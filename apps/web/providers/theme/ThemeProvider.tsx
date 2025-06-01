@@ -1,7 +1,7 @@
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 
-import type { PropsWithChildren } from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import type { PropsWithChildren } from "react";
 import { theme } from "./theme";
 
 /**

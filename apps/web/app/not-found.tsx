@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, Button, Stack, Typography, Container } from "@mui/material";
-import { Home, SearchOff, ArrowBack } from "@mui/icons-material";
+import { ArrowBack, Home, SearchOff } from "@mui/icons-material";
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
 
 export default function NotFound() {
   return (

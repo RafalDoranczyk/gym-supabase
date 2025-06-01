@@ -1,6 +1,6 @@
 "use server";
 
-import { assertZodParse, DB_TABLES, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import { type GetMealTagsResponse, GetMealTagsResponseSchema } from "@repo/schemas";
 
 export async function fetchMealTags(): Promise<GetMealTagsResponse> {

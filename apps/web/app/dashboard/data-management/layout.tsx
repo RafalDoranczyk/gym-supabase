@@ -1,4 +1,4 @@
-import { Stack, Typography, Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import type React from "react";
 
 export default function DataManagementLayout({ children }: React.PropsWithChildren) {

@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
-import { Typography, Button, Grid, Menu, MenuItem, Stack, Divider } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
-import type { NutritionGroupWithExamples } from "@repo/schemas";
-import { IngredientGroupCard } from "./IngredientGroupCard";
 import { ConfirmActionDialog, EmptyState, SearchField } from "@/components";
-import { IngredientGroupDialog } from "./IngredientGroupDialog";
-import { useIngredientGroupUI } from "../hoooks/useIngredientGroupUI";
-import { deleteIngredientGroup } from "../actions/deleteIngredientGroup";
 import { useToast } from "@/providers";
+import { Add, Delete, Edit } from "@mui/icons-material";
+import { Button, Divider, Grid, Menu, MenuItem, Stack, Typography } from "@mui/material";
+import type { NutritionGroupWithExamples } from "@repo/schemas";
+import { useMemo, useState, useTransition } from "react";
+import { deleteIngredientGroup } from "../actions/deleteIngredientGroup";
+import { useIngredientGroupUI } from "../hoooks/useIngredientGroupUI";
+import { IngredientGroupCard } from "./IngredientGroupCard";
+import { IngredientGroupDialog } from "./IngredientGroupDialog";
 
 type IngredientsGroupPageViewProps = {
   groups: NutritionGroupWithExamples[];

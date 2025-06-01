@@ -1,7 +1,7 @@
 "use server";
 
-import { assertZodParse, DB_TABLES, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
-import { MealSchema, type DeleteMealPayload, type DeleteMealResponse } from "@repo/schemas";
+import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { type DeleteMealPayload, type DeleteMealResponse, MealSchema } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function deleteMeal(id: DeleteMealPayload): Promise<DeleteMealResponse> {

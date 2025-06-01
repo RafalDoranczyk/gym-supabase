@@ -12,13 +12,13 @@ import { Button, Stack, TablePagination, Toolbar } from "@mui/material";
 import type { Ingredient, NutritionGroup } from "@repo/schemas";
 import { useTransition } from "react";
 
+import { Add, FilterList } from "@mui/icons-material";
 import { deleteIngredient } from "../actions/deleteIngredient";
 import { useIngredientsFilters } from "../hooks/useIngredientsFilters";
 import { useIngredientsPagination } from "../hooks/useIngredientsPagination";
 import { useIngredientsUI } from "../hooks/useIngredientsUI";
 import { IngredientDrawer } from "./IngredientDrawer";
 import { IngredientsTable } from "./IngredientsTable";
-import { Add, FilterList } from "@mui/icons-material";
 
 type IngredientsPageOverviewProps = {
   ingredientGroups: NutritionGroup[];

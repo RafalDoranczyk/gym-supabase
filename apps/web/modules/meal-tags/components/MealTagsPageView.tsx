@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
-import { Typography, Button, Grid, Menu, MenuItem, Stack, Divider } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Add, Delete, Edit } from "@mui/icons-material";
+import { Button, Divider, Grid, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import type { MealTag, MealTagWithExamples } from "@repo/schemas";
+import { useMemo, useState, useTransition } from "react";
 
 import { ConfirmActionDialog, EmptyState, SearchField } from "@/components";
-import { MealTagDialog } from "./MealTagDialog";
-import { MealTagCard } from "./MealTagCard";
-import { useMealTagsUI } from "../hooks/useMealTagsUI";
-import { deleteMealTag } from "../actions/deleteMealTag";
 import { useToast } from "@/providers";
+import { deleteMealTag } from "../actions/deleteMealTag";
+import { useMealTagsUI } from "../hooks/useMealTagsUI";
+import { MealTagCard } from "./MealTagCard";
+import { MealTagDialog } from "./MealTagDialog";
 
 type MealTagsPageViewProps = {
   tags: MealTagWithExamples[];

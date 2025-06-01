@@ -1,10 +1,10 @@
 "use server";
 
-import { assertZodParse, DB_TABLES, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
-  NutritionGroupSchema,
   type CreateNutritionGroupPayload,
   type CreateNutritionGroupResponse,
+  NutritionGroupSchema,
 } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Error as ErrorIcon, CheckCircle as SuccessIcon } from "@mui/icons-material";
-import { Snackbar as MuiSnackbar, SnackbarContent, Box } from "@mui/material";
+import { Box, Snackbar as MuiSnackbar, SnackbarContent } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import type React from "react";
 import { createContext, useState } from "react";

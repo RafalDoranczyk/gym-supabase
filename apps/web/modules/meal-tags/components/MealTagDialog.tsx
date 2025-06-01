@@ -1,25 +1,25 @@
+import { ColorPicker, ControlledTextField } from "@/components";
+import { Close } from "@mui/icons-material";
 import {
   Box,
-  Typography,
   Button,
-  IconButton,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
-  Stack,
+  DialogContent,
   DialogContentText,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Typography,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
-import { useMealTagForm } from "../forms/useMealTagForm";
 import type { MealTag } from "@repo/schemas";
-import { ControlledTextField, ColorPicker } from "@/components";
 import { startTransition } from "react";
+import { useMealTagForm } from "../forms/useMealTagForm";
 
-import { updateMealTag } from "../actions/updateMealTag";
 import { useToast } from "@/providers";
-import { createMealTag } from "../actions/createMealTag";
 import { handleFormErrors } from "@/utils";
+import { createMealTag } from "../actions/createMealTag";
+import { updateMealTag } from "../actions/updateMealTag";
 
 type MealTagDialogProps = {
   open: boolean;

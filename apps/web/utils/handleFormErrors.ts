@@ -1,5 +1,5 @@
 import type { ToastContextType } from "@/providers/toast/ToastProvider";
-import type { UseFormSetError, FieldValues, Path } from "react-hook-form";
+import type { FieldValues, Path, UseFormSetError } from "react-hook-form";
 
 /**
  * Handles form submission errors with automatic field-specific error mapping

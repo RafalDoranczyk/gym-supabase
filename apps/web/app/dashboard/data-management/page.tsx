@@ -1,8 +1,8 @@
-import { Stack, Divider } from "@mui/material";
+import { IngredientsGroupPageView } from "@/modules/ingredient-groups";
 import { fetchIngredientGroupsWithExamples } from "@/modules/ingredients";
 import { fetchMealTagsWithExamples } from "@/modules/meal-tags";
-import { IngredientsGroupPageView } from "@/modules/ingredient-groups";
 import { MealTagsPageView } from "@/modules/meal-tags";
+import { Divider, Stack } from "@mui/material";
 
 export default async function DataManagement() {
   const [ingredientGroups, mealTags] = await Promise.all([

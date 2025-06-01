@@ -1,15 +1,15 @@
 "use client";
 
+import { Palette } from "@mui/icons-material";
 import {
-  TextField,
+  Box,
+  IconButton,
   InputAdornment,
   Popover,
-  Box,
-  Typography,
   Stack,
-  IconButton,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { Palette } from "@mui/icons-material";
 import { useState } from "react";
 
 type MUIColorPickerProps = {

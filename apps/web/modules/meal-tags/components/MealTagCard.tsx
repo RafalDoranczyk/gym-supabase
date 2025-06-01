@@ -1,7 +1,7 @@
-import type React from "react";
-import { Box, Typography, Card, CardContent, IconButton, Chip, Stack } from "@mui/material";
-import { MoreVert, LocalOffer, Add } from "@mui/icons-material";
+import { Add, LocalOffer, MoreVert } from "@mui/icons-material";
+import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
 import type { MealTagWithExamples } from "@repo/schemas";
+import type React from "react";
 
 type MealTagCardProps = {
   tag: MealTagWithExamples;
