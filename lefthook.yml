@@ -1,8 +1,8 @@
 # Format and lint
 pre-commit:
   commands:
-    check:
-      run: npm run check:fix --no-errors-on-unmatched
+    lint:
+      run: npm run lint
       stage_fixed: true
 
 # Validate commit messages

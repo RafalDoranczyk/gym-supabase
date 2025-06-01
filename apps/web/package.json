@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "check:fix": "biome check --write",
+    "lint": "biome check --write",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
