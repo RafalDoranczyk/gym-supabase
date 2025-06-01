@@ -1,16 +1,14 @@
 "use server";
 
-import { getUser } from "@/actions";
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
-import { MealSchema, type RemoveMealPayload, type RemoveMealResponse } from "@repo/schemas";
+import { assertZodParse, DB_TABLES, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { MealSchema, type DeleteMealPayload, type DeleteMealResponse } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
-export async function deleteMeal(id: RemoveMealPayload): Promise<RemoveMealResponse> {
-  const user = await getUser();
-  const supabase = await createServerClient();
+export async function deleteMeal(id: DeleteMealPayload): Promise<DeleteMealResponse> {
+  const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from("meals")
+    .from(DB_TABLES.MEALS)
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)
@@ -21,9 +19,7 @@ export async function deleteMeal(id: RemoveMealPayload): Promise<RemoveMealRespo
     throw mapSupabaseErrorToAppError(error);
   }
 
-  const meal = assertZodParse(MealSchema, data);
-
   revalidatePath("/dashboard/meals");
 
-  return meal;
+  return assertZodParse(MealSchema, data);
 }

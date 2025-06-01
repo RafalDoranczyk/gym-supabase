@@ -1,16 +1,24 @@
 "use server";
 
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, createServerClient, DB_TABLES, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type GetMealsResponse,
   GetMealsResponseSchema,
+  MEALS_FETCH_LIMIT,
   type MealSearchParams,
 } from "@repo/schemas";
 
 export async function fetchMeals(params: MealSearchParams): Promise<GetMealsResponse> {
   const supabase = await createServerClient();
 
-  const { limit = 10, offset = 0, order = "asc", orderBy = "name", search, tag } = params;
+  const {
+    limit = MEALS_FETCH_LIMIT,
+    offset = 0,
+    order = "asc",
+    orderBy = "name",
+    search,
+    tag,
+  } = params;
 
   const tagIds =
     tag
@@ -22,7 +30,7 @@ export async function fetchMeals(params: MealSearchParams): Promise<GetMealsResp
 
   if (tagIds.length > 0) {
     const { data: tagLinks, error: tagError } = await supabase
-      .from("meal_to_tags")
+      .from(DB_TABLES.MEAL_TO_TAGS)
       .select("meal_id")
       .in("tag_id", tagIds);
 
@@ -37,7 +45,7 @@ export async function fetchMeals(params: MealSearchParams): Promise<GetMealsResp
     }
   }
 
-  let mealsQuery = supabase.from("meals").select(
+  let mealsQuery = supabase.from(DB_TABLES.MEALS).select(
     `
     *,
     meal_to_tags (
@@ -81,10 +89,8 @@ export async function fetchMeals(params: MealSearchParams): Promise<GetMealsResp
     throw mapSupabaseErrorToAppError(error);
   }
 
-  const parsed = assertZodParse(GetMealsResponseSchema, {
-    count,
-    data,
+  return assertZodParse(GetMealsResponseSchema, {
+    count: count ?? 0,
+    data: data ?? [],
   });
-
-  return parsed;
 }

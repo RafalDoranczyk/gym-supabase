@@ -87,7 +87,7 @@ export function MealIngredientsTable({ ingredients, fieldArray }: MealIngredient
             const macros = calculateMealIngredientNutrition({ amount, ingredient });
 
             return (
-              <TableRow key={id}>
+              <TableRow key={ingredient_id}>
                 <TableCell>{ingredient.name}</TableCell>
                 <TableCell>
                   <TextField

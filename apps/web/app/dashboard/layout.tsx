@@ -1,8 +1,7 @@
 import { DESKTOP_APP_NAVIGATION_DRAWER_WIDTH, Navigation } from "@/modules/navigation";
 import { Box } from "@mui/material";
-import type { PropsWithChildren } from "react";
 
-export default function DashboardLayout({ children }: PropsWithChildren) {
+export default function DashboardLayout({ children }: React.PropsWithChildren) {
   return (
     <>
       <Navigation />

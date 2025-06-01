@@ -5,7 +5,7 @@ import {
   TooltipIconButton,
 } from "@/components";
 import type { TableData, TableOrder } from "@/hooks";
-import { KeyboardArrowRight, LocalPizza } from "@mui/icons-material";
+import { KeyboardArrowRight } from "@mui/icons-material";
 import { Box, TableBody, TableCell, TableRow, Typography } from "@mui/material";
 import type { Meal } from "@repo/schemas";
 
@@ -26,7 +26,15 @@ type MealsTableProps = {
   onSort: (orderBy: TableOrder, property: keyof TableData) => void;
   order?: TableOrder;
   orderBy?: keyof TableData;
-  setMealToRemove: (meal: Meal) => void;
+  setMealToDelete: (meal: Meal) => void;
+};
+
+// Helper function to format numeric values
+const formatNumericValue = (value: number | null | undefined): string => {
+  if (value === null || value === undefined || value === 0) {
+    return "—";
+  }
+  return value.toString();
 };
 
 export function MealsTable({
@@ -35,7 +43,7 @@ export function MealsTable({
   onSort,
   order,
   orderBy,
-  setMealToRemove,
+  setMealToDelete,
 }: MealsTableProps) {
   if (meals.length === 0) {
     return <EmptyState subtitle="Please add some meals to your list" title="No meals found" />;
@@ -60,7 +68,7 @@ export function MealsTable({
         orderBy={orderBy}
       />
       <TableBody>
-        {meals.map((meal) => {
+        {meals.map((meal, index) => {
           const { calories, carbs, fat, price, protein } = calculateMealNutrition(
             meal.meal_ingredients ?? [],
           );
@@ -71,6 +79,13 @@ export function MealsTable({
               key={meal.id}
               onClick={() => onRowClick(meal)}
               sx={{
+                // Zebra striping - more subtle
+                "&:nth-of-type(even)": {
+                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                },
+                "&:hover": {
+                  backgroundColor: "action.hover !important",
+                },
                 "&:hover .delete-button-cell": {
                   opacity: 1,
                   visibility: "visible",
@@ -84,7 +99,6 @@ export function MealsTable({
             >
               <TableCell sx={{ minWidth: 200, p: 1 }}>
                 <Box alignItems="center" display="flex" gap={1} sx={{ overflow: "hidden" }}>
-                  <LocalPizza />
                   <Box
                     alignItems="center"
                     display="inline-flex"
@@ -115,19 +129,41 @@ export function MealsTable({
               </TableCell>
 
               <TableCell align="right" sx={{ width: 100 }}>
-                {calories}
+                <Typography
+                  variant="body2"
+                  sx={{ color: calories === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(calories)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {carbs}
+                <Typography
+                  variant="body2"
+                  sx={{ color: carbs === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(carbs)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {protein}
+                <Typography
+                  variant="body2"
+                  sx={{ color: protein === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(protein)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {fat}
+                <Typography variant="body2" sx={{ color: fat === 0 ? "text.disabled" : "inherit" }}>
+                  {formatNumericValue(fat)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {price}
+                <Typography
+                  variant="body2"
+                  sx={{ color: price === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(price)}
+                </Typography>
               </TableCell>
               <TableCell
                 align="center"
@@ -141,7 +177,7 @@ export function MealsTable({
                 <TooltipIconButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    setMealToRemove(meal);
+                    setMealToDelete(meal);
                   }}
                   size="small"
                   variant="delete"

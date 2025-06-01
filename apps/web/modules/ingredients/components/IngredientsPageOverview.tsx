@@ -1,6 +1,12 @@
 "use client";
 
-import { ConfirmActionDialog, CountIndicator, SearchField, SelectMenu } from "@/components";
+import {
+  ConfirmActionDialog,
+  CountIndicator,
+  EmptyState,
+  SearchField,
+  SelectMenu,
+} from "@/components";
 import { useToast } from "@/providers";
 import { Button, Stack, TablePagination, Toolbar } from "@mui/material";
 import type { Ingredient, NutritionGroup } from "@repo/schemas";
@@ -12,17 +18,18 @@ import { useIngredientsPagination } from "../hooks/useIngredientsPagination";
 import { useIngredientsUI } from "../hooks/useIngredientsUI";
 import { IngredientDrawer } from "./IngredientDrawer";
 import { IngredientsTable } from "./IngredientsTable";
+import { Add, FilterList } from "@mui/icons-material";
 
 type IngredientsPageOverviewProps = {
   ingredientGroups: NutritionGroup[];
   ingredients: Ingredient[];
-  total: number;
+  ingredientsCount: number;
 };
 
 export function IngredientsPageOverview({
   ingredientGroups,
   ingredients,
-  total,
+  ingredientsCount,
 }: IngredientsPageOverviewProps) {
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
@@ -35,32 +42,66 @@ export function IngredientsPageOverview({
     currentFilters: { group, order, orderBy, search },
     handleGroupChange,
     handleSortChange,
+    handleClearFilters,
   } = useIngredientsFilters(ingredientGroups);
 
   const {
-    closeConfirmDialog,
+    closeDeleteDialog,
     closeDrawer,
-    drawerState,
-    ingredientToRemove,
+    deleteIngredient: ingredientToDelete,
+    drawer,
     openDrawer,
-    setIngredientToRemove,
+    setDeleteIngredient,
   } = useIngredientsUI();
 
-  const handleRemoveIngredient = () => {
-    if (ingredientToRemove) {
+  const handleDeleteIngredient = () => {
+    if (ingredientToDelete) {
       startTransition(() => {
-        deleteIngredient(ingredientToRemove.id)
+        deleteIngredient(ingredientToDelete.id)
           .then(() => {
-            toast.success(`Ingredient ${ingredientToRemove.name} removed successfully`);
-            closeConfirmDialog();
+            toast.success(`Ingredient ${ingredientToDelete.name} removed successfully`);
+            closeDeleteDialog();
           })
           .catch((error) => {
             toast.error(`Failed to remove ingredient: ${error.message}`);
-            closeConfirmDialog();
+            closeDeleteDialog();
           });
       });
     }
   };
+
+  // Check if any filters are active
+  const hasActiveFilters = search?.trim() !== "" || group !== "All";
+
+  // Determine empty state content
+  const getEmptyStateContent = () => {
+    if (hasActiveFilters) {
+      return {
+        title: "No ingredients found",
+        subtitle:
+          search?.trim() !== ""
+            ? `No ingredients match "${search?.trim()}"`
+            : "No ingredients found with current filters",
+        action: (
+          <Button variant="outlined" startIcon={<FilterList />} onClick={handleClearFilters}>
+            Clear Filters
+          </Button>
+        ),
+      };
+    }
+
+    return {
+      title: "No ingredients found",
+      subtitle: "Please add some ingredients to your list",
+      action: (
+        <Button variant="outlined" startIcon={<Add />} onClick={() => openDrawer(null)}>
+          Add Ingredient
+        </Button>
+      ),
+    };
+  };
+
+  const emptyStateContent = getEmptyStateContent();
 
   return (
     <>
@@ -72,33 +113,44 @@ export function IngredientsPageOverview({
             options={activeOptions}
             setActiveOption={handleGroupChange}
           />
-          <CountIndicator end={total} />
-          <SearchField onChange={onSearchChange} value={search} />
+          <CountIndicator end={ingredientsCount} />
         </Stack>
 
-        <Button
-          color="secondary"
-          onClick={() => openDrawer()}
-          sx={{ ml: "auto" }}
-          variant="contained"
-        >
-          Add Ingredient
-        </Button>
+        <Stack alignItems="center" direction="row" spacing={2} sx={{ ml: "auto" }}>
+          <SearchField onChange={onSearchChange} value={search} />
+          <Button
+            aria-label="Add new ingredient"
+            onClick={() => openDrawer()}
+            variant="contained"
+            size="small"
+            startIcon={<Add />}
+          >
+            Add Ingredient
+          </Button>
+        </Stack>
       </Toolbar>
 
-      <IngredientsTable
-        ingredients={ingredients}
-        onRowClick={(ingredient) => openDrawer(ingredient)}
-        onSort={handleSortChange}
-        order={order}
-        orderBy={orderBy}
-        setIngredientToRemove={setIngredientToRemove}
-      />
+      {ingredients.length === 0 ? (
+        <EmptyState
+          title={emptyStateContent.title}
+          subtitle={emptyStateContent.subtitle}
+          action={emptyStateContent.action}
+        />
+      ) : (
+        <IngredientsTable
+          ingredients={ingredients}
+          onRowClick={(ingredient) => openDrawer(ingredient)}
+          onSort={handleSortChange}
+          order={order}
+          orderBy={orderBy}
+          setIngredientToDelete={setDeleteIngredient}
+        />
+      )}
 
       {ingredients.length > 0 && (
         <TablePagination
           component="div"
-          count={total}
+          count={ingredientsCount}
           onPageChange={(_event, newPage) => onPageChange(newPage)}
           onRowsPerPageChange={(e) => onParamsChange([{ param: "limit", value: +e.target.value }])}
           page={page}
@@ -107,18 +159,18 @@ export function IngredientsPageOverview({
       )}
 
       <IngredientDrawer
-        ingredient={drawerState.ingredient}
+        ingredient={drawer.ingredient}
         ingredientGroups={ingredientGroups}
         onClose={closeDrawer}
-        open={drawerState.open}
+        open={drawer.open}
       />
 
       <ConfirmActionDialog
-        description={`Are you sure you want to remove ${ingredientToRemove?.name ?? "this ingredient"}?`}
-        handleClose={closeConfirmDialog}
+        description={`Are you sure you want to remove ${ingredientToDelete?.name ?? "this ingredient"}?`}
+        handleClose={closeDeleteDialog}
         loading={isPending}
-        onConfirm={handleRemoveIngredient}
-        open={Boolean(ingredientToRemove)}
+        onConfirm={handleDeleteIngredient}
+        open={Boolean(ingredientToDelete)}
       />
     </>
   );

@@ -61,7 +61,7 @@ const UpdateIngredientPayloadSchema = BaseIngredientSchema.extend({
 export type UpdateIngredientPayload = z.infer<typeof UpdateIngredientPayloadSchema>;
 export type UpdateIngredientResponse = z.infer<typeof IngredientSchema>;
 
-// Remove
-const RemoveIngredientPayloadSchema = SupabaseId;
-export type RemoveIngredientPayload = z.infer<typeof RemoveIngredientPayloadSchema>;
-export type RemoveIngredientResponse = z.infer<typeof IngredientSchema>;
+// Delete
+const DeleteIngredientPayloadSchema = SupabaseId;
+export type DeleteIngredientPayload = z.infer<typeof DeleteIngredientPayloadSchema>;
+export type DeleteIngredientResponse = z.infer<typeof IngredientSchema>;

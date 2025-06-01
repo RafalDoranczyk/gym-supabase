@@ -1,20 +1,14 @@
 "use client";
 
-import { ConfirmActionDialog, CountIndicator, SearchField } from "@/components";
-import { useToast } from "@/providers";
 import {
-  Button,
-  Checkbox,
-  FormControl,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  Stack,
-  TablePagination,
-  Toolbar,
-} from "@mui/material";
+  ConfirmActionDialog,
+  CountIndicator,
+  EmptyState,
+  MultiSelect,
+  SearchField,
+} from "@/components";
+import { useToast } from "@/providers";
+import { Button, Stack, TablePagination, Toolbar } from "@mui/material";
 import type { Ingredient, Meal, MealTag } from "@repo/schemas";
 import { useTransition } from "react";
 
@@ -24,6 +18,7 @@ import { useMealsPagination } from "../hooks/useMealsPagination";
 import { useMealsUI } from "../hooks/useMealsUI";
 import { MealDrawer } from "./MealDrawer";
 import { MealsTable } from "./MealsTable";
+import { Add, FilterList } from "@mui/icons-material";
 
 type MealsPageOverviewProps = {
   ingredients: Ingredient[];
@@ -39,11 +34,10 @@ export function MealsPageOverview({ ingredients, meals, mealTags, total }: Meals
   const { limitParam, onPageChange, onParamsChange, onSearchChange, page } = useMealsPagination();
 
   const {
-    activeOptions,
-    currentFilters: { order, orderBy, search, tag },
+    currentFilters: { order, orderBy, search },
     handleSortChange,
     handleTagChange,
-    isAllSelected,
+    handleClearFilters,
     selectedTagIds,
   } = useMealsFilters(mealTags);
 
@@ -51,17 +45,17 @@ export function MealsPageOverview({ ingredients, meals, mealTags, total }: Meals
     closeConfirmDialog,
     closeDrawer,
     drawerState,
-    mealToRemove,
+    mealToDelete,
     openDrawer,
-    setMealToRemove,
+    setMealToDelete,
   } = useMealsUI();
 
-  const handleRemoveMeal = async () => {
-    if (mealToRemove) {
+  const handleDeleteMeal = () => {
+    if (mealToDelete) {
       startTransition(() => {
-        deleteMeal(mealToRemove.id)
+        deleteMeal(mealToDelete.id)
           .then(() => {
-            toast.success(`Meal ${mealToRemove.name} removed successfully`);
+            toast.success(`Meal ${mealToDelete.name} removed successfully`);
             closeConfirmDialog();
           })
           .catch((error) => {
@@ -72,72 +66,96 @@ export function MealsPageOverview({ ingredients, meals, mealTags, total }: Meals
     }
   };
 
+  // Check if any filters are active
+  const hasActiveFilters =
+    search.trim() !== "" || (selectedTagIds.length > 0 && selectedTagIds.length < mealTags.length);
+
+  // Determine empty state content
+  const getEmptyStateContent = () => {
+    if (hasActiveFilters) {
+      return {
+        title: "No meals found",
+        subtitle:
+          search?.trim() !== ""
+            ? `No meals match "${search?.trim()}"`
+            : "No meals found with current filters",
+        action: (
+          <Button variant="outlined" startIcon={<FilterList />} onClick={handleClearFilters}>
+            Clear Filters
+          </Button>
+        ),
+      };
+    }
+
+    return {
+      title: "No meals found",
+      subtitle: "Please add some meals to your list",
+      action: (
+        <Button variant="outlined" startIcon={<Add />} onClick={() => openDrawer(null)}>
+          Add Meal
+        </Button>
+      ),
+    };
+  };
+
+  const emptyStateContent = getEmptyStateContent();
+
   return (
     <>
       <Toolbar sx={{ mb: 2 }}>
         <Stack alignItems="center" direction="row" spacing={2}>
-          <FormControl sx={{ m: 1, width: 300 }}>
-            <InputLabel id="meals-tag-select-label">Meal tags</InputLabel>
-            <Select
-              input={<OutlinedInput label="Meal tags" />}
-              labelId="meals-tag-select-label"
-              multiple
-              onChange={handleTagChange}
-              renderValue={(selected) => {
-                if (selected.length === 0) return "All";
-                return activeOptions
-                  .filter((opt) => selected.includes(opt.id))
-                  .map((opt) => opt.name)
-                  .join(", ");
-              }}
-              value={selectedTagIds}
-            >
-              <MenuItem key="-1" value="-1">
-                <Checkbox checked={isAllSelected} />
-                <ListItemText primary="All" />
-              </MenuItem>
-
-              {activeOptions
-                .filter(({ id }) => id !== "-1")
-                .map(({ id, name }) => (
-                  <MenuItem key={id} value={id}>
-                    <Checkbox checked={selectedTagIds.includes(id)} />
-                    <ListItemText primary={name} />
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
+          <MultiSelect
+            label="Meal tags"
+            options={mealTags}
+            value={selectedTagIds}
+            onChange={handleTagChange}
+            size="small"
+            sx={{ minWidth: 200, maxWidth: 300 }}
+          />
           <CountIndicator end={total} />
-          <SearchField onChange={onSearchChange} value={search} />
         </Stack>
 
-        <Button
-          color="secondary"
-          onClick={() => openDrawer()}
-          sx={{ ml: "auto" }}
-          variant="contained"
-        >
-          Add Meal
-        </Button>
+        <Stack alignItems="center" direction="row" spacing={2} sx={{ ml: "auto" }}>
+          <SearchField onChange={onSearchChange} value={search} />
+          <Button
+            aria-label="Add new meal"
+            onClick={() => openDrawer()}
+            variant="contained"
+            size="small"
+            startIcon={<Add />}
+          >
+            Add Meal
+          </Button>
+        </Stack>
       </Toolbar>
 
-      <MealsTable
-        meals={meals}
-        onRowClick={(meal) => openDrawer(meal)}
-        onSort={handleSortChange}
-        order={order}
-        orderBy={orderBy}
-        setMealToRemove={setMealToRemove}
-      />
+      {meals.length === 0 ? (
+        <EmptyState
+          title={emptyStateContent.title}
+          subtitle={emptyStateContent.subtitle}
+          action={emptyStateContent.action}
+        />
+      ) : (
+        <MealsTable
+          meals={meals}
+          onRowClick={(meal) => openDrawer(meal)}
+          onSort={handleSortChange}
+          order={order}
+          orderBy={orderBy}
+          setMealToDelete={setMealToDelete}
+        />
+      )}
 
-      <TablePagination
-        component="div"
-        count={total}
-        onPageChange={(_event, newPage) => onPageChange(newPage)}
-        onRowsPerPageChange={(e) => onParamsChange([{ param: "limit", value: +e.target.value }])}
-        page={page}
-        rowsPerPage={limitParam}
-      />
+      {meals.length > 0 && (
+        <TablePagination
+          component="div"
+          count={total}
+          onPageChange={(_event, newPage) => onPageChange(newPage)}
+          onRowsPerPageChange={(e) => onParamsChange([{ param: "limit", value: +e.target.value }])}
+          page={page}
+          rowsPerPage={limitParam}
+        />
+      )}
 
       <MealDrawer
         ingredients={ingredients}
@@ -148,11 +166,11 @@ export function MealsPageOverview({ ingredients, meals, mealTags, total }: Meals
       />
 
       <ConfirmActionDialog
-        description={`Are you sure you want to remove ${mealToRemove?.name ?? "this meal"}?`}
+        description={`Are you sure you want to remove ${mealToDelete?.name ?? "this meal"}?`}
         handleClose={closeConfirmDialog}
         loading={isPending}
-        onConfirm={handleRemoveMeal}
-        open={Boolean(mealToRemove)}
+        onConfirm={handleDeleteMeal}
+        open={Boolean(mealToDelete)}
       />
     </>
   );

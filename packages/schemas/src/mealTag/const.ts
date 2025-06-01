@@ -1,0 +1,4 @@
+export const MEAL_TAG_NAME_MIN_LENGTH = 2;
+export const MEAL_TAG_NAME_MAX_LENGTH = 50;
+
+export const MEAL_TAG_DESCRIPTION_MAX_LENGTH = 200;

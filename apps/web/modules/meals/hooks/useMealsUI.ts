@@ -4,7 +4,7 @@ import type { Meal } from "@repo/schemas";
 import { useCallback, useState } from "react";
 
 export function useMealsUI() {
-  const [mealToRemove, setMealToRemove] = useState<Meal | null>(null);
+  const [mealToDelete, setMealToDelete] = useState<Meal | null>(null);
   const [drawerState, setDrawerState] = useState<{
     meal: Meal | null;
     open: boolean;
@@ -14,7 +14,7 @@ export function useMealsUI() {
   });
 
   const closeConfirmDialog = useCallback(() => {
-    setMealToRemove(null);
+    setMealToDelete(null);
   }, []);
 
   const closeDrawer = useCallback(() => {
@@ -29,8 +29,8 @@ export function useMealsUI() {
     closeConfirmDialog,
     closeDrawer,
     drawerState,
-    mealToRemove,
+    mealToDelete,
     openDrawer,
-    setMealToRemove,
+    setMealToDelete,
   };
 }

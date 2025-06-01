@@ -1,24 +1,23 @@
 "use server";
 
-import { getUser } from "@/actions";
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, mapSupabaseErrorToAppError, DB_TABLES, getUserScopedQuery } from "@/utils";
+
 import {
   IngredientSchema,
-  type RemoveIngredientPayload,
-  type RemoveIngredientResponse,
+  type DeleteIngredientPayload,
+  type DeleteIngredientResponse,
 } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function deleteIngredient(
-  id: RemoveIngredientPayload,
-): Promise<RemoveIngredientResponse> {
-  const user = await getUser();
-  const supabase = await createServerClient();
+  payload: DeleteIngredientPayload,
+): Promise<DeleteIngredientResponse> {
+  const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from("ingredients")
+    .from(DB_TABLES.INGREDIENTS)
     .delete()
-    .eq("id", id)
+    .eq("id", payload)
     .eq("user_id", user.id)
     .select("*")
     .single();

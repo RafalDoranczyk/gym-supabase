@@ -1,13 +1,10 @@
 "use client";
 
-import { Elevation } from "@/components";
 import { Chip, Stack, Typography } from "@mui/material";
 import { ChartContainer } from "@mui/x-charts/ChartContainer";
 import { LinePlot } from "@mui/x-charts/LineChart";
 import type { Measurements } from "@repo/schemas";
 import { useMemo } from "react";
-
-import { DashboardCard } from "./styles";
 
 type WeightCardProps = {
   data: Measurements[];
@@ -26,7 +23,7 @@ export function WeightCard({ data }: WeightCardProps) {
   );
 
   return (
-    <Elevation>
+    <div>
       <Stack spacing={1}>
         <Typography variant="body1">Weight</Typography>
 
@@ -78,6 +75,6 @@ export function WeightCard({ data }: WeightCardProps) {
           {/* <ChartsYAxis /> */}
         </ChartContainer>
       </div>
-    </Elevation>
+    </div>
   );
 }

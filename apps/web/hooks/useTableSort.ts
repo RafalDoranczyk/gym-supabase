@@ -10,7 +10,6 @@ export type TableOrder = "asc" | "desc";
 
 type Comparable = string | number | Date;
 
-// Ograniczamy orderBy do kluczy T, których wartość jest Comparable
 type OrderByKeys<T> = {
   [K in keyof T]: T[K] extends Comparable ? K : never;
 }[keyof T];

@@ -1,6 +1,5 @@
 import type { TableData, TableOrder } from "@/hooks";
 import { assertZodParse } from "@/utils";
-import type { SelectChangeEvent } from "@mui/material";
 import { type MealSearchParams, MealSearchParamsSchema, type MealTag } from "@repo/schemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
@@ -14,13 +13,24 @@ export const useMealsFilters = (mealTags: MealTag[]) => {
     Object.fromEntries(searchParams.entries()),
   );
 
-  const { order = "desc", orderBy = "created_at", tag: tagParam = "" } = currentFilters;
+  const {
+    order = "desc",
+    orderBy = "created_at",
+    tag: tagParam = "",
+    search = "",
+    limit = 20,
+    offset = 0,
+  } = currentFilters;
 
   const selectedTagIds = useMemo(() => {
-    return tagParam && tagParam !== "All" ? tagParam.split(",") : [];
-  }, [tagParam]);
+    // If no tag param or empty, default to all tags selected
+    if (!tagParam || tagParam === "") {
+      return mealTags.map((tag) => String(tag.id));
+    }
+    return tagParam.split(",");
+  }, [tagParam, mealTags]);
 
-  const isAllSelected = selectedTagIds.length === 0;
+  const isAllSelected = selectedTagIds.length === mealTags.length;
 
   const activeOptions = useMemo(
     () => mealTags.map((tag) => ({ id: String(tag.id), name: tag.name })),
@@ -28,31 +38,19 @@ export const useMealsFilters = (mealTags: MealTag[]) => {
   );
 
   const handleTagChange = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      const value = event.target.value;
-
-      const selected = Array.isArray(value)
-        ? value
-        : typeof value === "string"
-          ? value.split(",")
-          : (value as string[]);
-
+    (selectedIds: string[]) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set("offset", "0");
+      params.set("offset", "0"); // Reset pagination when filtering
 
-      // reset = "All"
-      if (selected.includes("-1") || selected.length === 0) {
-        params.delete("tag");
+      if (selectedIds.length > 0) {
+        params.set("tag", selectedIds.join(","));
       } else {
-        params.set("tag", selected.join(","));
+        params.delete("tag");
       }
 
-      if (order) params.set("order", order);
-      if (orderBy) params.set("orderBy", orderBy);
-
-      router.push(`/dashboard/meals?${params.toString()}`);
+      router.push(`/dashboard/meals?${params}`);
     },
-    [router, searchParams, order, orderBy],
+    [router, searchParams],
   );
 
   const handleSortChange = useCallback(
@@ -60,26 +58,28 @@ export const useMealsFilters = (mealTags: MealTag[]) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set("order", newOrder);
       params.set("orderBy", newOrderBy.toString());
-
-      if (tagParam && tagParam !== "All") {
-        params.set("tag", tagParam);
-      }
-
       router.push(`/dashboard/meals?${params.toString()}`);
     },
-    [router, searchParams, tagParam],
+    [router, searchParams],
   );
+
+  const handleClearFilters = useCallback(() => {
+    router.push("/dashboard/meals");
+  }, [router]);
 
   return {
     activeOptions,
     currentFilters: {
-      ...currentFilters,
       order,
       orderBy,
-      tag: tagParam || "All",
+      tag: tagParam,
+      search,
+      limit,
+      offset,
     },
     handleSortChange,
     handleTagChange,
+    handleClearFilters,
     isAllSelected,
     selectedTagIds,
   };

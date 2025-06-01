@@ -1,4 +1,3 @@
-import { AppError, AppErrorCodes } from "@/core";
 import {
   IngredientsPageOverview,
   fetchIngredientGroups,
@@ -15,17 +14,18 @@ export default async function IngredientsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const cleanedParams = cleanSearchParams(params);
 
-  const result = IngredientSearchParamsSchema.safeParse(cleanedParams);
+  const validatedParams = IngredientSearchParamsSchema.parse(cleanedParams);
 
-  if (!result.success) {
-    throw new AppError(AppErrorCodes.INVALID_QUERY_PARAMS);
-  }
-
-  const ingredientGroups = await fetchIngredientGroups();
-
-  const { count, data } = await fetchIngredients(result.data, ingredientGroups);
+  const [groupsResponse, ingredientsResponse] = await Promise.all([
+    fetchIngredientGroups(),
+    fetchIngredients(validatedParams),
+  ]);
 
   return (
-    <IngredientsPageOverview ingredientGroups={ingredientGroups} ingredients={data} total={count} />
+    <IngredientsPageOverview
+      ingredientGroups={groupsResponse.data}
+      ingredients={ingredientsResponse.data}
+      ingredientsCount={ingredientsResponse.count}
+    />
   );
 }

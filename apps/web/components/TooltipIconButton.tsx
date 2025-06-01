@@ -38,7 +38,7 @@ const IconsMap: Record<
   }
 > = {
   create: { icon: <AddCircle />, name: "Create" },
-  delete: { color: "error", icon: <Delete />, name: "Delete" },
+  delete: { icon: <Delete />, name: "Delete" },
   download: { icon: <Download />, name: "Download" },
   edit: { icon: <Edit />, name: "Edit" },
   "edit-off": { icon: <EditOff />, name: "Edit off" },
@@ -52,7 +52,7 @@ const IconsMap: Record<
 export function TooltipIconButton({ disabled, size, variant, ...props }: TooltipIconButtonProps) {
   const { color = "default", icon, name } = IconsMap[variant];
 
-  const Icon = cloneElement(icon, { fontSize: size });
+  const Icon = cloneElement(icon, { fontSize: size } as { fontSize: IconButtonProps["size"] });
 
   const button = (
     <IconButton color={color} disabled={disabled} {...props}>

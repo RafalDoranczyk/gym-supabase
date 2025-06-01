@@ -16,8 +16,8 @@ export class AppError extends Error {
     switch (code) {
       case AppErrorCodes.FOREIGN_KEY_VIOLATION:
         return "Invalid foreign key reference.";
-      case AppErrorCodes.INGREDIENT_NAME_EXISTS:
-        return "Ingredient with this name already exists.";
+      case AppErrorCodes.UNIQUE_VIOLATION:
+        return "Unique constraint violation.";
       case AppErrorCodes.INVALID_PAYLOAD:
         return "The provided data is invalid.";
       case AppErrorCodes.INVALID_QUERY_PARAMS:

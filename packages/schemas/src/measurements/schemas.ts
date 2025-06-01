@@ -33,13 +33,13 @@ export const SetMeasurementsResponseSchema = z.object({
 export type SetMeasurementsResponse = z.infer<typeof SetMeasurementsResponseSchema>;
 
 // ---------- REMOVE ----------
-export const RemoveMeasurementsPayloadSchema = z.object({
+export const DeleteMeasurementsPayloadSchema = z.object({
   created_at: CreatedAt,
 });
-export type RemoveMeasurementsPayload = z.infer<typeof RemoveMeasurementsPayloadSchema>;
+export type DeleteMeasurementsPayload = z.infer<typeof DeleteMeasurementsPayloadSchema>;
 
-export const RemoveMeasurementsResponseSchema = z.object({
+export const DeleteMeasurementsResponseSchema = z.object({
   created_at: CreatedAt,
   message: z.string(),
 });
-export type RemoveMeasurementsResponse = z.infer<typeof RemoveMeasurementsResponseSchema>;
+export type DeleteMeasurementsResponse = z.infer<typeof DeleteMeasurementsResponseSchema>;

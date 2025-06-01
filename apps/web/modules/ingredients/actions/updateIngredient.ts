@@ -1,7 +1,6 @@
 "use server";
 
-import { getUser } from "@/actions";
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, DB_TABLES, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   IngredientSchema,
   type UpdateIngredientPayload,
@@ -12,11 +11,10 @@ import { revalidatePath } from "next/cache";
 export async function updateIngredient(
   payload: UpdateIngredientPayload,
 ): Promise<UpdateIngredientResponse> {
-  const user = await getUser();
-  const supabase = await createServerClient();
+  const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from("ingredients")
+    .from(DB_TABLES.INGREDIENTS)
     .update(payload)
     .eq("id", payload.id)
     .eq("user_id", user.id)

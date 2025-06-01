@@ -1,4 +1,4 @@
-import { supabaseMiddleware } from "@/utils/supabase";
+import { supabaseMiddleware } from "@/utils/supabase/auth/supabaseMiddleware";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {

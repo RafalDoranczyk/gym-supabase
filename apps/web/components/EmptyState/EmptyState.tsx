@@ -1,10 +1,9 @@
 import { Box, type BoxProps, Fade, Stack, Typography } from "@mui/material";
-import type { ReactNode } from "react";
 
 import DefaultSvg from "./EmptySvg";
 
 type EmptyStateProps = BoxProps & {
-  action?: ReactNode;
+  action?: React.ReactNode;
   fullHeight?: boolean;
   size?: Sizes;
   subtitle?: string;

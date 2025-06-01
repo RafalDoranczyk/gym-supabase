@@ -1,9 +1,8 @@
 import {
+  AccountTreeRounded,
   DashboardRounded,
   DinnerDiningRounded,
   EggRounded,
-  FoodBankRounded,
-  MenuBookRounded,
   ScaleRounded,
 } from "@mui/icons-material";
 import { Box, List, Typography } from "@mui/material";
@@ -15,7 +14,7 @@ type NavigationSection = {
   title: string;
 };
 
-const modules: NavigationSection[] = [
+const NAVIGATION_MODULES: NavigationSection[] = [
   {
     elements: [
       {
@@ -35,12 +34,6 @@ const modules: NavigationSection[] = [
         text: "Measurements",
         to: "/dashboard/measurements",
       },
-      {
-        icon: <MenuBookRounded />,
-        id: "eating",
-        text: "Eating",
-        to: "/dashboard/eating",
-      },
     ],
     title: "diary",
   },
@@ -58,48 +51,44 @@ const modules: NavigationSection[] = [
         text: "Meals",
         to: "/dashboard/meals",
       },
-      {
-        icon: <FoodBankRounded />,
-        id: "eating-day-plans",
-        text: "Day plans",
-        to: "/dashboard/plans",
-      },
     ],
     title: "nutrition database",
   },
   {
     elements: [
       {
-        icon: <FoodBankRounded />,
+        icon: <AccountTreeRounded />,
         id: "data-management",
         text: "Data management",
         to: "/dashboard/data-management",
       },
     ],
-    title: "data-management",
+    title: "data management",
   },
-];
+] as const;
+
+const SECTION_TITLE_STYLES = {
+  color: "text.secondary",
+  cursor: "default",
+  fontSize: 12,
+  fontWeight: 700,
+  pl: 2,
+  textTransform: "uppercase",
+} as const;
 
 export function NavigationLinks() {
-  return modules.map(({ elements, title }) => (
-    <Box key={title} mt={3}>
-      <Typography
-        sx={{
-          color: "text.secondary",
-          cursor: "default",
-          fontSize: 12,
-          fontWeight: 700,
-          pl: 2,
-          textTransform: "uppercase",
-        }}
-      >
-        {title}
-      </Typography>
-      <List component="nav">
-        {elements.map((props) => (
-          <NavigationLinkElement key={props.id} {...props} />
-        ))}
-      </List>
-    </Box>
-  ));
+  return (
+    <>
+      {NAVIGATION_MODULES.map(({ elements, title }) => (
+        <Box key={title} mt={3}>
+          <Typography sx={SECTION_TITLE_STYLES}>{title}</Typography>
+          <List component="nav">
+            {elements.map((props) => (
+              <NavigationLinkElement key={props.id} {...props} />
+            ))}
+          </List>
+        </Box>
+      ))}
+    </>
+  );
 }

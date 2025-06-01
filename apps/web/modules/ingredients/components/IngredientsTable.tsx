@@ -1,7 +1,6 @@
 import { NutritionTable, type NutritionTableHeadCell, TooltipIconButton } from "@/components";
-import { EmptyState } from "@/components/EmptyState";
 import type { TableData, TableOrder } from "@/hooks";
-import { KeyboardArrowRight, LocalPizza } from "@mui/icons-material";
+import { KeyboardArrowRight } from "@mui/icons-material";
 import { Box, TableBody, TableCell, TableRow, Typography } from "@mui/material";
 import { INGREDIENT_UNIT_TYPES, type Ingredient } from "@repo/schemas";
 
@@ -21,7 +20,15 @@ type IngredientsTableProps = {
   onSort: (orderBy: TableOrder, property: keyof TableData) => void;
   order?: TableOrder;
   orderBy?: keyof TableData;
-  setIngredientToRemove: (ingredient: Ingredient) => void;
+  setIngredientToDelete: (ingredient: Ingredient) => void;
+};
+
+// Helper function to format numeric values
+const formatNumericValue = (value: number | null | undefined): string => {
+  if (value === null || value === undefined || value === 0) {
+    return "—";
+  }
+  return value.toString();
 };
 
 export function IngredientsTable({
@@ -30,17 +37,8 @@ export function IngredientsTable({
   onSort,
   order,
   orderBy,
-  setIngredientToRemove,
+  setIngredientToDelete,
 }: IngredientsTableProps) {
-  if (ingredients.length === 0) {
-    return (
-      <EmptyState
-        subtitle="Please add some ingredients to your list"
-        title="No ingredients found"
-      />
-    );
-  }
-
   return (
     <NutritionTable.Root
       sx={{
@@ -60,7 +58,7 @@ export function IngredientsTable({
         orderBy={orderBy}
       />
       <TableBody>
-        {ingredients.map((ingredient) => {
+        {ingredients.map((ingredient, index) => {
           const { calories, carbs, fat, id, name, price, protein, unit_type } = ingredient;
 
           return (
@@ -69,6 +67,13 @@ export function IngredientsTable({
               key={id}
               onClick={() => onRowClick(ingredient)}
               sx={{
+                // Zebra striping - more subtle
+                "&:nth-of-type(even)": {
+                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                },
+                "&:hover": {
+                  backgroundColor: "action.hover !important",
+                },
                 "&:hover .delete-button-cell": {
                   opacity: 1,
                   visibility: "visible",
@@ -82,7 +87,6 @@ export function IngredientsTable({
             >
               <TableCell sx={{ minWidth: 200, p: 1 }}>
                 <Box alignItems="center" display="flex" gap={1} sx={{ overflow: "hidden" }}>
-                  <LocalPizza />
                   <Box
                     alignItems="center"
                     display="inline-flex"
@@ -116,19 +120,41 @@ export function IngredientsTable({
                 {INGREDIENT_UNIT_TYPES[unit_type]}
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {calories}
+                <Typography
+                  variant="body2"
+                  sx={{ color: calories === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(calories)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {carbs}
+                <Typography
+                  variant="body2"
+                  sx={{ color: carbs === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(carbs)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {protein}
+                <Typography
+                  variant="body2"
+                  sx={{ color: protein === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(protein)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {fat}
+                <Typography variant="body2" sx={{ color: fat === 0 ? "text.disabled" : "inherit" }}>
+                  {formatNumericValue(fat)}
+                </Typography>
               </TableCell>
               <TableCell align="right" sx={{ width: 100 }}>
-                {price}
+                <Typography
+                  variant="body2"
+                  sx={{ color: price === 0 ? "text.disabled" : "inherit" }}
+                >
+                  {formatNumericValue(price)}
+                </Typography>
               </TableCell>
               <TableCell
                 align="center"
@@ -142,7 +168,7 @@ export function IngredientsTable({
                 <TooltipIconButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIngredientToRemove(ingredient);
+                    setIngredientToDelete(ingredient);
                   }}
                   size="small"
                   variant="delete"

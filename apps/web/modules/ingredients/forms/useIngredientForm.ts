@@ -15,7 +15,7 @@ const getDefaultValues = (
   calories: ingredient?.calories ?? 0,
   carbs: ingredient?.carbs ?? 0,
   fat: ingredient?.fat ?? 0,
-  group_id: ingredient?.group_id ?? groups[0].id,
+  group_id: ingredient?.group_id ?? groups[0]?.id,
   name: ingredient?.name ?? "",
   price: ingredient?.price ?? 0,
   protein: ingredient?.protein ?? 0,

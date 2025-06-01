@@ -15,7 +15,8 @@ import type { PropsWithChildren } from "react";
 
 const StyledDialog = styled(Dialog)(() => ({
   "& .MuiPaper-root": {
-    backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))",
+    backgroundImage:
+      "linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))",
   },
 }));
 
@@ -61,7 +62,7 @@ export function ConfirmActionDialog({
     >
       <DialogTitle>
         <Stack alignItems="center" direction="row" spacing={1}>
-          <WarningAmber fontSize="small" />
+          <WarningAmber fontSize="small" color="warning" />
           <span>{title}</span>
         </Stack>
       </DialogTitle>
@@ -70,20 +71,21 @@ export function ConfirmActionDialog({
         {renderDescription(description)}
         {children}
       </DialogContent>
-      <DialogActions>
+
+      <DialogActions sx={{ p: 3, gap: 1 }}>
         <LoadingButton
           autoFocus
-          color="error"
+          color="inherit"
           disabled={disabled}
           loading={loading}
           onClick={handleClose}
           size="small"
-          variant="contained"
+          variant="outlined"
         >
           Cancel
         </LoadingButton>
         <LoadingButton
-          color="primary"
+          color="error"
           disabled={disabled}
           loading={loading}
           onClick={onConfirm}

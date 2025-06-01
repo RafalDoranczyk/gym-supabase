@@ -1,18 +1,16 @@
-import type { PropsWithChildren } from "react";
-
+import type React from "react";
 import { ThemeProvider } from "./theme/ThemeProvider";
 import { ToastProvider } from "./toast/ToastProvider";
 
 /**
  * A wrapper component that provides all necessary providers to the app.
- * It includes:
- * - ThemeProvider for app-wide theme management
- * - ToasterProvider for managing toast notifications
+ * Includes ThemeProvider for styling and ToastProvider for notifications.
+ *
+ * @param children - React components to be wrapped with providers.
  */
-export function AppProviders({ children }: PropsWithChildren) {
+export function AppProviders({ children }: React.PropsWithChildren) {
   return (
     <ThemeProvider>
-      {/* ToasterProvider wraps the children to manage toast notifications */}
       <ToastProvider>{children}</ToastProvider>
     </ThemeProvider>
   );

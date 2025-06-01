@@ -3,13 +3,14 @@
 import { ControlledSelect, ControlledTextField, Drawer } from "@/components";
 import { useToast } from "@/providers";
 import { LoadingButton } from "@mui/lab";
-import { Box, Stack } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { INGREDIENT_UNIT_TYPES, type Ingredient, type NutritionGroup } from "@repo/schemas";
+import { useRouter } from "next/navigation";
+import { handleFormErrors } from "@/utils";
 import { useTransition } from "react";
 
 import { createIngredient } from "../actions/createIngredient";
 import { updateIngredient } from "../actions/updateIngredient";
-import { handleCreateIngredientError } from "../forms/errorHandlers";
 import { useIngredientForm } from "../forms/useIngredientForm";
 import { IngredientNumberFields } from "./IngredientNumberFields";
 
@@ -32,8 +33,50 @@ export function IngredientDrawer({
   open,
 }: IngredientDrawerProps) {
   const toast = useToast();
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
+  // Handle empty groups case
+  if (ingredientGroups.length === 0) {
+    return (
+      <Drawer.Root
+        BackdropProps={{
+          onClick: (event) => event.stopPropagation(),
+        }}
+        onClose={onClose}
+        open={open}
+        size="sm"
+      >
+        <Drawer.Title title="Setup Required" />
+
+        <Box p={3} textAlign="center">
+          <Typography variant="h6" mb={2}>
+            No ingredient groups found
+          </Typography>
+          <Typography color="text.secondary" mb={3}>
+            You need to create at least one ingredient group before adding ingredients.
+          </Typography>
+          <Stack spacing={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                router.push("/dashboard/data-management");
+                onClose();
+              }}
+            >
+              Create Ingredient Groups
+            </Button>
+            <Button variant="text" onClick={onClose}>
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </Drawer.Root>
+    );
+  }
+
+  // Normal form when groups exist
   const { control, formState, handleSubmit, reset, setError, watch } = useIngredientForm(
     ingredient,
     ingredientGroups,
@@ -49,11 +92,14 @@ export function IngredientDrawer({
           id: ingredient.id,
         })
           .then(() => {
+            reset();
             toast.success("Ingredient updated successfully");
             onClose();
           })
           .catch((error) => {
-            handleCreateIngredientError(error, setError);
+            handleFormErrors(error, setError, toast, {
+              name: "This name already exists",
+            });
           });
       } else {
         createIngredient(payload)
@@ -63,7 +109,9 @@ export function IngredientDrawer({
             onClose();
           })
           .catch((error) => {
-            handleCreateIngredientError(error, setError);
+            handleFormErrors(error, setError, toast, {
+              name: "This name already exists",
+            });
           });
       }
     });
@@ -80,13 +128,14 @@ export function IngredientDrawer({
     >
       <Drawer.Title title={ingredient ? "Edit Ingredient" : "New Ingredient"} />
 
-      <Box p={2}>
-        <Stack spacing={3}>
+      <Box p={2.5}>
+        <Stack spacing={2.5}>
           <ControlledTextField
             control={control}
             helperText={formState.errors.name?.message}
             label="Name"
             name="name"
+            required
           />
 
           <IngredientNumberFields control={control} errors={formState.errors} unitType={unitType} />
@@ -105,13 +154,13 @@ export function IngredientDrawer({
             options={unitTypeOptions}
           />
 
-          <Stack spacing={1}>
-            <LoadingButton loading={isPending} onClick={onSubmit} variant="contained">
-              Save
+          <Stack spacing={1.5} sx={{ pt: 1 }}>
+            <LoadingButton loading={isPending} onClick={onSubmit} variant="contained" size="medium">
+              {ingredient ? "Update" : "Save"}
             </LoadingButton>
 
-            <LoadingButton color="error" loading={isPending} onClick={onClose} variant="contained">
-              Close
+            <LoadingButton onClick={onClose} variant="text" disabled={isPending} size="medium">
+              Cancel
             </LoadingButton>
           </Stack>
         </Stack>

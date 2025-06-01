@@ -19,6 +19,9 @@ type MenuOption = {
 export function SelectMenu({ activeOption, id, options, setActiveOption }: ChipCounterMenuProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
+  // Check if only "All" option exists (id: -1)
+  const hasRealOptions = options.some((option) => option.id !== -1);
+
   return (
     <div>
       <Chip
@@ -27,6 +30,7 @@ export function SelectMenu({ activeOption, id, options, setActiveOption }: ChipC
         label={activeOption}
         onClick={(e) => setAnchorEl(e.currentTarget)}
         sx={{ px: 3, textTransform: "capitalize" }}
+        disabled={!hasRealOptions}
       />
 
       <Menu

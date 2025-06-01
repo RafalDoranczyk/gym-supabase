@@ -57,6 +57,11 @@ export function SearchField(
 
   const [searchTerm, setSearchTerm] = useState<string>(value || "");
 
+  // Synchronize local state with external value changes
+  useEffect(() => {
+    setSearchTerm(value || "");
+  }, [value]);
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm !== value) {

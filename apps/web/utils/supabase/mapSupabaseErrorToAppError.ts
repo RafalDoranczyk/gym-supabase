@@ -25,8 +25,8 @@ export function mapSupabaseErrorToAppError(error: SupabaseKnownError): AppError 
         );
       case "23505":
         return new AppError(
-          AppErrorCodes.INGREDIENT_NAME_EXISTS,
-          "Ingredient with this name already exists",
+          AppErrorCodes.UNIQUE_VIOLATION,
+          "Unique constraint violation",
           error.details,
         );
       case "42501":

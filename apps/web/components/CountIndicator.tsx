@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import CountUp from "react-countup";
 
 type CountIndicatorProps = {
@@ -21,7 +21,7 @@ export function CountIndicator({ end, start = 0 }: CountIndicatorProps) {
           justifyContent="center"
           width={32}
         >
-          <span ref={countUpRef} />
+          <Typography ref={countUpRef} />
         </Box>
       )}
     </CountUp>

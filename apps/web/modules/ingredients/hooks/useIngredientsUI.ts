@@ -4,8 +4,8 @@ import type { Ingredient } from "@repo/schemas";
 import { useCallback, useState } from "react";
 
 export function useIngredientsUI() {
-  const [ingredientToRemove, setIngredientToRemove] = useState<Ingredient | null>(null);
-  const [drawerState, setDrawerState] = useState<{
+  const [deleteIngredient, setDeleteIngredient] = useState<Ingredient | null>(null);
+  const [drawer, setDrawer] = useState<{
     ingredient: Ingredient | null;
     open: boolean;
   }>({
@@ -13,24 +13,27 @@ export function useIngredientsUI() {
     open: false,
   });
 
-  const closeConfirmDialog = useCallback(() => {
-    setIngredientToRemove(null);
+  const closeDeleteDialog = useCallback(() => {
+    setDeleteIngredient(null);
   }, []);
 
   const closeDrawer = useCallback(() => {
-    setDrawerState({ ingredient: null, open: false });
+    setDrawer({ ingredient: null, open: false });
   }, []);
 
   const openDrawer = useCallback((ingredient: Ingredient | null = null) => {
-    setDrawerState({ ingredient, open: true });
+    setDrawer({ ingredient, open: true });
   }, []);
 
   return {
-    closeConfirmDialog,
+    // State
+    deleteIngredient,
+    drawer,
+
+    // Actions
+    closeDeleteDialog,
     closeDrawer,
-    drawerState,
-    ingredientToRemove,
     openDrawer,
-    setIngredientToRemove,
+    setDeleteIngredient,
   };
 }
