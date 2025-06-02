@@ -35,6 +35,7 @@ export const MealTagSchema = BaseMealTagSchema.extend({
   id: SupabaseId,
   created_at: CreatedAt,
   user_id: SupabaseId,
+  updated_at: CreatedAt,
 });
 
 export const MealToTagSchema = z.object({

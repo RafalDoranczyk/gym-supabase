@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils";
 import { Add, MoreVert } from "@mui/icons-material";
 import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
 import type { NutritionGroupWithExamples } from "@repo/schemas";
@@ -17,10 +18,12 @@ export function IngredientGroupCard({
   onMenuClick,
   onAddIngredient,
 }: IngredientGroupCardProps) {
+  const totalIngredients = group.ingredientsCount || 0;
+
   return (
     <Card
       sx={{
-        height: "100%", // Make card take full height
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         transition: "all 0.2s",
@@ -36,9 +39,10 @@ export function IngredientGroupCard({
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          flex: 1, // Make content flexible
+          flex: 1,
         }}
       >
+        {/* Header */}
         <Box
           sx={{
             display: "flex",
@@ -81,20 +85,25 @@ export function IngredientGroupCard({
           </Box>
         </Box>
 
+        {/* Description */}
         <Typography
           variant="body2"
           sx={{
             color: group.description ? "text.secondary" : "text.disabled",
-            minHeight: "3em", // Fixed min height for description
+            minHeight: "2.5em",
             flex: "0 0 auto",
           }}
         >
           {group.description || "No description provided"}
         </Typography>
 
-        <Box sx={{ mt: "auto" }}>
-          {" "}
-          {/* Push examples to bottom */}
+        {/* Ingredient count only */}
+        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+          {totalIngredients} ingredient{totalIngredients !== 1 ? "s" : ""}
+        </Typography>
+
+        {/* Examples */}
+        <Box sx={{ flex: 1 }}>
           {group.examples.length === 0 ? (
             <Typography
               variant="caption"
@@ -125,7 +134,7 @@ export function IngredientGroupCard({
               ))}
               {group.examples.length > 3 && (
                 <Chip
-                  label={`+${group.examples.length - 3}`}
+                  label={`+${group.examples.length - 3} more`}
                   size="small"
                   sx={{
                     bgcolor: "action.hover",
@@ -136,6 +145,21 @@ export function IngredientGroupCard({
               )}
             </Stack>
           )}
+        </Box>
+
+        {/* Dates at the bottom */}
+        <Box sx={{ mt: "auto", pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography variant="caption" sx={{ color: "text.disabled" }}>
+              Created {formatDate(group.created_at)}
+            </Typography>
+
+            {group.updated_at && group.updated_at !== group.created_at && (
+              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                Updated {formatDate(group.updated_at)}
+              </Typography>
+            )}
+          </Box>
         </Box>
       </CardContent>
     </Card>

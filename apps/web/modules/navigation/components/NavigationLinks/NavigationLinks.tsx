@@ -1,12 +1,11 @@
 import {
-  AccountTreeRounded,
+  AnalyticsRounded,
   DashboardRounded,
   DinnerDiningRounded,
-  EggRounded,
-  ScaleRounded,
+  MonitorWeightRounded,
+  RestaurantRounded,
 } from "@mui/icons-material";
 import { Box, List, Typography } from "@mui/material";
-
 import { NavigationLinkElement, type NavigationLinkElementProps } from "./NavigationLinkElement";
 
 type NavigationSection = {
@@ -24,23 +23,23 @@ const NAVIGATION_MODULES: NavigationSection[] = [
         to: "/dashboard",
       },
     ],
-    title: "dashboard",
+    title: "overview",
   },
   {
     elements: [
       {
-        icon: <ScaleRounded />,
+        icon: <MonitorWeightRounded />,
         id: "measurements",
         text: "Measurements",
         to: "/dashboard/measurements",
       },
     ],
-    title: "diary",
+    title: "tracking",
   },
   {
     elements: [
       {
-        icon: <EggRounded />,
+        icon: <RestaurantRounded />,
         id: "ingredients",
         text: "Ingredients",
         to: "/dashboard/ingredients",
@@ -52,18 +51,18 @@ const NAVIGATION_MODULES: NavigationSection[] = [
         to: "/dashboard/meals",
       },
     ],
-    title: "nutrition database",
+    title: "nutrition",
   },
   {
     elements: [
       {
-        icon: <AccountTreeRounded />,
-        id: "data-management",
-        text: "Data management",
-        to: "/dashboard/data-management",
+        icon: <AnalyticsRounded />,
+        id: "library",
+        text: "Library",
+        to: "/dashboard/library",
       },
     ],
-    title: "data management",
+    title: "library",
   },
 ] as const;
 

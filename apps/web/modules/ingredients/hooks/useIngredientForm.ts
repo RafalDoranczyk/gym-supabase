@@ -27,6 +27,6 @@ export function useIngredientForm(ingredient: Ingredient | null, groups: Nutriti
 
   return useForm<CreateIngredientPayload>({
     resolver: zodResolver(CreateIngredientPayloadSchema),
-    values: defaultValues,
+    defaultValues,
   });
 }

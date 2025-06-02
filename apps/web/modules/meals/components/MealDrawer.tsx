@@ -11,7 +11,7 @@ import { createMeal } from "../actions/createMeal";
 import { updateMeal } from "../actions/updateMeal";
 
 import { handleFormErrors } from "@/utils";
-import { useMealForm } from "../forms/useMealForm";
+import { useMealForm } from "../hooks/useMealForm";
 import { MealIngredientsTable } from "./MealIngredientsTable";
 
 type MealDrawerProps = {

@@ -20,8 +20,6 @@ export default async function MealsPage({ searchParams }: PageProps) {
     fetchMeals(validatedParams),
   ]);
 
-  console.log(meals);
-
   return (
     <MealsPageOverview
       ingredients={ingredients.data}

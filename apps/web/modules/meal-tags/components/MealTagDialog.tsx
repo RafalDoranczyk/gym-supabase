@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import type { MealTag } from "@repo/schemas";
 import { startTransition } from "react";
-import { useMealTagForm } from "../forms/useMealTagForm";
+import { useMealTagForm } from "../hooks/useMealTagForm";
 
 import { useToast } from "@/providers";
 import { handleFormErrors } from "@/utils";

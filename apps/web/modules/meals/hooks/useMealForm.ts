@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type CreateMealPayload, CreateMealPayloadSchema, type Meal } from "@repo/schemas";
 import { useMemo } from "react";
@@ -20,7 +18,7 @@ export function useMealForm(meal: Meal | null) {
   const defaultValues = useMemo(() => getDefaultValues(meal), [meal]);
 
   const methods = useForm<CreateMealPayload>({
-    defaultValues,
+    values: defaultValues,
     resolver: zodResolver(CreateMealPayloadSchema),
     mode: "onChange",
   });

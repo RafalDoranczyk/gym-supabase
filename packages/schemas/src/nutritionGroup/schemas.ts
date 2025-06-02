@@ -26,6 +26,7 @@ export const NutritionGroupSchema = BaseNutritionGroupSchema.extend({
   created_at: CreatedAt,
   id: SupabaseId,
   user_id: SupabaseId,
+  updated_at: CreatedAt.nullable(),
 });
 export type NutritionGroup = z.infer<typeof NutritionGroupSchema>;
 

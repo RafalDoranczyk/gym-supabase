@@ -8,7 +8,6 @@ export { NutritionTable } from "./NutritionTable";
 export type { NutritionTableHeadCell } from "./NutritionTable";
 export { SearchField } from "./SearchField";
 export { ControlledSelect } from "./ControlledSelect";
-export { SelectMenu } from "./SelectMenu";
 export { ControlledTextField } from "./ControlledTextField";
 export { TooltipIconButton } from "./TooltipIconButton";
 export { ColorPicker } from "./ColorPicker";

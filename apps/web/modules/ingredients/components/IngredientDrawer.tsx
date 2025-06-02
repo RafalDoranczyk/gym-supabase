@@ -11,7 +11,7 @@ import { useTransition } from "react";
 
 import { createIngredient } from "../actions/createIngredient";
 import { updateIngredient } from "../actions/updateIngredient";
-import { useIngredientForm } from "../forms/useIngredientForm";
+import { useIngredientForm } from "../hooks/useIngredientForm";
 import { IngredientNumberFields } from "./IngredientNumberFields";
 
 const unitTypeOptions = Object.entries(INGREDIENT_UNIT_TYPES).map(([id, name]) => ({

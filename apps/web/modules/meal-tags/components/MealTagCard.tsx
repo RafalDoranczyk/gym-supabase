@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils";
 import { Add, LocalOffer, MoreVert } from "@mui/icons-material";
 import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
 import type { MealTagWithExamples } from "@repo/schemas";
@@ -10,13 +11,15 @@ type MealTagCardProps = {
 };
 
 export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
+  const totalMeals = tag.mealsCount || 0;
+
   return (
     <Card
       sx={{
-        position: "relative",
-        transition: "all 0.2s ease-in-out",
-        border: "1px solid",
-        borderColor: "divider",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        transition: "all 0.2s",
         "&:hover": {
           borderColor: tag.color || "primary.main",
           transform: "translateY(-2px)",
@@ -24,7 +27,14 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
         },
       }}
     >
-      <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <CardContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          flex: 1,
+        }}
+      >
         {/* Header */}
         <Box
           sx={{
@@ -33,7 +43,7 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
             alignItems: "flex-start",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             {tag.color ? (
               <Box
                 sx={{
@@ -46,13 +56,10 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
                 }}
               />
             ) : (
-              <LocalOffer sx={{ fontSize: 18, color: "text.secondary" }} />
+              <LocalOffer sx={{ fontSize: 16, color: "text.secondary" }} />
             )}
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              {tag.name}
-            </Typography>
+            <Typography variant="h6">{tag.name}</Typography>
           </Box>
-
           <Box sx={{ display: "flex", gap: 0.5 }}>
             {onAddMeal && (
               <IconButton
@@ -69,14 +76,7 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
                 <Add fontSize="small" />
               </IconButton>
             )}
-            <IconButton
-              size="small"
-              onClick={(e) => onMenuClick(e, tag)}
-              sx={{
-                opacity: 0.7,
-                "&:hover": { opacity: 1 },
-              }}
-            >
+            <IconButton size="small" onClick={(e) => onMenuClick(e, tag)}>
               <MoreVert />
             </IconButton>
           </Box>
@@ -87,54 +87,77 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
           variant="body2"
           sx={{
             color: tag.description ? "text.secondary" : "text.disabled",
-            minHeight: "2em",
-            mb: 1,
+            minHeight: "2.5em",
+            flex: "0 0 auto",
           }}
         >
           {tag.description || "No description provided"}
         </Typography>
 
-        {/* Meal Examples */}
-        {tag.examples.length === 0 ? (
-          <Typography
-            variant="caption"
-            sx={{
-              color: "text.disabled",
-              fontStyle: "italic",
-              py: 1,
-            }}
-          >
-            Add meals to see examples here
-          </Typography>
-        ) : (
-          <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap", gap: 0.5 }}>
-            {tag.examples.slice(0, 3).map((example) => (
-              <Chip
-                key={example}
-                label={example}
-                size="small"
-                sx={{
-                  bgcolor: tag.color ? `${tag.color}20` : "primary.main20",
-                  color: tag.color || "primary.main",
-                  fontSize: "0.75rem",
-                  fontWeight: 500,
-                  border: `1px solid ${tag.color ? `${tag.color}40` : "primary.main40"}`,
-                }}
-              />
-            ))}
-            {tag.examples.length > 3 && (
-              <Chip
-                label={`+${tag.examples.length - 3}`}
-                size="small"
-                sx={{
-                  bgcolor: "action.hover",
-                  color: "text.secondary",
-                  fontSize: "0.75rem",
-                }}
-              />
+        {/* Meals count */}
+        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+          {totalMeals} meal{totalMeals !== 1 ? "s" : ""}
+        </Typography>
+
+        {/* Examples */}
+        <Box sx={{ flex: 1 }}>
+          {tag.examples.length === 0 ? (
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.disabled",
+                fontStyle: "italic",
+                display: "block",
+                py: 1,
+              }}
+            >
+              Add meals to see examples here
+            </Typography>
+          ) : (
+            <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap", gap: 0.5 }}>
+              {tag.examples.slice(0, 3).map((example) => (
+                <Chip
+                  key={example}
+                  label={example}
+                  size="small"
+                  sx={{
+                    bgcolor: tag.color ? `${tag.color}20` : "primary.main20",
+                    color: tag.color || "primary.main",
+                    fontSize: "0.75rem",
+                    fontWeight: 500,
+                    border: `1px solid ${tag.color ? `${tag.color}40` : "primary.main40"}`,
+                  }}
+                />
+              ))}
+              {tag.examples.length > 3 && (
+                <Chip
+                  label={`+${tag.examples.length - 3} more`}
+                  size="small"
+                  sx={{
+                    bgcolor: "action.hover",
+                    color: "text.secondary",
+                    fontSize: "0.75rem",
+                  }}
+                />
+              )}
+            </Stack>
+          )}
+        </Box>
+
+        {/* Dates at the bottom */}
+        <Box sx={{ mt: "auto", pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography variant="caption" sx={{ color: "text.disabled" }}>
+              Created {formatDate(tag.created_at)}
+            </Typography>
+
+            {tag.updated_at && tag.updated_at !== tag.created_at && (
+              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                Updated {formatDate(tag.updated_at)}
+              </Typography>
             )}
-          </Stack>
-        )}
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );

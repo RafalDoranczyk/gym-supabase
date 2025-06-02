@@ -6,3 +6,5 @@ export { DB_TABLES } from "./supabase/dbTables";
 export { assertZodParse } from "./assertZodParse";
 export { cleanSearchParams } from "./cleanSearchParams";
 export { handleFormErrors } from "./handleFormErrors";
+
+export { formatDate } from "./formatDate";

@@ -4,7 +4,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import { Chip, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 
-type ChipCounterMenuProps = {
+type CategoryChipSelectProps = {
   activeOption: string;
   id: string;
   options: MenuOption[];
@@ -16,7 +16,12 @@ type MenuOption = {
   name: string;
 };
 
-export function SelectMenu({ activeOption, id, options, setActiveOption }: ChipCounterMenuProps) {
+export function CategoryChipSelect({
+  activeOption,
+  id,
+  options,
+  setActiveOption,
+}: CategoryChipSelectProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   // Check if only "All" option exists (id: -1)
