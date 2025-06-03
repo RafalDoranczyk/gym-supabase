@@ -14,6 +14,16 @@ const headCells: NutritionTableHeadCell[] = [
   { id: "price", label: "Price", numeric: true, width: 100 },
 ];
 
+const TABLE_CONFIG = {
+  MAX_HEIGHT: 950,
+  CELL_PADDING: 1,
+  ICON_TRANSITION: "opacity .3s linear",
+  DELETE_BUTTON_WIDTH: 60,
+  NAME_CELL_WIDTH: 200,
+  UNIT_CELL_WIDTH: 110,
+  NUTRITION_CELL_WIDTH: 100,
+} as const;
+
 type IngredientsTableProps = {
   ingredients: Ingredient[];
   onRowClick: (ingredient: Ingredient) => void;
@@ -31,6 +41,18 @@ const formatNumericValue = (value: number | null | undefined): string => {
   return value.toString();
 };
 
+// Helper function to render nutrition cells consistently
+const renderNutritionCell = (
+  value: number | null | undefined,
+  width = TABLE_CONFIG.NUTRITION_CELL_WIDTH,
+) => (
+  <TableCell align="right" sx={{ width }}>
+    <Typography variant="body2" sx={{ color: value === 0 ? "text.disabled" : "inherit" }}>
+      {formatNumericValue(value)}
+    </Typography>
+  </TableCell>
+);
+
 export function IngredientsTable({
   ingredients,
   onRowClick,
@@ -45,7 +67,7 @@ export function IngredientsTable({
         "& table": {
           tableLayout: "fixed",
         },
-        maxHeight: 950,
+        maxHeight: TABLE_CONFIG.MAX_HEIGHT,
       }}
     >
       <NutritionTable.Head
@@ -58,7 +80,7 @@ export function IngredientsTable({
         orderBy={orderBy}
       />
       <TableBody>
-        {ingredients.map((ingredient, index) => {
+        {ingredients.map((ingredient) => {
           const { calories, carbs, fat, id, name, price, protein, unit_type } = ingredient;
 
           return (
@@ -85,7 +107,9 @@ export function IngredientsTable({
               }}
               tabIndex={-1}
             >
-              <TableCell sx={{ minWidth: 200, p: 1 }}>
+              <TableCell
+                sx={{ minWidth: TABLE_CONFIG.NAME_CELL_WIDTH, p: TABLE_CONFIG.CELL_PADDING }}
+              >
                 <Box alignItems="center" display="flex" gap={1} sx={{ overflow: "hidden" }}>
                   <Box
                     alignItems="center"
@@ -109,60 +133,30 @@ export function IngredientsTable({
                         flexShrink: 0,
                         ml: 0.5,
                         opacity: 0,
-                        transition: "opacity .3s linear",
+                        transition: TABLE_CONFIG.ICON_TRANSITION,
                       }}
                     />
                   </Box>
                 </Box>
               </TableCell>
 
-              <TableCell align="right" sx={{ width: 110 }}>
+              <TableCell align="right" sx={{ width: TABLE_CONFIG.UNIT_CELL_WIDTH }}>
                 {INGREDIENT_UNIT_TYPES[unit_type]}
               </TableCell>
-              <TableCell align="right" sx={{ width: 100 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: calories === 0 ? "text.disabled" : "inherit" }}
-                >
-                  {formatNumericValue(calories)}
-                </Typography>
-              </TableCell>
-              <TableCell align="right" sx={{ width: 100 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: carbs === 0 ? "text.disabled" : "inherit" }}
-                >
-                  {formatNumericValue(carbs)}
-                </Typography>
-              </TableCell>
-              <TableCell align="right" sx={{ width: 100 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: protein === 0 ? "text.disabled" : "inherit" }}
-                >
-                  {formatNumericValue(protein)}
-                </Typography>
-              </TableCell>
-              <TableCell align="right" sx={{ width: 100 }}>
-                <Typography variant="body2" sx={{ color: fat === 0 ? "text.disabled" : "inherit" }}>
-                  {formatNumericValue(fat)}
-                </Typography>
-              </TableCell>
-              <TableCell align="right" sx={{ width: 100 }}>
-                <Typography
-                  variant="body2"
-                  sx={{ color: price === 0 ? "text.disabled" : "inherit" }}
-                >
-                  {formatNumericValue(price)}
-                </Typography>
-              </TableCell>
+
+              {renderNutritionCell(calories)}
+              {renderNutritionCell(carbs)}
+              {renderNutritionCell(protein)}
+              {renderNutritionCell(fat)}
+              {renderNutritionCell(price)}
+
               <TableCell
                 align="center"
                 className="delete-button-cell"
                 sx={{
                   opacity: 0,
                   textAlign: "center",
-                  width: 60,
+                  width: TABLE_CONFIG.DELETE_BUTTON_WIDTH,
                 }}
               >
                 <TooltipIconButton

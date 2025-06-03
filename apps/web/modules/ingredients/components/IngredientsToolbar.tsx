@@ -3,11 +3,28 @@ import { Add, Category } from "@mui/icons-material";
 import { Button, Chip, Menu, MenuItem, Stack, Toolbar } from "@mui/material";
 import { useState } from "react";
 
+const TOOLBAR_CONFIG = {
+  MENU_ID: "ingredients-toolbar-menu",
+  SPACING: 2,
+  MARGIN_BOTTOM: 2,
+  CHIP_PADDING: 3,
+} as const;
+
+const MENU_ANCHOR_ORIGIN = {
+  horizontal: "left" as const,
+  vertical: "top" as const,
+};
+
+type GroupOption = {
+  id: string | number;
+  name: string;
+};
+
 type IngredientsToolbarProps = {
   filters: {
     group?: string;
     search?: string;
-    activeOptions: { id: number | string; name: string }[];
+    activeOptions: GroupOption[];
   };
   actions: {
     onSearchChange: (value: string) => void;
@@ -15,6 +32,13 @@ type IngredientsToolbarProps = {
     handleGroupChange: (name: string) => void;
   };
   ingredientsCount: number;
+};
+
+// Helper function to get available groups for the dropdown
+const getAvailableGroups = (activeOptions: GroupOption[], currentGroup?: string) => {
+  return activeOptions
+    .filter((option) => option.id !== -1) // Real options only
+    .filter((option) => option.name !== currentGroup); // Exclude current selection
 };
 
 export function IngredientsToolbar({
@@ -27,60 +51,64 @@ export function IngredientsToolbar({
   const { onSearchChange, openDrawer, handleGroupChange } = actions;
 
   const hasRealOptions = activeOptions.some((option) => option.id !== -1);
-  const id = "ingredients-toolbar-menu";
+  const availableGroups = getAvailableGroups(activeOptions, group);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleGroupSelect = (groupName: string) => {
+    handleGroupChange(groupName);
+    handleMenuClose();
+  };
 
   return (
-    <Toolbar sx={{ mb: 2 }}>
-      <Stack alignItems="center" direction="row" spacing={2}>
+    <Toolbar sx={{ mb: TOOLBAR_CONFIG.MARGIN_BOTTOM }}>
+      <Stack alignItems="center" direction="row" spacing={TOOLBAR_CONFIG.SPACING}>
         <div>
           <Chip
             color="primary"
             icon={<Category />}
             label={group}
-            onClick={(e) => setAnchorEl(e.currentTarget)}
-            sx={{ px: 3, textTransform: "capitalize" }}
+            onClick={handleMenuOpen}
+            sx={{ px: TOOLBAR_CONFIG.CHIP_PADDING, textTransform: "capitalize" }}
             disabled={!hasRealOptions}
           />
 
           <Menu
             anchorEl={anchorEl}
-            anchorOrigin={{
-              horizontal: "left",
-              vertical: "top",
-            }}
-            aria-labelledby={id}
-            id={id}
-            onClose={() => setAnchorEl(null)}
+            anchorOrigin={MENU_ANCHOR_ORIGIN}
+            aria-labelledby={TOOLBAR_CONFIG.MENU_ID}
+            id={TOOLBAR_CONFIG.MENU_ID}
+            onClose={handleMenuClose}
             open={Boolean(anchorEl)}
             sx={{ textTransform: "capitalize" }}
-            transformOrigin={{
-              horizontal: "left",
-              vertical: "top",
-            }}
+            transformOrigin={MENU_ANCHOR_ORIGIN}
           >
-            {activeOptions
-              .filter((option) => option.name !== group)
-              .map(({ name }) => (
-                <MenuItem
-                  key={name}
-                  onClick={() => {
-                    handleGroupChange(name);
-                    setAnchorEl(null);
-                  }}
-                >
-                  {name}
-                </MenuItem>
-              ))}
+            {availableGroups.map(({ name }) => (
+              <MenuItem key={name} onClick={() => handleGroupSelect(name)}>
+                {name}
+              </MenuItem>
+            ))}
           </Menu>
         </div>
         <CountIndicator end={ingredientsCount} />
       </Stack>
 
-      <Stack alignItems="center" direction="row" spacing={2} sx={{ ml: "auto" }}>
+      <Stack
+        alignItems="center"
+        direction="row"
+        spacing={TOOLBAR_CONFIG.SPACING}
+        sx={{ ml: "auto" }}
+      >
         <SearchField onChange={onSearchChange} value={search} />
         <Button
           aria-label="Add new ingredient"
-          onClick={() => openDrawer()}
+          onClick={openDrawer}
           variant="contained"
           size="small"
           startIcon={<Add />}
