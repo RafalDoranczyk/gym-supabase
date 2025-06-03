@@ -1,64 +1,81 @@
 "use server";
 
 import { DB_TABLES, assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { type GetIngredientsResponse, GetIngredientsResponseSchema } from "@repo/schemas";
+import type { z } from "zod";
+import { type IngredientSearchParams, IngredientSearchParamsSchema } from "../constants";
 import {
-  type GetIngredientsResponse,
-  GetIngredientsResponseSchema,
-  type IngredientSearchParams,
-} from "@repo/schemas";
+  INGREDIENTS_DEFAULT_OFFSET,
+  INGREDIENTS_DEFAULT_ORDER,
+  INGREDIENTS_DEFAULT_ORDER_BY,
+  INGREDIENTS_DEFAULT_PAGE_SIZE,
+} from "../constants/pagination";
 
-// Helper function to build query filters
-async function buildIngredientsQuery(
+/**
+ * Builds Supabase query with filters, search, and pagination
+ */
+
+function buildIngredientsQuery(
   supabase: Awaited<ReturnType<typeof createServerClient>>,
-  params: Partial<IngredientSearchParams>,
+  params: IngredientSearchParams,
+  groupId?: string,
 ) {
-  // Extract params with defaults
-  const {
-    group = "",
-    search = "",
-    offset = 0,
-    limit = 10,
-    orderBy = "name",
-    order = "asc",
-  } = params;
+  let query = supabase.from(DB_TABLES.INGREDIENTS).select(
+    `
+      *,
+      ingredient_groups!inner(name)
+    `,
+    { count: "exact" },
+  );
 
-  let query = supabase.from(DB_TABLES.INGREDIENTS).select("*", { count: "exact" });
-
-  // If filtering by group name, first get the group ID
-  if (group !== "") {
-    const { data: groups } = await supabase
-      .from(DB_TABLES.INGREDIENT_GROUPS)
-      .select("id")
-      .eq("name", group)
-      .single();
-
-    if (groups?.id) {
-      query = query.eq("group_id", groups.id);
-    }
+  // Filter by group name directly in JOIN
+  if (params.group?.trim()) {
+    query = query.eq("ingredient_groups.name", params.group);
   }
 
-  if (search.trim()) {
-    query = query.ilike("name", `%${search.trim()}%`);
+  // Search by ingredient name
+  if (params.search?.trim()) {
+    query = query.ilike("name", `%${params.search.trim()}%`);
   }
 
-  // Apply pagination and sorting
+  // Apply sorting and pagination with fallbacks
+  const offset = params.offset ?? INGREDIENTS_DEFAULT_OFFSET;
+  const limit = params.limit ?? INGREDIENTS_DEFAULT_PAGE_SIZE;
+  const orderBy = params.orderBy ?? INGREDIENTS_DEFAULT_ORDER_BY;
+  const order = params.order ?? INGREDIENTS_DEFAULT_ORDER;
+
   return query.range(offset, offset + limit - 1).order(orderBy, { ascending: order === "asc" });
 }
 
 export async function fetchIngredients(
-  params?: IngredientSearchParams,
+  payload?: Partial<z.input<typeof IngredientSearchParamsSchema>>,
 ): Promise<GetIngredientsResponse> {
+  // Validate input
+  const validatedPayload = assertZodParse(IngredientSearchParamsSchema, payload ?? {});
+
   const supabase = await createServerClient();
 
-  // Build and execute query with validated params
-  const query = await buildIngredientsQuery(supabase, params || {});
+  // Handle group filtering with separate query if needed
+  let groupId: string | undefined;
+  if (validatedPayload.group?.trim()) {
+    const { data: groups } = await supabase
+      .from(DB_TABLES.INGREDIENT_GROUPS)
+      .select("id")
+      .eq("name", validatedPayload.group)
+      .single();
 
+    groupId = groups?.id;
+  }
+
+  // Build and execute query
+  const query = buildIngredientsQuery(supabase, validatedPayload, groupId);
   const { count, data, error } = await query;
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);
   }
 
+  // Validate output
   return assertZodParse(GetIngredientsResponseSchema, {
     count: count ?? 0,
     data: data ?? [],

@@ -1,10 +1,11 @@
+import { fetchIngredientGroups } from "@/modules/ingredient-groups";
 import {
-  IngredientsPageOverview,
-  fetchIngredientGroups,
+  IngredientSearchParamsSchema,
+  IngredientsPageContent,
   fetchIngredients,
 } from "@/modules/ingredients";
+
 import { cleanSearchParams } from "@/utils";
-import { IngredientSearchParamsSchema } from "@repo/schemas";
 
 type PageProps = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -22,7 +23,7 @@ export default async function IngredientsPage({ searchParams }: PageProps) {
   ]);
 
   return (
-    <IngredientsPageOverview
+    <IngredientsPageContent
       ingredientGroups={groupsResponse.data}
       ingredients={ingredientsResponse.data}
       ingredientsCount={ingredientsResponse.count}

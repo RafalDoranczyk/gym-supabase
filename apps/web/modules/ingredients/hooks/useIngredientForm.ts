@@ -1,15 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  type CreateIngredientPayload,
-  CreateIngredientPayloadSchema,
-  type UpdateIngredientPayload,
-} from "@repo/schemas";
-
+import { type CreateIngredientPayload, CreateIngredientPayloadSchema } from "@repo/schemas";
 import { useForm } from "react-hook-form";
 
-export type IngredientForm = CreateIngredientPayload | UpdateIngredientPayload;
-
-export const ingredientDefaultValues: IngredientForm = {
+/**
+ * Default values for creating a new ingredient
+ * Used for form initialization and reset operations
+ */
+export const ingredientDefaultValues: CreateIngredientPayload = {
   calories: 0,
   carbs: 0,
   fat: 0,
@@ -20,6 +17,10 @@ export const ingredientDefaultValues: IngredientForm = {
   unit_type: "g",
 };
 
+/**
+ * Form hook for ingredient create/update operations
+ * Provides validated form with Zod schema integration
+ */
 export function useIngredientForm() {
   return useForm<CreateIngredientPayload>({
     resolver: zodResolver(CreateIngredientPayloadSchema),

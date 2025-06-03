@@ -55,13 +55,13 @@ export type CreateIngredientPayload = z.infer<typeof CreateIngredientPayloadSche
 export type CreateIngredientResponse = z.infer<typeof IngredientSchema>;
 
 // Update
-const UpdateIngredientPayloadSchema = BaseIngredientSchema.extend({
+export const UpdateIngredientPayloadSchema = BaseIngredientSchema.extend({
   id: SupabaseId,
 });
 export type UpdateIngredientPayload = z.infer<typeof UpdateIngredientPayloadSchema>;
 export type UpdateIngredientResponse = z.infer<typeof IngredientSchema>;
 
 // Delete
-const DeleteIngredientPayloadSchema = SupabaseId;
+export const DeleteIngredientPayloadSchema = SupabaseId;
 export type DeleteIngredientPayload = z.infer<typeof DeleteIngredientPayloadSchema>;
 export type DeleteIngredientResponse = z.infer<typeof IngredientSchema>;

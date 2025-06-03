@@ -1,9 +1,13 @@
 import type { TableData, TableOrder } from "@/hooks";
-
-import { IngredientSearchParamsSchema, type NutritionGroup } from "@repo/schemas";
+import type { NutritionGroup } from "@repo/schemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
+import { IngredientSearchParamsSchema } from "../constants";
+
+/**
+ * Manages ingredients filtering and URL state synchronization
+ */
 export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -12,17 +16,11 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
     Object.fromEntries(searchParams.entries()),
   );
 
-  // Map empty group to "All" for display
-  const displayGroup = currentFilters.group === "" ? "All" : currentFilters.group;
-
-  const activeOptions = [
-    { id: "", name: "All" },
-    ...ingredientGroups.map((g) => ({ id: g.name, name: g.name })),
-  ];
-
   const handleGroupChange = useCallback(
     (group: string) => {
       const params = new URLSearchParams(searchParams.toString());
+
+      // Reset pagination when filters change
       params.set("offset", "0");
 
       if (group === "All" || group === "") {
@@ -50,6 +48,16 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
     router.push("/dashboard/ingredients");
   }, [router]);
 
+  // Transform empty group to "All" for consistent UI display
+  const displayGroup = !currentFilters.group ? "All" : currentFilters.group;
+
+  const activeOptions = [
+    { id: "", name: "All" },
+    ...ingredientGroups.map((g) => ({ id: g.name, name: g.name })),
+  ];
+
+  const hasActiveFilters = currentFilters.search?.trim() !== "" || currentFilters.group !== "All";
+
   return {
     activeOptions,
     currentFilters: {
@@ -59,5 +67,6 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
     handleGroupChange,
     handleSortChange,
     handleClearFilters,
+    hasActiveFilters,
   };
 };

@@ -1,38 +1,78 @@
 import { CountIndicator, SearchField } from "@/components";
-import { Add } from "@mui/icons-material";
-
-import { Button, Stack, Toolbar } from "@mui/material";
-
-import { CategoryChipSelect } from "./CategoryChipSelect";
+import { Add, Category } from "@mui/icons-material";
+import { Button, Chip, Menu, MenuItem, Stack, Toolbar } from "@mui/material";
+import { useState } from "react";
 
 type IngredientsToolbarProps = {
-  activeOptions: { id: number | string; name: string }[];
-  group: string;
+  filters: {
+    group?: string;
+    search?: string;
+    activeOptions: { id: number | string; name: string }[];
+  };
+  actions: {
+    onSearchChange: (value: string) => void;
+    openDrawer: () => void;
+    handleGroupChange: (name: string) => void;
+  };
   ingredientsCount: number;
-  onSearchChange: (value: string) => void;
-  openDrawer: () => void;
-  search?: string;
-  handleGroupChange: (name: string) => void;
 };
 
 export function IngredientsToolbar({
-  activeOptions,
-  group,
+  filters,
+  actions,
   ingredientsCount,
-  onSearchChange,
-  openDrawer,
-  search,
-  handleGroupChange,
 }: IngredientsToolbarProps) {
+  const { group, search, activeOptions } = filters;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const { onSearchChange, openDrawer, handleGroupChange } = actions;
+
+  const hasRealOptions = activeOptions.some((option) => option.id !== -1);
+  const id = "ingredients-toolbar-menu";
+
   return (
     <Toolbar sx={{ mb: 2 }}>
       <Stack alignItems="center" direction="row" spacing={2}>
-        <CategoryChipSelect
-          activeOption={group}
-          id="ingredients-filter-menu"
-          options={activeOptions}
-          setActiveOption={handleGroupChange}
-        />
+        <div>
+          <Chip
+            color="primary"
+            icon={<Category />}
+            label={group}
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            sx={{ px: 3, textTransform: "capitalize" }}
+            disabled={!hasRealOptions}
+          />
+
+          <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              horizontal: "left",
+              vertical: "top",
+            }}
+            aria-labelledby={id}
+            id={id}
+            onClose={() => setAnchorEl(null)}
+            open={Boolean(anchorEl)}
+            sx={{ textTransform: "capitalize" }}
+            transformOrigin={{
+              horizontal: "left",
+              vertical: "top",
+            }}
+          >
+            {activeOptions
+              .filter((option) => option.name !== group)
+              .map(({ name }) => (
+                <MenuItem
+                  key={name}
+                  onClick={() => {
+                    handleGroupChange(name);
+                    setAnchorEl(null);
+                  }}
+                >
+                  {name}
+                </MenuItem>
+              ))}
+          </Menu>
+        </div>
         <CountIndicator end={ingredientsCount} />
       </Stack>
 

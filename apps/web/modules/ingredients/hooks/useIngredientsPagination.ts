@@ -1,6 +1,7 @@
 import { usePagination } from "@/hooks";
-import { INGREDIENTS_FETCH_LIMIT } from "@repo/schemas";
+
+import { INGREDIENTS_DEFAULT_PAGE_SIZE } from "../constants";
 
 export const useIngredientsPagination = () => {
-  return usePagination({ limit: INGREDIENTS_FETCH_LIMIT });
+  return usePagination({ limit: INGREDIENTS_DEFAULT_PAGE_SIZE });
 };

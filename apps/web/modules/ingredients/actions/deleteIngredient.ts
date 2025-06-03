@@ -4,6 +4,7 @@ import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppErr
 
 import {
   type DeleteIngredientPayload,
+  DeleteIngredientPayloadSchema,
   type DeleteIngredientResponse,
   IngredientSchema,
 } from "@repo/schemas";
@@ -12,12 +13,14 @@ import { revalidatePath } from "next/cache";
 export async function deleteIngredient(
   payload: DeleteIngredientPayload,
 ): Promise<DeleteIngredientResponse> {
+  const validatedPayload = assertZodParse(DeleteIngredientPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
     .from(DB_TABLES.INGREDIENTS)
     .delete()
-    .eq("id", payload)
+    .eq("id", validatedPayload)
     .eq("user_id", user.id)
     .select("*")
     .single();

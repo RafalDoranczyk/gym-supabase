@@ -1,3 +1,2 @@
 export const INGREDIENT_NAME_MIN_LENGTH = 3;
 export const INGREDIENT_NAME_MAX_LENGTH = 24;
-export const INGREDIENTS_FETCH_LIMIT = 50;
