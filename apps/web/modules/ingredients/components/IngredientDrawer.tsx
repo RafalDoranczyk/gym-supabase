@@ -5,14 +5,57 @@ import { useToast } from "@/providers";
 import { handleFormErrors } from "@/utils";
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { INGREDIENT_UNIT_TYPES, type Ingredient, type NutritionGroup } from "@repo/schemas";
-import { useRouter } from "next/navigation";
+import { INGREDIENT_UNIT_TYPES, type NutritionGroup } from "@repo/schemas";
+import Link from "next/link";
+
 import { useTransition } from "react";
+import type { UseFormReturn } from "react-hook-form";
 
 import { createIngredient } from "../actions/createIngredient";
 import { updateIngredient } from "../actions/updateIngredient";
-import { useIngredientForm } from "../hooks/useIngredientForm";
+import type { IngredientForm } from "../hooks/useIngredientForm";
 import { IngredientNumberFields } from "./IngredientNumberFields";
+
+type SetupRequiredDrawerProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
+function SetupRequiredDrawer({ onClose, open }: SetupRequiredDrawerProps) {
+  return (
+    <Drawer.Root
+      slotProps={{
+        backdrop: {
+          onClick: (event) => event.stopPropagation(),
+        },
+      }}
+      onClose={onClose}
+      open={open}
+      size="sm"
+    >
+      <Drawer.Title title="Setup Required" />
+
+      <Box p={3} textAlign="center">
+        <Typography variant="h6" mb={2}>
+          No ingredient groups found
+        </Typography>
+        <Typography color="text.secondary" mb={3}>
+          You need to create at least one ingredient group before adding ingredients.
+        </Typography>
+        <Stack spacing={2}>
+          <Link href="/dashboard/data-management" passHref>
+            <Button variant="contained" color="primary" onClick={onClose}>
+              Create Ingredient Groups
+            </Button>
+          </Link>
+          <Button variant="text" onClick={onClose}>
+            Cancel
+          </Button>
+        </Stack>
+      </Box>
+    </Drawer.Root>
+  );
+}
 
 const unitTypeOptions = Object.entries(INGREDIENT_UNIT_TYPES).map(([id, name]) => ({
   id,
@@ -20,77 +63,30 @@ const unitTypeOptions = Object.entries(INGREDIENT_UNIT_TYPES).map(([id, name]) =
 }));
 
 type IngredientDrawerProps = {
-  ingredient: Ingredient | null;
-  ingredientGroups: NutritionGroup[];
+  form: UseFormReturn<IngredientForm>;
   onClose: () => void;
   open: boolean;
+  ingredientGroups: NutritionGroup[];
 };
 
-export function IngredientDrawer({
-  ingredient,
-  ingredientGroups,
-  onClose,
-  open,
-}: IngredientDrawerProps) {
+export function IngredientDrawer({ form, onClose, open, ingredientGroups }: IngredientDrawerProps) {
   const toast = useToast();
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // Handle empty groups case
   if (ingredientGroups.length === 0) {
-    return (
-      <Drawer.Root
-        BackdropProps={{
-          onClick: (event) => event.stopPropagation(),
-        }}
-        onClose={onClose}
-        open={open}
-        size="sm"
-      >
-        <Drawer.Title title="Setup Required" />
-
-        <Box p={3} textAlign="center">
-          <Typography variant="h6" mb={2}>
-            No ingredient groups found
-          </Typography>
-          <Typography color="text.secondary" mb={3}>
-            You need to create at least one ingredient group before adding ingredients.
-          </Typography>
-          <Stack spacing={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                router.push("/dashboard/data-management");
-                onClose();
-              }}
-            >
-              Create Ingredient Groups
-            </Button>
-            <Button variant="text" onClick={onClose}>
-              Cancel
-            </Button>
-          </Stack>
-        </Box>
-      </Drawer.Root>
-    );
+    return <SetupRequiredDrawer onClose={onClose} open={open} />;
   }
 
-  // Normal form when groups exist
-  const { control, formState, handleSubmit, reset, setError, watch } = useIngredientForm(
-    ingredient,
-    ingredientGroups,
-  );
+  const { control, formState, handleSubmit, reset, setError, watch, getValues } = form;
+  const mode = form.getValues("id") ? "edit" : "create";
 
   const unitType = watch("unit_type");
 
   const onSubmit = handleSubmit((payload) => {
     startTransition(() => {
-      if (ingredient) {
-        updateIngredient({
-          ...payload,
-          id: ingredient.id,
-        })
+      if (mode === "edit") {
+        const id = getValues("id");
+        updateIngredient({ ...payload, id })
           .then(() => {
             reset();
             toast.success("Ingredient updated successfully");
@@ -119,14 +115,16 @@ export function IngredientDrawer({
 
   return (
     <Drawer.Root
-      BackdropProps={{
-        onClick: (event) => event.stopPropagation(),
+      slotProps={{
+        backdrop: {
+          onClick: (event) => event.stopPropagation(),
+        },
       }}
       onClose={onClose}
       open={open}
       size="sm"
     >
-      <Drawer.Title title={ingredient ? "Edit Ingredient" : "New Ingredient"} />
+      <Drawer.Title title={mode === "edit" ? "Edit Ingredient" : "New Ingredient"} />
 
       <Box p={2.5}>
         <Stack spacing={2.5}>
@@ -141,6 +139,7 @@ export function IngredientDrawer({
           <IngredientNumberFields control={control} errors={formState.errors} unitType={unitType} />
 
           <ControlledSelect
+            errorMessage={formState.errors.group_id?.message}
             control={control}
             label="Group"
             name="group_id"
@@ -156,7 +155,7 @@ export function IngredientDrawer({
 
           <Stack spacing={1.5} sx={{ pt: 1 }}>
             <LoadingButton loading={isPending} onClick={onSubmit} variant="contained" size="medium">
-              {ingredient ? "Update" : "Save"}
+              {mode === "edit" ? "Update" : "Save"}
             </LoadingButton>
 
             <LoadingButton onClick={onClose} variant="text" disabled={isPending} size="medium">

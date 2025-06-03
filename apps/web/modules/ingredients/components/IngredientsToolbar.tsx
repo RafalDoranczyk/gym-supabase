@@ -1,8 +1,7 @@
 import { CountIndicator, SearchField } from "@/components";
+import { Add } from "@mui/icons-material";
 
 import { Button, Stack, Toolbar } from "@mui/material";
-
-import { Add } from "@mui/icons-material";
 
 import { CategoryChipSelect } from "./CategoryChipSelect";
 

@@ -1,39 +1,34 @@
-"use client";
-
 import type { Ingredient } from "@repo/schemas";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 export function useIngredientsUI() {
-  const [deleteIngredient, setDeleteIngredient] = useState<Ingredient | null>(null);
-  const [drawer, setDrawer] = useState<{
-    ingredient: Ingredient | null;
-    open: boolean;
-  }>({
-    ingredient: null,
-    open: false,
-  });
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null);
 
-  const closeDeleteDialog = useCallback(() => {
-    setDeleteIngredient(null);
-  }, []);
+  const openDrawer = () => {
+    setDrawerOpen(true);
+  };
 
-  const closeDrawer = useCallback(() => {
-    setDrawer({ ingredient: null, open: false });
-  }, []);
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+  };
 
-  const openDrawer = useCallback((ingredient: Ingredient | null = null) => {
-    setDrawer({ ingredient, open: true });
-  }, []);
+  const setDeleteIngredient = (ingredient: Ingredient) => {
+    setIngredientToDelete(ingredient);
+  };
+
+  const closeDeleteDialog = () => {
+    setIngredientToDelete(null);
+  };
 
   return {
-    // State
-    deleteIngredient,
-    drawer,
-
-    // Actions
-    closeDeleteDialog,
-    closeDrawer,
+    drawer: {
+      open: drawerOpen,
+    },
     openDrawer,
+    closeDrawer,
+    ingredientToDelete,
     setDeleteIngredient,
+    closeDeleteDialog,
   };
 }

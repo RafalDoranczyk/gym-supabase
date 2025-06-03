@@ -5,4 +5,6 @@ export const DB_TABLES = {
   MEAL_TAGS: "meal_tags",
   MEAL_TO_TAGS: "meal_to_tags",
   MEAL_INGREDIENTS: "meal_ingredients",
+  MEASUREMENTS: "measurements",
+  MEASUREMENT_TYPES: "measurement_types",
 } as const;

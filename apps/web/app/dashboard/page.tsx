@@ -1,8 +1,8 @@
 import { WeightCard } from "@/modules/dashboard";
-import { getMeasurements } from "@/modules/measurements";
+import { fetchMeasurements } from "@/modules/measurements";
 
 export default async function Dashboard() {
-  const { data } = await getMeasurements();
+  const { data } = await fetchMeasurements();
 
   return (
     <div>

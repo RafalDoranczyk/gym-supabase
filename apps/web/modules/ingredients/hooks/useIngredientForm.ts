@@ -2,31 +2,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type CreateIngredientPayload,
   CreateIngredientPayloadSchema,
-  type Ingredient,
-  type NutritionGroup,
+  type UpdateIngredientPayload,
 } from "@repo/schemas";
-import { useMemo } from "react";
+
 import { useForm } from "react-hook-form";
 
-const getDefaultValues = (
-  ingredient: Ingredient | null,
-  groups: NutritionGroup[],
-): CreateIngredientPayload => ({
-  calories: ingredient?.calories ?? 0,
-  carbs: ingredient?.carbs ?? 0,
-  fat: ingredient?.fat ?? 0,
-  group_id: ingredient?.group_id ?? groups[0]?.id,
-  name: ingredient?.name ?? "",
-  price: ingredient?.price ?? 0,
-  protein: ingredient?.protein ?? 0,
-  unit_type: ingredient?.unit_type ?? "g",
-});
+export type IngredientForm = CreateIngredientPayload | UpdateIngredientPayload;
 
-export function useIngredientForm(ingredient: Ingredient | null, groups: NutritionGroup[]) {
-  const defaultValues = useMemo(() => getDefaultValues(ingredient, groups), [ingredient, groups]);
+export const ingredientDefaultValues: IngredientForm = {
+  calories: 0,
+  carbs: 0,
+  fat: 0,
+  group_id: "",
+  name: "",
+  price: 0,
+  protein: 0,
+  unit_type: "g",
+};
 
+export function useIngredientForm() {
   return useForm<CreateIngredientPayload>({
     resolver: zodResolver(CreateIngredientPayloadSchema),
-    defaultValues,
+    defaultValues: ingredientDefaultValues,
   });
 }

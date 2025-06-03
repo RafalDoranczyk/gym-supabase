@@ -1,4 +1,5 @@
 import type React from "react";
+import { DateProvider } from "./date/DateProvider";
 import { ThemeProvider } from "./theme/ThemeProvider";
 import { ToastProvider } from "./toast/ToastProvider";
 
@@ -11,7 +12,9 @@ import { ToastProvider } from "./toast/ToastProvider";
 export function AppProviders({ children }: React.PropsWithChildren) {
   return (
     <ThemeProvider>
-      <ToastProvider>{children}</ToastProvider>
+      <DateProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </DateProvider>
     </ThemeProvider>
   );
 }

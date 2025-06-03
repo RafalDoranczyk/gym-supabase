@@ -11,6 +11,7 @@ import { useIngredientsFilters } from "../hooks/useIngredientsFilters";
 import { useIngredientsPagination } from "../hooks/useIngredientsPagination";
 import { useIngredientsUI } from "../hooks/useIngredientsUI";
 
+import { ingredientDefaultValues, useIngredientForm } from "../hooks/useIngredientForm";
 import { IngredientDrawer } from "./IngredientDrawer";
 import { IngredientsEmptyState } from "./IngredientsEmptyState";
 import { IngredientsTable } from "./IngredientsTable";
@@ -42,13 +43,15 @@ export function IngredientsPageOverview({
   } = useIngredientsFilters(ingredientGroups);
 
   const {
-    closeDeleteDialog,
-    closeDrawer,
-    deleteIngredient: ingredientToDelete,
     drawer,
     openDrawer,
+    closeDrawer,
+    ingredientToDelete,
     setDeleteIngredient,
+    closeDeleteDialog,
   } = useIngredientsUI();
+
+  const form = useIngredientForm();
 
   const handleDeleteIngredient = () => {
     if (ingredientToDelete) {
@@ -66,6 +69,15 @@ export function IngredientsPageOverview({
     }
   };
 
+  const handleOpenDrawer = (ingredient?: Ingredient) => {
+    if (ingredient) {
+      form.reset(ingredient);
+    } else {
+      form.reset(ingredientDefaultValues);
+    }
+    openDrawer();
+  };
+
   // Check if any filters are active
   const hasActiveFilters = search?.trim() !== "" || group !== "All";
 
@@ -76,7 +88,7 @@ export function IngredientsPageOverview({
         group={group}
         ingredientsCount={ingredientsCount}
         onSearchChange={onSearchChange}
-        openDrawer={() => openDrawer(null)}
+        openDrawer={handleOpenDrawer}
         search={search}
         handleGroupChange={handleGroupChange}
       />
@@ -85,12 +97,12 @@ export function IngredientsPageOverview({
           hasActiveFilters={hasActiveFilters}
           search={search}
           onClearFilters={handleClearFilters}
-          onAddIngredient={() => openDrawer(null)}
+          onAddIngredient={handleOpenDrawer}
         />
       ) : (
         <IngredientsTable
           ingredients={ingredients}
-          onRowClick={(ingredient) => openDrawer(ingredient)}
+          onRowClick={handleOpenDrawer}
           onSort={handleSortChange}
           order={order}
           orderBy={orderBy}
@@ -110,7 +122,7 @@ export function IngredientsPageOverview({
       )}
 
       <IngredientDrawer
-        ingredient={drawer.ingredient}
+        form={form}
         ingredientGroups={ingredientGroups}
         onClose={closeDrawer}
         open={drawer.open}

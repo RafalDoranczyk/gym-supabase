@@ -85,7 +85,6 @@ export function IngredientsGroupPageView({ groups }: IngredientsGroupPageViewPro
 
   return (
     <div>
-      {/* Header z opisem po lewej i akcjami po prawej */}
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={3}>
         <Stack spacing={1} sx={{ flex: 1, maxWidth: "60%" }}>
           <Typography variant="h4">Ingredient Groups</Typography>

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { MACRO_NUMBER_MAX, MACRO_NUMBER_MIN } from "./const";
 import { validationMessages } from "./validationMessages";
 
-export const SupabaseId = z.string().uuid();
+export const SupabaseId = z.string().uuid(validationMessages.string.required("ID"));
 
 export const MacroNumber = z.coerce.number().min(MACRO_NUMBER_MIN).max(MACRO_NUMBER_MAX);
 

@@ -2,44 +2,76 @@ import { z } from "zod";
 
 import { CreatedAt, SupabaseId, validationMessages } from "../shared";
 
-export const MeasurementsSchema = z.object({
-  created_at: CreatedAt,
+// ---------- MEASUREMENTS ----------
+export const MeasurementSchema = z.object({
   id: SupabaseId,
+  measurement_type_id: z.string(),
+  value: z.number().min(0, validationMessages.number.min("Value", 0)),
+  unit: z.enum(["metric", "imperial"]),
+  notes: z.string().nullable(),
+  measured_at: CreatedAt,
   user_id: SupabaseId,
-  weight: z.number().min(0, {
-    message: validationMessages.number.min("Weight", 0),
-  }),
+  created_at: CreatedAt,
 });
-export type Measurements = z.infer<typeof MeasurementsSchema>;
 
-// ---------- GET ----------
+export type Measurement = z.infer<typeof MeasurementSchema>;
+
+// ---------- MEASUREMENTS CRUD ----------
+
+// CREATE
+export const CreateMeasurementSchema = MeasurementSchema.omit({
+  id: true,
+  created_at: true,
+  user_id: true,
+});
+
+export type CreateMeasurement = z.infer<typeof CreateMeasurementSchema>;
+
+// UPDATE
+export const UpdateMeasurementSchema = MeasurementSchema.omit({
+  id: true,
+  created_at: true,
+  user_id: true,
+}).partial();
+
+export type UpdateMeasurement = z.infer<typeof UpdateMeasurementSchema>;
+
+// UPDATE WITH ID (for API endpoints that need the ID)
+export const UpdateMeasurementWithIdSchema = z.object({
+  id: SupabaseId,
+  data: UpdateMeasurementSchema,
+});
+
+export type UpdateMeasurementWithId = z.infer<typeof UpdateMeasurementWithIdSchema>;
+
+// DELETE
+export const DeleteMeasurementSchema = z.object({
+  id: SupabaseId,
+});
+
+export type DeleteMeasurement = z.infer<typeof DeleteMeasurementSchema>;
+
+// GET RESPONSES
 export const GetMeasurementsResponseSchema = z.object({
   count: z.number(),
-  data: MeasurementsSchema.array(),
+  data: MeasurementSchema.array(),
 });
 
 export type GetMeasurementsResponse = z.infer<typeof GetMeasurementsResponseSchema>;
 
-// ---------- SET ----------
-export const SetMeasurementsPayloadSchema = MeasurementsSchema.omit({ id: true }).extend({
-  id: z.number().optional(),
-});
-export type SetMeasurementsPayload = z.infer<typeof SetMeasurementsPayloadSchema>;
+export const GetMeasurementByIdResponseSchema = MeasurementSchema;
 
-export const SetMeasurementsResponseSchema = z.object({
-  measurements: MeasurementsSchema,
-  message: z.string(),
-});
-export type SetMeasurementsResponse = z.infer<typeof SetMeasurementsResponseSchema>;
+export type GetMeasurementByIdResponse = z.infer<typeof GetMeasurementByIdResponseSchema>;
 
-// ---------- REMOVE ----------
-export const DeleteMeasurementsPayloadSchema = z.object({
-  created_at: CreatedAt,
+// BULK OPERATIONS
+export const CreateMeasurementsSchema = z.object({
+  measurements: CreateMeasurementSchema.array().min(1, "At least one measurement is required"),
 });
-export type DeleteMeasurementsPayload = z.infer<typeof DeleteMeasurementsPayloadSchema>;
 
-export const DeleteMeasurementsResponseSchema = z.object({
-  created_at: CreatedAt,
-  message: z.string(),
+export type CreateMeasurements = z.infer<typeof CreateMeasurementsSchema>;
+
+export const DeleteMeasurementsSchema = z.object({
+  ids: SupabaseId.array().min(1, "At least one ID is required"),
 });
-export type DeleteMeasurementsResponse = z.infer<typeof DeleteMeasurementsResponseSchema>;
+
+export type DeleteMeasurements = z.infer<typeof DeleteMeasurementsSchema>;
