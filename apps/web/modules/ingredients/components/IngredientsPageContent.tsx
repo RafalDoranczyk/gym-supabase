@@ -22,7 +22,7 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
 
   const { isPending, pagination, filters, ui, form, handlers } = useIngredientsPageLogic(props);
 
-  const { limitParam, page, onSearchChange } = pagination;
+  const { limitParam, page, onSearchChange, onClearAllFilters } = pagination;
 
   // UI state
   const { drawer, ingredientToDelete, setDeleteIngredient, closeDeleteDialog } = ui;
@@ -37,7 +37,6 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
     currentFilters: { group, order, orderBy, search },
     handleGroupChange,
     handleSortChange,
-    handleClearFilters,
     hasActiveFilters,
   } = filters;
 
@@ -72,7 +71,7 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
         <IngredientsEmptyState
           hasActiveFilters={hasActiveFilters}
           search={search}
-          onClearFilters={handleClearFilters}
+          onClearFilters={onClearAllFilters}
           onAddIngredient={handleOpenDrawer}
         />
       )}
@@ -98,6 +97,7 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
         onClose={ui.closeDrawer}
         open={drawer.open}
       />
+
       <ConfirmActionDialog
         description={INGREDIENT_MESSAGES.CONFIRM_DELETE(ingredientToDelete?.name)}
         handleClose={closeDeleteDialog}

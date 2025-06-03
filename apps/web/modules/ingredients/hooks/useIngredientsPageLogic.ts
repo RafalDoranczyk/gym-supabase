@@ -62,6 +62,7 @@ export const useIngredientsPageLogic = (props: IngredientsPageContentProps) => {
   };
 
   const resetForm = (ingredient?: Ingredient) => {
+    console.log(ingredient);
     form.reset(ingredient ?? ingredientDefaultValues);
   };
 

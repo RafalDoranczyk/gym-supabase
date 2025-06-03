@@ -33,9 +33,17 @@ export function usePagination({ limit }: UsePaginationProps) {
 
   const onSearchChange = useCallback(
     (search: string) => {
-      urlSearchParams.set("offset", "0");
-      urlSearchParams.set("search", search);
-      router.push(`${pathname}?${urlSearchParams}`);
+      const newParams = new URLSearchParams(urlSearchParams.toString());
+
+      newParams.set("offset", "0");
+
+      if (search.trim()) {
+        newParams.set("search", search);
+      } else {
+        newParams.delete("search");
+      }
+
+      router.push(`${pathname}?${newParams}`);
     },
     [pathname, router, urlSearchParams],
   );
@@ -47,6 +55,10 @@ export function usePagination({ limit }: UsePaginationProps) {
     [limitParam, onParamsChange],
   );
 
+  const onClearAllFilters = useCallback(() => {
+    router.push(pathname);
+  }, [pathname, router]);
+
   return {
     limitParam,
     onPageChange,
@@ -54,5 +66,6 @@ export function usePagination({ limit }: UsePaginationProps) {
     onSearchChange,
     page: Math.floor(offsetParam / limitParam),
     searchParams: urlSearchParams,
+    onClearAllFilters,
   };
 }

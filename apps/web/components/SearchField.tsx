@@ -64,7 +64,8 @@ export function SearchField(
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (searchTerm !== value) {
+      const normalizedValue = value || "";
+      if (searchTerm !== normalizedValue) {
         onChange(searchTerm);
       }
     }, 500);

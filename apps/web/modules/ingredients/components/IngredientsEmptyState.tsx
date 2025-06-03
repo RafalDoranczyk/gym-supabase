@@ -46,7 +46,7 @@ export function IngredientsEmptyState({
       title={EMPTY_STATE_MESSAGES.WELCOME_TITLE}
       subtitle={EMPTY_STATE_MESSAGES.WELCOME_SUBTITLE}
       action={
-        <Button variant="contained" startIcon={<Add />} onClick={onAddIngredient}>
+        <Button variant="contained" startIcon={<Add />} onClick={() => onAddIngredient()}>
           {EMPTY_STATE_MESSAGES.ADD_INGREDIENT}
         </Button>
       }

@@ -108,7 +108,7 @@ export function IngredientsToolbar({
         <SearchField onChange={onSearchChange} value={search} />
         <Button
           aria-label="Add new ingredient"
-          onClick={openDrawer}
+          onClick={() => openDrawer()}
           variant="contained"
           size="small"
           startIcon={<Add />}

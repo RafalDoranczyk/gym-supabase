@@ -20,7 +20,7 @@ function buildIngredientsQuery(
   params: IngredientSearchParams,
   groupId?: string,
 ) {
-  let query = supabase.from("inngredients").select(
+  let query = supabase.from("ingredients").select(
     `
       *,
       ingredient_groups!inner(name)

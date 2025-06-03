@@ -44,10 +44,6 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
     [router, searchParams],
   );
 
-  const handleClearFilters = useCallback(() => {
-    router.push("/dashboard/ingredients");
-  }, [router]);
-
   // Transform empty group to "All" for consistent UI display
   const displayGroup = !currentFilters.group ? "All" : currentFilters.group;
 
@@ -56,7 +52,7 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
     ...ingredientGroups.map((g) => ({ id: g.name, name: g.name })),
   ];
 
-  const hasActiveFilters = currentFilters.search?.trim() !== "" || currentFilters.group !== "All";
+  const hasActiveFilters = !!currentFilters.search?.trim() || displayGroup !== "All";
 
   return {
     activeOptions,
@@ -66,7 +62,6 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
     },
     handleGroupChange,
     handleSortChange,
-    handleClearFilters,
     hasActiveFilters,
   };
 };

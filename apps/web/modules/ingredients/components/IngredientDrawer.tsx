@@ -78,7 +78,7 @@ export function IngredientDrawer({ form, onClose, open, ingredientGroups }: Ingr
   }
 
   const { control, formState, handleSubmit, reset, setError, watch, getValues } = form;
-  const mode = form.getValues("id") ? "edit" : "create";
+  const mode = getValues("id") ? "edit" : "create";
 
   const unitType = watch("unit_type");
 
