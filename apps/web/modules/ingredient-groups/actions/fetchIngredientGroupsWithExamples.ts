@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type GetNutritionGroupsWithExamplesResponse,
   GetNutritionGroupsWithExamplesResponseSchema,
@@ -11,11 +11,11 @@ export async function fetchIngredientGroupsWithExamples(): Promise<GetNutritionG
   const supabase = await createServerClient();
 
   const { data, error, count } = await supabase
-    .from(DB_TABLES.INGREDIENT_GROUPS)
+    .from("ingredient_groups")
     .select(
       `
       *,
-      ${DB_TABLES.INGREDIENTS}:${DB_TABLES.INGREDIENTS}(name)
+      ingredients:ingredients(name)
     `,
       { count: "exact" },
     )

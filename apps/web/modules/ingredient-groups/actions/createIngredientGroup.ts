@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type CreateNutritionGroupPayload,
   type CreateNutritionGroupResponse,
@@ -14,7 +14,7 @@ export async function createIngredientGroup(
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.INGREDIENT_GROUPS)
+    .from("ingredient_groups")
     .insert([{ ...payload, user_id: user.id }])
     .select("*")
     .single();

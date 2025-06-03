@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type CreateMeasurement,
   CreateMeasurementSchema,
@@ -12,7 +12,7 @@ export async function createMeasurement(payload: CreateMeasurement): Promise<Mea
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.MEASUREMENTS)
+    .from("measurements")
     .insert({
       ...payload,
       user_id: user.id,
@@ -36,7 +36,7 @@ export async function createMeasurements(inputs: CreateMeasurement[]): Promise<M
 
   // Insert measurements
   const { data, error } = await supabase
-    .from(DB_TABLES.MEASUREMENTS)
+    .from("measurements")
     .insert(
       validatedData.map((measurement) => ({
         ...measurement,

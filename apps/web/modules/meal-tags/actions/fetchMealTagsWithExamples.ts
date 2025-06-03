@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type GetMealTagsWithExamplesResponse,
   GetMealTagsWithExamplesResponseSchema,
@@ -11,12 +11,12 @@ export async function fetchMealTagsWithExamples(): Promise<GetMealTagsWithExampl
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error, count } = await supabase
-    .from(DB_TABLES.MEAL_TAGS)
+    .from("meal_tags")
     .select(
       `
       *,
-      ${DB_TABLES.MEAL_TO_TAGS}(
-        ${DB_TABLES.MEALS}(name)
+      meal_to_tags(
+        meals(name)
       )
     `,
       { count: "exact" },

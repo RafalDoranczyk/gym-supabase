@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import { type Measurement, MeasurementSchema, type UpdateMeasurement } from "@repo/schemas";
 
 export async function updateMeasurement(
@@ -10,7 +10,7 @@ export async function updateMeasurement(
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.MEASUREMENTS)
+    .from("measurements")
     .update(payload)
     .eq("id", id)
     .eq("user_id", user.id)

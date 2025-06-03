@@ -1,13 +1,13 @@
 "use server";
 
-import { DB_TABLES, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 
 export async function deleteMeasurement(id: string): Promise<void> {
   const { user, supabase } = await getUserScopedQuery();
 
   // Delete measurement (only if it belongs to the user)
   const { error } = await supabase
-    .from(DB_TABLES.MEASUREMENTS)
+    .from("measurements")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id); // Ensure user can only delete their own measurements
@@ -27,7 +27,7 @@ export async function deleteMeasurements(ids: string[]): Promise<void> {
 
   // Delete measurements (only if they belong to the user)
   const { error } = await supabase
-    .from(DB_TABLES.MEASUREMENTS)
+    .from("measurements")
     .delete()
     .in("id", ids)
     .eq("user_id", user.id); // Ensure user can only delete their own measurements

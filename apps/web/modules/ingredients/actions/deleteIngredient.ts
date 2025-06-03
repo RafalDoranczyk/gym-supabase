@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 
 import {
   type DeleteIngredientPayload,
@@ -18,7 +18,7 @@ export async function deleteIngredient(
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.INGREDIENTS)
+    .from("ingredients")
     .delete()
     .eq("id", validatedPayload)
     .eq("user_id", user.id)

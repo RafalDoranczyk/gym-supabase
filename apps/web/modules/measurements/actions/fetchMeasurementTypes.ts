@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
 import { MeasurementTypeSchema } from "@repo/schemas";
 import { z } from "zod";
 
@@ -12,7 +12,7 @@ export async function fetchMeasurementTypes(): Promise<GetMeasurementTypesRespon
   const supabase = await createServerClient();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.MEASUREMENT_TYPES)
+    .from("measurement_types")
     .select("*")
     .order("display_order", { ascending: true }); // Sort by display order
 

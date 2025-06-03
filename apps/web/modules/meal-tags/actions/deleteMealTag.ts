@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type DeleteMealTagPayload,
   type DeleteMealTagResponse,
@@ -12,7 +12,7 @@ export async function deleteMealTag(id: DeleteMealTagPayload): Promise<DeleteMea
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.MEAL_TAGS)
+    .from("meal_tags")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)

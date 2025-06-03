@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   NutritionGroupSchema,
   type UpdateNutritionGroupPayload,
@@ -14,7 +14,7 @@ export async function updateIngredientGroup(
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.INGREDIENT_GROUPS)
+    .from("ingredient_groups")
     .update(payload)
     .eq("id", payload.id)
     .eq("user_id", user.id)

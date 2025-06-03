@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
 import { type GetIngredientsResponse, GetIngredientsResponseSchema } from "@repo/schemas";
 import type { z } from "zod";
 import { type IngredientSearchParams, IngredientSearchParamsSchema } from "../constants";
@@ -20,7 +20,7 @@ function buildIngredientsQuery(
   params: IngredientSearchParams,
   groupId?: string,
 ) {
-  let query = supabase.from(DB_TABLES.INGREDIENTS).select(
+  let query = supabase.from("inngredients").select(
     `
       *,
       ingredient_groups!inner(name)
@@ -59,7 +59,7 @@ export async function fetchIngredients(
   let groupId: string | undefined;
   if (validatedPayload.group?.trim()) {
     const { data: groups } = await supabase
-      .from(DB_TABLES.INGREDIENT_GROUPS)
+      .from("ingredient_groups")
       .select("id")
       .eq("name", validatedPayload.group)
       .single();

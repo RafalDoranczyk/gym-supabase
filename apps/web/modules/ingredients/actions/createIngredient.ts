@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type CreateIngredientPayload,
   CreateIngredientPayloadSchema,
@@ -17,7 +17,7 @@ export async function createIngredient(
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.INGREDIENTS)
+    .from("ingredients")
     .insert([{ ...validatedPayload, user_id: user.id }])
     .select("*")
     .single();

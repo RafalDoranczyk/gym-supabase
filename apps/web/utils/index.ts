@@ -1,7 +1,6 @@
 export { createServerClient } from "./supabase/createServerClient";
 export { getUserScopedQuery } from "./supabase/getUserScopedQuery";
 export { mapSupabaseErrorToAppError } from "./supabase/mapSupabaseErrorToAppError";
-export { DB_TABLES } from "./supabase/dbTables";
 
 export { assertZodParse } from "./assertZodParse";
 export { cleanSearchParams } from "./cleanSearchParams";

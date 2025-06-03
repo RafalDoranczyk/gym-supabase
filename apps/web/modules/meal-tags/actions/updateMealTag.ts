@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   MealTagSchema,
   type UpdateMealTagPayload,
@@ -12,7 +12,7 @@ export async function updateMealTag(payload: UpdateMealTagPayload): Promise<Upda
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.MEAL_TAGS)
+    .from("meal_tags")
     .update(payload)
     .eq("id", payload.id)
     .eq("user_id", user.id)

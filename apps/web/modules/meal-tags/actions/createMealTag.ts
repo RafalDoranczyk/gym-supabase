@@ -1,6 +1,6 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type CreateMealTagPayload,
   type CreateMealTagResponse,
@@ -12,7 +12,7 @@ export async function createMealTag(payload: CreateMealTagPayload): Promise<Crea
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
-    .from(DB_TABLES.MEAL_TAGS)
+    .from("meal_tags")
     .insert([{ ...payload, user_id: user.id }])
     .select("*")
     .single();

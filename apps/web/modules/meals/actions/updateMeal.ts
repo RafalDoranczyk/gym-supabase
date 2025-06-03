@@ -1,20 +1,41 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
-import { MealSchema, type UpdateMealPayload, type UpdateMealResponse } from "@repo/schemas";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import {
+  MealSchema,
+  type UpdateMealPayload,
+  UpdateMealPayloadSchema,
+  type UpdateMealResponse,
+} from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMealResponse> {
+  // Validate input payload
+  const validatedPayload = assertZodParse(UpdateMealPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
+  // First verify the meal exists and belongs to the user
+  const { data: existingMeal, error: checkError } = await supabase
+    .from("meals")
+    .select("id")
+    .eq("id", validatedPayload.id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (checkError || !existingMeal) {
+    throw mapSupabaseErrorToAppError(checkError || new Error("Meal not found or unauthorized"));
+  }
+
+  // Update meal basic info
   const { data: meal, error: updateMealError } = await supabase
-    .from(DB_TABLES.MEALS)
+    .from("meals")
     .update({
-      name: payload.name,
-      description: payload.description,
+      name: validatedPayload.name,
+      description: validatedPayload.description,
     })
-    .eq("id", payload.id)
-    .eq("user_id", user.id) // Security: only update user's own meals
+    .eq("id", validatedPayload.id)
+    .eq("user_id", user.id)
     .select("*")
     .single();
 
@@ -23,9 +44,8 @@ export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMeal
   }
 
   // 2. Update meal ingredients - replace all existing
-  // First, delete existing ingredients
   const { error: deleteIngredientsError } = await supabase
-    .from(DB_TABLES.MEAL_INGREDIENTS)
+    .from("meal_ingredients")
     .delete()
     .eq("meal_id", meal.id);
 
@@ -33,16 +53,16 @@ export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMeal
     throw mapSupabaseErrorToAppError(deleteIngredientsError);
   }
 
-  // Then, insert new ingredients (if any)
-  if (payload.ingredients && payload.ingredients.length > 0) {
-    const mealIngredients = payload.ingredients.map((ingredient) => ({
+  // Insert new ingredients (if any)
+  if (validatedPayload.ingredients && validatedPayload.ingredients.length > 0) {
+    const mealIngredients = validatedPayload.ingredients.map((ingredient) => ({
       meal_id: meal.id,
       ingredient_id: ingredient.ingredient_id,
       amount: ingredient.amount,
     }));
 
     const { error: insertIngredientsError } = await supabase
-      .from(DB_TABLES.MEAL_INGREDIENTS)
+      .from("meal_ingredients")
       .insert(mealIngredients);
 
     if (insertIngredientsError) {
@@ -51,9 +71,8 @@ export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMeal
   }
 
   // 3. Update meal tags - replace all existing
-  // First, delete existing tag relations
   const { error: deleteTagsError } = await supabase
-    .from("meal_tags_relation")
+    .from("meal_to_tags")
     .delete()
     .eq("meal_id", meal.id);
 
@@ -61,14 +80,14 @@ export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMeal
     throw mapSupabaseErrorToAppError(deleteTagsError);
   }
 
-  // Then, insert new tag relations (if any)
-  if (payload.tag_ids && payload.tag_ids.length > 0) {
-    const mealTags = payload.tag_ids.map((tagId) => ({
+  // Insert new tag relations (if any)
+  if (validatedPayload.tag_ids && validatedPayload.tag_ids.length > 0) {
+    const mealTags = validatedPayload.tag_ids.map((tagId) => ({
       meal_id: meal.id,
       tag_id: tagId,
     }));
 
-    const { error: insertTagsError } = await supabase.from("meal_tags_relation").insert(mealTags);
+    const { error: insertTagsError } = await supabase.from("meal_to_tags").insert(mealTags);
 
     if (insertTagsError) {
       throw mapSupabaseErrorToAppError(insertTagsError);
@@ -76,6 +95,5 @@ export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMeal
   }
 
   revalidatePath("/dashboard/meals");
-
   return assertZodParse(MealSchema, meal);
 }

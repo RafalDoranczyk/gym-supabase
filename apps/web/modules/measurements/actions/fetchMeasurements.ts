@@ -1,13 +1,13 @@
 "use server";
 
-import { DB_TABLES, assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import { type GetMeasurementsResponse, GetMeasurementsResponseSchema } from "@repo/schemas";
 
 export async function fetchMeasurements(): Promise<GetMeasurementsResponse> {
   const { user, supabase } = await getUserScopedQuery();
 
   const { count, data, error } = await supabase
-    .from(DB_TABLES.MEASUREMENTS)
+    .from("measurements")
     .select(
       `
       *,
