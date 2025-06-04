@@ -1,3 +1,3 @@
 export { fetchMeals } from "./actions/fetchMeals";
-export { MealsPageOverview } from "./components/MealsPageOverview";
+export { MealsPageContent } from "./components/MealsPageContent";
 export { useMealsUI } from "./hooks/useMealsUI";

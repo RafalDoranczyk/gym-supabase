@@ -1,10 +1,11 @@
 import { z } from "zod";
 
-import { SearchString } from "../shared";
-
-// Search params for filtering meals
 export const MealSearchParamsSchema = z.object({
-  search: SearchString,
+  search: z
+    .string()
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
   tag: z.string().optional(),
   limit: z.coerce.number().optional(),
   offset: z.coerce.number().optional(),

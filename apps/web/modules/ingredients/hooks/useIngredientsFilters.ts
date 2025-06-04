@@ -1,9 +1,7 @@
 import type { TableData, TableOrder } from "@/hooks";
-import type { NutritionGroup } from "@repo/schemas";
+import { FetchIngredientsPayloadSchema, type NutritionGroup } from "@repo/schemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-
-import { IngredientSearchParamsSchema } from "../constants";
 
 /**
  * Manages ingredients filtering and URL state synchronization
@@ -12,7 +10,7 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentFilters = IngredientSearchParamsSchema.parse(
+  const currentFilters = FetchIngredientsPayloadSchema.parse(
     Object.fromEntries(searchParams.entries()),
   );
 

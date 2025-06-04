@@ -1,6 +1,6 @@
 import { fetchIngredients } from "@/modules/ingredients";
 import { fetchMealTagsWithExamples } from "@/modules/meal-tags";
-import { MealsPageOverview, fetchMeals } from "@/modules/meals";
+import { MealsPageContent, fetchMeals } from "@/modules/meals";
 import { cleanSearchParams } from "@/utils";
 import { MealSearchParamsSchema } from "@repo/schemas";
 
@@ -21,7 +21,7 @@ export default async function MealsPage({ searchParams }: PageProps) {
   ]);
 
   return (
-    <MealsPageOverview
+    <MealsPageContent
       ingredients={ingredients.data}
       meals={meals.data}
       mealTags={mealTags.data}

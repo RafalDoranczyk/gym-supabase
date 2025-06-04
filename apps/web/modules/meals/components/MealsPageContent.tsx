@@ -20,14 +20,14 @@ import { useMealsUI } from "../hooks/useMealsUI";
 import { MealDrawer } from "./MealDrawer";
 import { MealsTable } from "./MealsTable";
 
-type MealsPageOverviewProps = {
+type MealsPageContentProps = {
   ingredients: Ingredient[];
   meals: Meal[];
   mealTags: MealTag[];
   total: number;
 };
 
-export function MealsPageOverview({ ingredients, meals, mealTags, total }: MealsPageOverviewProps) {
+export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsPageContentProps) {
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
 

@@ -1,9 +1,12 @@
 "use server";
 
 import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
-import { type GetIngredientsResponse, GetIngredientsResponseSchema } from "@repo/schemas";
-import type { z } from "zod";
-import { type IngredientSearchParams, IngredientSearchParamsSchema } from "../constants";
+import {
+  type FetchIngredientsPayload,
+  FetchIngredientsPayloadSchema,
+  type FetchIngredientsResponse,
+  FetchIngredientsResponseSchema,
+} from "@repo/schemas";
 import {
   INGREDIENTS_DEFAULT_OFFSET,
   INGREDIENTS_DEFAULT_ORDER,
@@ -17,8 +20,7 @@ import {
 
 function buildIngredientsQuery(
   supabase: Awaited<ReturnType<typeof createServerClient>>,
-  params: IngredientSearchParams,
-  groupId?: string,
+  params: FetchIngredientsPayload,
 ) {
   let query = supabase.from("ingredients").select(
     `
@@ -48,10 +50,10 @@ function buildIngredientsQuery(
 }
 
 export async function fetchIngredients(
-  payload?: Partial<z.input<typeof IngredientSearchParamsSchema>>,
-): Promise<GetIngredientsResponse> {
+  payload?: FetchIngredientsPayload,
+): Promise<FetchIngredientsResponse> {
   // Validate input
-  const validatedPayload = assertZodParse(IngredientSearchParamsSchema, payload ?? {});
+  const validatedPayload = assertZodParse(FetchIngredientsPayloadSchema, payload);
 
   const supabase = await createServerClient();
 
@@ -68,7 +70,7 @@ export async function fetchIngredients(
   }
 
   // Build and execute query
-  const query = buildIngredientsQuery(supabase, validatedPayload, groupId);
+  const query = buildIngredientsQuery(supabase, validatedPayload);
   const { count, data, error } = await query;
 
   if (error) {
@@ -76,7 +78,7 @@ export async function fetchIngredients(
   }
 
   // Validate output
-  return assertZodParse(GetIngredientsResponseSchema, {
+  return assertZodParse(FetchIngredientsResponseSchema, {
     count: count ?? 0,
     data: data ?? [],
   });

@@ -77,6 +77,15 @@ export const MealTagWithExamplesSchema = MealTagSchema.extend({
   examples: z.array(z.string()),
 });
 
+export const FetchMealTagPayloadSchema = z.object({
+  search: z.string().optional(),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  offset: z.coerce.number().min(0).default(0),
+  order: z.enum(["asc", "desc"]).default("asc"),
+  orderBy: z.enum(["name", "created_at"]).default("name"),
+});
+export type FetchMealTagPayload = z.infer<typeof FetchMealTagPayloadSchema>;
+
 export type MealTagWithExamples = z.infer<typeof MealTagWithExamplesSchema>;
 
 export const GetMealTagsWithExamplesResponseSchema = z.object({
