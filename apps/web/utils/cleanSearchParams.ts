@@ -20,6 +20,6 @@ export function cleanSearchParams<T extends Record<string, unknown>>(params: T):
         value !== null && // Filter out null values
         !(typeof value === "string" && value.trim() === "") // Filter out empty strings
       );
-    }),
+    })
   ) as Partial<T>;
 }

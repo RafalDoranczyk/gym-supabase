@@ -1,9 +1,9 @@
 "use server";
 
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
-import { type GetMealTagsResponse, GetMealTagsResponseSchema } from "@repo/schemas";
+import { FetchMealTagsResponseSchema, type FetchMealTagsResponse } from "@repo/schemas";
 
-export async function fetchMealTags(): Promise<GetMealTagsResponse> {
+export async function fetchMealTags(): Promise<FetchMealTagsResponse> {
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error, count } = await supabase
@@ -16,5 +16,8 @@ export async function fetchMealTags(): Promise<GetMealTagsResponse> {
     throw mapSupabaseErrorToAppError(error);
   }
 
-  return assertZodParse(GetMealTagsResponseSchema, { data: data || [], count: count || 0 });
+  return assertZodParse(FetchMealTagsResponseSchema, {
+    data,
+    count,
+  });
 }

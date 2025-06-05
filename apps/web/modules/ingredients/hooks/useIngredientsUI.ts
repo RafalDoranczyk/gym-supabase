@@ -22,9 +22,7 @@ export function useIngredientsUI() {
   };
 
   return {
-    drawer: {
-      open: drawerOpen,
-    },
+    drawerOpen,
     openDrawer,
     closeDrawer,
     ingredientToDelete,

@@ -5,25 +5,99 @@
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 100,
-    "ignore": ["node_modules"]
+    "lineEnding": "lf",
+    "ignore": ["node_modules", ".next/**", "dist/**"],
+    "formatWithErrors": false
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "style": {
-        "useSingleVarDeclarator": "error"
+        "useSingleVarDeclarator": "error",
+        "useImportType": "error",
+        "useExportType": "error",
+        "useNodejsImportProtocol": "error",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": false,
+            "requireAscii": true
+          }
+        },
+        "noNonNullAssertion": "warn",
+        "useConst": "error",
+        "useDefaultParameterLast": "error"
       },
       "complexity": {
-        "noUselessCatch": "error"
+        "noUselessCatch": "error",
+        "noUselessRename": "error",
+        "noUselessSwitchCase": "error",
+        "noVoid": "error",
+        "useSimplifiedLogicExpression": "error"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "useArrayLiterals": "error",
+        "useHookAtTopLevel": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noArrayIndexKey": "warn",
+        "noEmptyBlockStatements": "error",
+        "noMisleadingCharacterClass": "error"
+      },
+      "performance": {
+        "noAccumulatingSpread": "error",
+        "noDelete": "error"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "error"
+      },
+      "nursery": {
+        "useSortedClasses": "error",
+        "noMissingVarFunction": "error"
       }
     }
   },
   "organizeImports": {
-    "enabled": true
+    "enabled": true,
+    "include": ["**/*.{js,jsx,ts,tsx}"],
+    "ignore": ["node_modules/**", ".next/**", "dist/**"]
   },
   "files": {
-    "ignore": ["node_modules/**", ".next/**", "dist/**", "build/**", "coverage/**"],
-    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
+    "ignore": [
+      "node_modules/**",
+      ".next/**",
+      "dist/**",
+      "build/**",
+      "coverage/**",
+      "*.config.js",
+      "*.config.ts",
+      ".env*"
+    ],
+    "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"],
+    "ignoreUnknown": true
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 100
+    }
   }
 }

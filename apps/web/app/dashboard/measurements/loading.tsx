@@ -1,4 +1,5 @@
 "use client";
+
 import { Box, Grid, Paper, Skeleton, Stack } from "@mui/material";
 
 // Skeleton for individual stat card

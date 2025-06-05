@@ -3,7 +3,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase, { type InputBaseProps } from "@mui/material/InputBase";
 import { alpha, styled } from "@mui/material/styles";
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 
 const Search = styled("div")(({ theme }) => ({
   "&:hover": {
@@ -51,11 +51,12 @@ export function SearchField(
   props: Omit<InputBaseProps, "onChange" | "value"> & {
     onChange: (value: string) => void;
     value?: string;
-  },
+  }
 ) {
   const { onChange, value } = props;
 
   const [searchTerm, setSearchTerm] = useState<string>(value || "");
+  const deferredSearchTerm = useDeferredValue(searchTerm);
 
   // Synchronize local state with external value changes
   useEffect(() => {
@@ -63,15 +64,11 @@ export function SearchField(
   }, [value]);
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      const normalizedValue = value || "";
-      if (searchTerm !== normalizedValue) {
-        onChange(searchTerm);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, onChange, value]);
+    const normalizedValue = value || "";
+    if (deferredSearchTerm !== normalizedValue) {
+      onChange(deferredSearchTerm);
+    }
+  }, [deferredSearchTerm, onChange, value]);
 
   return (
     <Search>

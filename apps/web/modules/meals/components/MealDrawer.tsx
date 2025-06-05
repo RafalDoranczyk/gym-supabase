@@ -2,8 +2,7 @@
 
 import { ControlledTextField, Drawer, MultiSelect } from "@/components";
 import { useToast } from "@/providers";
-import { LoadingButton } from "@mui/lab";
-import { Box, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import type { Ingredient, Meal, MealTag } from "@repo/schemas";
 import { useTransition } from "react";
 
@@ -58,12 +57,12 @@ export function MealDrawer({ ingredients, meal, mealTags, onClose, open }: MealD
             You need to create ingredients before adding meals.
           </Typography>
           <Stack spacing={2}>
-            <LoadingButton variant="contained" onClick={onClose}>
+            <Button loading={isPending} variant="contained" onClick={onClose}>
               Go to Ingredients
-            </LoadingButton>
-            <LoadingButton variant="text" onClick={onClose}>
+            </Button>
+            <Button variant="text" disabled={isPending} onClick={onClose}>
               Cancel
-            </LoadingButton>
+            </Button>
           </Stack>
         </Box>
       </Drawer.Root>
@@ -176,13 +175,13 @@ export function MealDrawer({ ingredients, meal, mealTags, onClose, open }: MealD
 
           {/* Action buttons */}
           <Stack spacing={1.5} sx={{ pt: 1 }}>
-            <LoadingButton loading={isPending} onClick={onSubmit} variant="contained" size="medium">
+            <Button loading={isPending} onClick={onSubmit} variant="contained" size="medium">
               {meal ? "Update Meal" : "Create Meal"}
-            </LoadingButton>
+            </Button>
 
-            <LoadingButton onClick={onClose} variant="text" disabled={isPending} size="medium">
+            <Button onClick={onClose} variant="text" disabled={isPending} size="medium">
               Cancel
-            </LoadingButton>
+            </Button>
           </Stack>
         </Stack>
       </Box>

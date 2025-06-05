@@ -3,17 +3,20 @@
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type CreateMealTagPayload,
+  CreateMealTagPayloadSchema,
   type CreateMealTagResponse,
   MealTagSchema,
 } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function createMealTag(payload: CreateMealTagPayload): Promise<CreateMealTagResponse> {
+  const validatedPayload = assertZodParse(CreateMealTagPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
     .from("meal_tags")
-    .insert([{ ...payload, user_id: user.id }])
+    .insert([{ ...validatedPayload, user_id: user.id }])
     .select("*")
     .single();
 
@@ -21,7 +24,7 @@ export async function createMealTag(payload: CreateMealTagPayload): Promise<Crea
     throw mapSupabaseErrorToAppError(error);
   }
 
-  revalidatePath("/dashboard/data-management");
+  revalidatePath("/dashboard/library");
 
   return assertZodParse(MealTagSchema, data);
 }

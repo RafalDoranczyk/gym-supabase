@@ -1,5 +1,6 @@
 import { ColorPicker, ControlledTextField } from "@/components";
-import { Close } from "@mui/icons-material";
+import { useToast } from "@/providers";
+import { handleFormErrors } from "@/utils";
 import {
   Box,
   Button,
@@ -12,44 +13,42 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import type { MealTag } from "@repo/schemas";
-import { startTransition } from "react";
-import { useMealTagForm } from "../hooks/useMealTagForm";
+import { useTransition } from "react";
+import type { UseFormReturn } from "react-hook-form";
 
-import { useToast } from "@/providers";
-import { handleFormErrors } from "@/utils";
+import { Close } from "@mui/icons-material";
 import { createMealTag } from "../actions/createMealTag";
 import { updateMealTag } from "../actions/updateMealTag";
+import type { MealTagForm } from "../hooks/useMealTagForm";
 
 type MealTagDialogProps = {
   open: boolean;
   onClose: () => void;
-  tag: MealTag | null;
+  form: UseFormReturn<MealTagForm>;
 };
 
-export function MealTagDialog({ open, onClose, tag }: MealTagDialogProps) {
-  const { control, formState, handleSubmit, reset, watch, setValue, setError } =
-    useMealTagForm(tag);
-
+export function MealTagDialog({ open, onClose, form }: MealTagDialogProps) {
+  const [isPending, startTransition] = useTransition();
   const toast = useToast();
-  const selectedColor = watch("color");
 
-  const editingTag = Boolean(tag);
+  const { control, formState, handleSubmit, watch, setValue, setError, getValues } = form;
+
+  const selectedColor = watch("color");
+  const isEditing = !!getValues("id");
+  const isSubmitting = formState.isSubmitting;
 
   const onSubmit = handleSubmit((payload) => {
     startTransition(async () => {
       try {
-        if (tag) {
-          await updateMealTag({
-            ...payload,
-            id: tag.id,
-          });
+        if (isEditing) {
+          const id = getValues("id");
+          await updateMealTag({ ...payload, id });
           toast.success("Meal tag updated successfully");
         } else {
           await createMealTag(payload);
           toast.success("Meal tag created successfully");
         }
-        handleClose();
+        onClose();
       } catch (error) {
         handleFormErrors(error, setError, toast, {
           name: "This tag name already exists",
@@ -58,41 +57,29 @@ export function MealTagDialog({ open, onClose, tag }: MealTagDialogProps) {
     });
   });
 
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
-
-  const isSubmitting = formState.isSubmitting;
-  const submitButtonText = isSubmitting
-    ? editingTag
-      ? "Updating..."
-      : "Creating..."
-    : editingTag
-      ? "Update Tag"
-      : "Create Tag";
-
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        component: "form",
-        onSubmit: onSubmit,
+      slotProps={{
+        paper: {
+          component: "form",
+          onSubmit: onSubmit,
+        },
       }}
     >
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        {editingTag ? "Edit Meal Tag" : "Create Meal Tag"}
-        <IconButton onClick={handleClose} aria-label="close dialog" disabled={isSubmitting}>
+        {isEditing ? "Edit Meal Tag" : "Create Meal Tag"}
+        <IconButton onClick={onClose} aria-label="close dialog">
           <Close />
         </IconButton>
       </DialogTitle>
 
       <DialogContent>
         <DialogContentText sx={{ mb: 2 }}>
-          {editingTag
+          {isEditing
             ? "Update the details of this meal tag."
             : "Create a new meal tag to organize and categorize your meals."}
         </DialogContentText>
@@ -105,8 +92,7 @@ export function MealTagDialog({ open, onClose, tag }: MealTagDialogProps) {
             label="Tag Name"
             name="name"
             required
-            disabled={isSubmitting}
-            autoFocus={!editingTag}
+            autoFocus={!isEditing}
             placeholder="e.g., Breakfast, Quick Meals, Vegetarian"
           />
 
@@ -118,19 +104,11 @@ export function MealTagDialog({ open, onClose, tag }: MealTagDialogProps) {
             name="description"
             multiline
             rows={3}
-            disabled={isSubmitting}
             placeholder="Optional description for this tag..."
           />
 
           <Box>
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 1,
-                fontWeight: 600,
-                color: isSubmitting ? "text.disabled" : "text.primary",
-              }}
-            >
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 600 }}>
               Tag Color
             </Typography>
             <ColorPicker
@@ -143,12 +121,18 @@ export function MealTagDialog({ open, onClose, tag }: MealTagDialogProps) {
         </Stack>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-        <Button onClick={handleClose} disabled={isSubmitting} color="inherit">
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button onClick={onClose} disabled={isPending} color="inherit">
           Cancel
         </Button>
-        <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ minWidth: 120 }}>
-          {submitButtonText}
+        <Button type="submit" variant="contained" loading={isPending}>
+          {isSubmitting
+            ? isEditing
+              ? "Updating..."
+              : "Creating..."
+            : isEditing
+              ? "Update Tag"
+              : "Create Tag"}
         </Button>
       </DialogActions>
     </Dialog>

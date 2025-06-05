@@ -2,8 +2,6 @@ import { EmptyState } from "@/components";
 import { Add, FilterList } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
-import { EMPTY_STATE_MESSAGES } from "../constants/emptyState";
-
 type IngredientsEmptyStateProps = {
   hasActiveFilters: boolean;
   search?: string;
@@ -23,17 +21,15 @@ export function IngredientsEmptyState({
 
     return (
       <EmptyState
-        title={
-          searchTerm ? EMPTY_STATE_MESSAGES.NO_MATCH_TITLE : EMPTY_STATE_MESSAGES.NO_FILTERS_TITLE
-        }
+        title={searchTerm ? "No matching ingredients" : "No ingredients found"}
         subtitle={
           searchTerm
-            ? EMPTY_STATE_MESSAGES.SEARCH_NO_MATCH(searchTerm)
-            : EMPTY_STATE_MESSAGES.FILTERED_NO_MATCH
+            ? `No ingredients match "${searchTerm}"`
+            : "No ingredients found with current filters"
         }
         action={
           <Button variant="outlined" startIcon={<FilterList />} onClick={onClearFilters}>
-            {EMPTY_STATE_MESSAGES.CLEAR_FILTERS}
+            Clear Filters
           </Button>
         }
       />
@@ -43,11 +39,11 @@ export function IngredientsEmptyState({
   // Default welcome state for new users
   return (
     <EmptyState
-      title={EMPTY_STATE_MESSAGES.WELCOME_TITLE}
-      subtitle={EMPTY_STATE_MESSAGES.WELCOME_SUBTITLE}
+      title="Start building your ingredients list"
+      subtitle="Add your first ingredient to get started"
       action={
         <Button variant="contained" startIcon={<Add />} onClick={() => onAddIngredient()}>
-          {EMPTY_STATE_MESSAGES.ADD_INGREDIENT}
+          Add Ingredient
         </Button>
       }
     />

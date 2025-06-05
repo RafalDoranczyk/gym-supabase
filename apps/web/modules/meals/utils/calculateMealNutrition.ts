@@ -27,7 +27,7 @@ export function calculateMealNutrition(mealIngredients: MealIngredient[]) {
       acc.price += (ingredient.price ?? 0) * f;
       return acc;
     },
-    { calories: 0, carbs: 0, fat: 0, price: 0, protein: 0 },
+    { calories: 0, carbs: 0, fat: 0, price: 0, protein: 0 }
   );
 
   return {

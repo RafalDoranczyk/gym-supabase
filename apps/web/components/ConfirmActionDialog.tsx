@@ -1,8 +1,8 @@
 "use client";
 
 import { WarningAmber } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -73,7 +73,7 @@ export function ConfirmActionDialog({
       </DialogContent>
 
       <DialogActions sx={{ p: 3, gap: 1 }}>
-        <LoadingButton
+        <Button
           autoFocus
           color="inherit"
           disabled={disabled}
@@ -83,8 +83,8 @@ export function ConfirmActionDialog({
           variant="outlined"
         >
           Cancel
-        </LoadingButton>
-        <LoadingButton
+        </Button>
+        <Button
           color="error"
           disabled={disabled}
           loading={loading}
@@ -93,7 +93,7 @@ export function ConfirmActionDialog({
           variant="contained"
         >
           Confirm
-        </LoadingButton>
+        </Button>
       </DialogActions>
     </StyledDialog>
   );

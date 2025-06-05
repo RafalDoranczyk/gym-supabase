@@ -7,10 +7,7 @@ import {
 import { useForm } from "react-hook-form";
 
 export type IngredientForm = CreateIngredientPayload | UpdateIngredientPayload;
-/**
- * Default values for creating a new ingredient
- * Used for form initialization and reset operations
- */
+
 export const ingredientDefaultValues: IngredientForm = {
   calories: 0,
   carbs: 0,
@@ -22,10 +19,6 @@ export const ingredientDefaultValues: IngredientForm = {
   unit_type: "g",
 };
 
-/**
- * Form hook for ingredient create/update operations
- * Provides validated form with Zod schema integration
- */
 export function useIngredientForm() {
   return useForm<IngredientForm>({
     resolver: zodResolver(CreateIngredientPayloadSchema),

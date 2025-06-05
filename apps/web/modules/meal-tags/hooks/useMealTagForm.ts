@@ -1,19 +1,22 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type CreateMealTagPayload, CreateMealTagPayloadSchema, type MealTag } from "@repo/schemas";
-import { useMemo } from "react";
+import {
+  type CreateMealTagPayload,
+  CreateMealTagPayloadSchema,
+  type UpdateMealTagPayload,
+} from "@repo/schemas";
 import { useForm } from "react-hook-form";
 
-const getDefaultValues = (tag: MealTag | null): CreateMealTagPayload => ({
-  name: tag?.name ?? "",
-  description: tag?.description ?? "",
-  color: tag?.color ?? "#8B5CF6",
-});
+export type MealTagForm = CreateMealTagPayload | UpdateMealTagPayload;
 
-export function useMealTagForm(tag: MealTag | null) {
-  const defaultValues = useMemo(() => getDefaultValues(tag), [tag]);
+export const mealTagDefaultValues: MealTagForm = {
+  name: "",
+  description: "",
+  color: "#8B5CF6",
+};
 
+export function useMealTagForm() {
   return useForm<CreateMealTagPayload>({
     resolver: zodResolver(CreateMealTagPayloadSchema),
-    values: defaultValues,
+    defaultValues: mealTagDefaultValues,
   });
 }

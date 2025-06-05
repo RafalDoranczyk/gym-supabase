@@ -1,17 +1,17 @@
 import type { TableData, TableOrder } from "@/hooks";
-import { FetchIngredientsPayloadSchema, type NutritionGroup } from "@repo/schemas";
+import { FetchIngredientsPayloadSchema, type IngredientGroup } from "@repo/schemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
 /**
  * Manages ingredients filtering and URL state synchronization
  */
-export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
+export const useIngredientsFilters = (ingredientGroups: IngredientGroup[]) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const currentFilters = FetchIngredientsPayloadSchema.parse(
-    Object.fromEntries(searchParams.entries()),
+    Object.fromEntries(searchParams.entries())
   );
 
   const handleGroupChange = useCallback(
@@ -29,7 +29,7 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
 
       router.push(`/dashboard/ingredients?${params}`);
     },
-    [router, searchParams],
+    [router, searchParams]
   );
 
   const handleSortChange = useCallback(
@@ -39,7 +39,7 @@ export const useIngredientsFilters = (ingredientGroups: NutritionGroup[]) => {
       params.set("orderBy", orderBy.toString());
       router.push(`/dashboard/ingredients?${params}`);
     },
-    [router, searchParams],
+    [router, searchParams]
   );
 
   // Transform empty group to "All" for consistent UI display

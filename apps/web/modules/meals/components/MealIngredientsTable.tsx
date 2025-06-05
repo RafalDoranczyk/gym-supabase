@@ -80,7 +80,7 @@ export function MealIngredientsTable({ ingredients, fieldArray }: MealIngredient
           </TableRow>
         </TableHead>
         <TableBody>
-          {fields.map(({ id, ingredient_id, amount }, index) => {
+          {fields.map(({ ingredient_id, amount }, index) => {
             const ingredient = findIngredientById(ingredient_id);
             if (!ingredient) return null;
 

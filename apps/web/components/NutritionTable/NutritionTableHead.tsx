@@ -1,6 +1,6 @@
 import { TableCell, TableHead, TableRow, TableSortLabel } from "@mui/material";
 
-import type { TableOrder, TableOrderBy } from "../../hooks";
+import type { TableData, TableOrder } from "../../hooks";
 
 export type NutritionTableHeadCell = {
   id: string;
@@ -11,9 +11,9 @@ export type NutritionTableHeadCell = {
 
 type NutritionTableHeadProps = {
   headCells: NutritionTableHeadCell[];
-  onRequestSort: (event: React.MouseEvent<unknown>, property: TableOrderBy) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
   order?: TableOrder;
-  orderBy?: TableOrderBy;
+  orderBy?: keyof TableData;
 };
 
 export function NutritionTableHead({

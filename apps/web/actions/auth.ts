@@ -45,7 +45,7 @@ async function loginWithOAuth(provider: OAuthProvider) {
   if (!data?.url) {
     throw new AppError(
       AppErrorCodes.SERVER_ERROR,
-      "Missing redirect URL from Supabase OAuth login",
+      "Missing redirect URL from Supabase OAuth login"
     );
   }
 

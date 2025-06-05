@@ -2,12 +2,12 @@
 
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
-  type GetMealTagsWithExamplesResponse,
-  GetMealTagsWithExamplesResponseSchema,
+  FetchMealTagsWithExamplesResponseSchema,
+  type FetchMealTagsWithExamplesResponse,
   type Meal,
 } from "@repo/schemas";
 
-export async function fetchMealTagsWithExamples(): Promise<GetMealTagsWithExamplesResponse> {
+export async function fetchMealTagsWithExamples(): Promise<FetchMealTagsWithExamplesResponse> {
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error, count } = await supabase
@@ -19,7 +19,7 @@ export async function fetchMealTagsWithExamples(): Promise<GetMealTagsWithExampl
         meals(name)
       )
     `,
-      { count: "exact" },
+      { count: "exact" }
     )
     .eq("user_id", user.id)
     .order("name", { ascending: true });
@@ -37,8 +37,8 @@ export async function fetchMealTagsWithExamples(): Promise<GetMealTagsWithExampl
       .map((relation: { meals: Meal }) => relation.meals?.name),
   }));
 
-  return assertZodParse(GetMealTagsWithExamplesResponseSchema, {
+  return assertZodParse(FetchMealTagsWithExamplesResponseSchema, {
     data: transformedData,
-    count: count || 0,
+    count: count,
   });
 }

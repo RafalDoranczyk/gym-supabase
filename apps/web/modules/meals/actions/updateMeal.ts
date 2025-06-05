@@ -10,7 +10,6 @@ import {
 import { revalidatePath } from "next/cache";
 
 export async function updateMeal(payload: UpdateMealPayload): Promise<UpdateMealResponse> {
-  // Validate input payload
   const validatedPayload = assertZodParse(UpdateMealPayloadSchema, payload);
 
   const { user, supabase } = await getUserScopedQuery();

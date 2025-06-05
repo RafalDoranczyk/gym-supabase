@@ -1,18 +1,17 @@
 "use client";
 
 import { useToast } from "@/providers";
-import type { Ingredient, NutritionGroup } from "@repo/schemas";
+import type { Ingredient, IngredientGroup } from "@repo/schemas";
 import { useTransition } from "react";
 
 import { deleteIngredient } from "../actions/deleteIngredient";
-import { INGREDIENT_MESSAGES } from "../constants";
 import { ingredientDefaultValues, useIngredientForm } from "./useIngredientForm";
 import { useIngredientsFilters } from "./useIngredientsFilters";
 import { useIngredientsPagination } from "./useIngredientsPagination";
 import { useIngredientsUI } from "./useIngredientsUI";
 
 type IngredientsPageContentProps = {
-  ingredientGroups: NutritionGroup[];
+  ingredientGroups: IngredientGroup[];
   ingredients: Ingredient[];
   ingredientsCount: number;
 };
@@ -36,14 +35,14 @@ export const useIngredientsPageLogic = (props: IngredientsPageContentProps) => {
   const handleAsyncAction = async (
     action: () => Promise<unknown>,
     successMessage: string,
-    onComplete?: () => void,
+    onComplete?: () => void
   ) => {
     try {
       await action();
       toast.success(successMessage);
       onComplete?.();
     } catch (error) {
-      toast.error(INGREDIENT_MESSAGES.DELETE_ERROR((error as Error).message));
+      toast.error(`Failed to remove ingredient: ${(error as Error).message}`);
     } finally {
       // Always close dialog regardless of success/failure
       ui.closeDeleteDialog();
@@ -57,12 +56,11 @@ export const useIngredientsPageLogic = (props: IngredientsPageContentProps) => {
 
     // Use transition for better UX during deletion
     startTransition(() => {
-      handleAsyncAction(() => deleteIngredient(id), INGREDIENT_MESSAGES.DELETE_SUCCESS(name));
+      handleAsyncAction(() => deleteIngredient({ id }), `Ingredient ${name} removed successfully`);
     });
   };
 
   const resetForm = (ingredient?: Ingredient) => {
-    console.log(ingredient);
     form.reset(ingredient ?? ingredientDefaultValues);
   };
 
@@ -76,7 +74,7 @@ export const useIngredientsPageLogic = (props: IngredientsPageContentProps) => {
   };
 
   const handleRowsPerPageChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newLimit = Number(event.target.value);
     pagination.onParamsChange([{ param: "limit", value: newLimit }]);

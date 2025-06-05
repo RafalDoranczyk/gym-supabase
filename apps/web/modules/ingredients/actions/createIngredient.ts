@@ -10,7 +10,7 @@ import {
 import { revalidatePath } from "next/cache";
 
 export async function createIngredient(
-  payload: CreateIngredientPayload,
+  payload: CreateIngredientPayload
 ): Promise<CreateIngredientResponse> {
   const validatedPayload = assertZodParse(CreateIngredientPayloadSchema, payload);
 

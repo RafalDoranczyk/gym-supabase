@@ -11,7 +11,7 @@ import {
 import { revalidatePath } from "next/cache";
 
 export async function deleteIngredient(
-  payload: DeleteIngredientPayload,
+  payload: DeleteIngredientPayload
 ): Promise<DeleteIngredientResponse> {
   const validatedPayload = assertZodParse(DeleteIngredientPayloadSchema, payload);
 
@@ -20,7 +20,7 @@ export async function deleteIngredient(
   const { data, error } = await supabase
     .from("ingredients")
     .delete()
-    .eq("id", validatedPayload)
+    .eq("id", validatedPayload.id)
     .eq("user_id", user.id)
     .select("*")
     .single();

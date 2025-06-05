@@ -45,7 +45,7 @@ export function ErrorPage({
     console.log("Bug report data:", errorInfo);
     // Could send to your error tracking service
     alert(
-      "Error details logged to console. In production, this would be sent to our error tracking service.",
+      "Error details logged to console. In production, this would be sent to our error tracking service."
     );
   };
 

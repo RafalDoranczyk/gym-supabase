@@ -1,20 +1,14 @@
 "use server";
 
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
-import { type GetMeasurementsResponse, GetMeasurementsResponseSchema } from "@repo/schemas";
+import { type FetchMeasurementsResponse, FetchMeasurementsResponseSchema } from "@repo/schemas";
 
-export async function fetchMeasurements(): Promise<GetMeasurementsResponse> {
+export async function fetchMeasurements(): Promise<FetchMeasurementsResponse> {
   const { user, supabase } = await getUserScopedQuery();
 
   const { count, data, error } = await supabase
     .from("measurements")
-    .select(
-      `
-      *,
-      measurement_type:measurement_types(*)
-    `,
-      { count: "exact" },
-    )
+    .select("*, measurement_type:measurement_types(*)", { count: "exact" })
     .eq("user_id", user.id)
     .order("measured_at", { ascending: false });
 
@@ -22,8 +16,8 @@ export async function fetchMeasurements(): Promise<GetMeasurementsResponse> {
     throw mapSupabaseErrorToAppError(error);
   }
 
-  return assertZodParse(GetMeasurementsResponseSchema, {
-    count: count ?? 0,
-    data: data ?? [],
+  return assertZodParse(FetchMeasurementsResponseSchema, {
+    count,
+    data,
   });
 }

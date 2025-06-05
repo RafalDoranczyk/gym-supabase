@@ -1,36 +1,54 @@
 "use server";
 
-import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import {
+  BasicMeasurementSchema,
+  type DeleteMeasurementPayload,
+  DeleteMeasurementPayloadSchema,
+  type DeleteMeasurementResponse,
+  type DeleteMeasurementsPayload,
+  DeleteMeasurementsPayloadSchema,
+} from "@repo/schemas";
+import { revalidatePath } from "next/cache";
 
-export async function deleteMeasurement(id: string): Promise<void> {
+export async function deleteMeasurement(
+  payload: DeleteMeasurementPayload
+): Promise<DeleteMeasurementResponse> {
+  const validatedPayload = assertZodParse(DeleteMeasurementPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
-  // Delete measurement (only if it belongs to the user)
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from("measurements")
     .delete()
-    .eq("id", id)
-    .eq("user_id", user.id); // Ensure user can only delete their own measurements
+    .eq("id", validatedPayload.id)
+    .eq("user_id", user.id)
+    .select("*")
+    .single();
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);
   }
+
+  revalidatePath("/dashboard/measurements");
+
+  return assertZodParse(BasicMeasurementSchema, data);
 }
 
 // Bulk delete measurements
-export async function deleteMeasurements(ids: string[]): Promise<void> {
+export async function deleteMeasurements(payload: DeleteMeasurementsPayload): Promise<void> {
+  const validatedPayload = assertZodParse(DeleteMeasurementsPayloadSchema, payload);
   const { user, supabase } = await getUserScopedQuery();
 
-  if (ids.length === 0) {
+  if (validatedPayload.ids.length === 0) {
     throw new Error("At least one ID is required for bulk delete");
   }
 
-  // Delete measurements (only if they belong to the user)
   const { error } = await supabase
     .from("measurements")
     .delete()
-    .in("id", ids)
-    .eq("user_id", user.id); // Ensure user can only delete their own measurements
+    .in("id", validatedPayload.ids)
+    .eq("user_id", user.id);
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);

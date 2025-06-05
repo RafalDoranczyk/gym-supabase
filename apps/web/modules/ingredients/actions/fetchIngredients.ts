@@ -20,14 +20,14 @@ import {
 
 function buildIngredientsQuery(
   supabase: Awaited<ReturnType<typeof createServerClient>>,
-  params: FetchIngredientsPayload,
+  params: FetchIngredientsPayload
 ) {
   let query = supabase.from("ingredients").select(
     `
       *,
       ingredient_groups!inner(name)
     `,
-    { count: "exact" },
+    { count: "exact" }
   );
 
   // Filter by group name directly in JOIN
@@ -50,24 +50,11 @@ function buildIngredientsQuery(
 }
 
 export async function fetchIngredients(
-  payload?: FetchIngredientsPayload,
+  payload?: FetchIngredientsPayload
 ): Promise<FetchIngredientsResponse> {
-  // Validate input
   const validatedPayload = assertZodParse(FetchIngredientsPayloadSchema, payload);
 
   const supabase = await createServerClient();
-
-  // Handle group filtering with separate query if needed
-  let groupId: string | undefined;
-  if (validatedPayload.group?.trim()) {
-    const { data: groups } = await supabase
-      .from("ingredient_groups")
-      .select("id")
-      .eq("name", validatedPayload.group)
-      .single();
-
-    groupId = groups?.id;
-  }
 
   // Build and execute query
   const query = buildIngredientsQuery(supabase, validatedPayload);

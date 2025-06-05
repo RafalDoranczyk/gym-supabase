@@ -2,19 +2,27 @@
 
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
-  type CreateMeasurement,
-  CreateMeasurementSchema,
-  type Measurement,
-  MeasurementSchema,
+  BasicMeasurementSchema,
+  type CreateMeasurementPayload,
+  CreateMeasurementPayloadSchema,
+  type CreateMeasurementResponse,
+  type CreateMeasurementsPayload,
+  CreateMeasurementsPayloadSchema,
+  type CreateMeasurementsResponse,
 } from "@repo/schemas";
+import { revalidatePath } from "next/cache";
 
-export async function createMeasurement(payload: CreateMeasurement): Promise<Measurement> {
+export async function createMeasurement(
+  payload: CreateMeasurementPayload
+): Promise<CreateMeasurementResponse> {
+  const validatedPayload = assertZodParse(CreateMeasurementPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
     .from("measurements")
     .insert({
-      ...payload,
+      ...validatedPayload,
       user_id: user.id,
     })
     .select()
@@ -24,24 +32,24 @@ export async function createMeasurement(payload: CreateMeasurement): Promise<Mea
     throw mapSupabaseErrorToAppError(error);
   }
 
-  return assertZodParse(MeasurementSchema, data);
+  return assertZodParse(BasicMeasurementSchema, data);
 }
 
 // Bulk create measurements (useful for importing data)
-export async function createMeasurements(inputs: CreateMeasurement[]): Promise<Measurement[]> {
+export async function createMeasurements(
+  payload: CreateMeasurementsPayload
+): Promise<CreateMeasurementsResponse> {
+  const validatedPayload = assertZodParse(CreateMeasurementsPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
-  // Validate all inputs
-  const validatedData = inputs.map((input) => assertZodParse(CreateMeasurementSchema, input));
-
-  // Insert measurements
   const { data, error } = await supabase
     .from("measurements")
     .insert(
-      validatedData.map((measurement) => ({
+      validatedPayload.measurements.map((measurement) => ({
         ...measurement,
         user_id: user.id,
-      })),
+      }))
     )
     .select();
 
@@ -49,5 +57,7 @@ export async function createMeasurements(inputs: CreateMeasurement[]): Promise<M
     throw mapSupabaseErrorToAppError(error);
   }
 
-  return data.map((measurement) => assertZodParse(MeasurementSchema, measurement));
+  revalidatePath("/dashboard/measurements");
+
+  return data.map((measurement) => assertZodParse(BasicMeasurementSchema, measurement));
 }

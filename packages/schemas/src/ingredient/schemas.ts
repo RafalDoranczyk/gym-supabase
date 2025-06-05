@@ -28,7 +28,7 @@ export const IngredientUnitTypeSchema = z.enum(
   Object.keys(INGREDIENT_UNIT_TYPES) as [IngredientUnitType, ...IngredientUnitType[]],
   {
     message: validationMessages.enum("Unit type", INGREDIENT_UNIT_TYPES),
-  },
+  }
 );
 
 export const IngredientFormSchema = z.object({
@@ -89,7 +89,7 @@ export const FetchIngredientsPayloadSchema = z.object({
   limit: z.coerce.number().min(1).max(100).optional(),
   offset: z.coerce.number().min(0).optional(),
   order: z.enum(["asc", "desc"]).optional(),
-  orderBy: z.enum(["name", "calories", "price", "created_at"]).optional(), // Simplified
+  orderBy: z.enum(["name", "calories", "price", "created_at"]).optional(),
 });
 
 export const FetchIngredientsResponseSchema = z.object({

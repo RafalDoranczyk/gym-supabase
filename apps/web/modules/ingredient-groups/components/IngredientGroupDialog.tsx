@@ -10,44 +10,43 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import type { NutritionGroup } from "@repo/schemas";
-import { startTransition } from "react";
-import { useIngredientGroupForm } from "../forms/useIngredientGroupForm";
+import { useTransition } from "react";
 
 import { useToast } from "@/providers";
 import { handleFormErrors } from "@/utils";
+import type { UseFormReturn } from "react-hook-form";
 import { createIngredientGroup } from "../actions/createIngredientGroup";
 import { updateIngredientGroup } from "../actions/updateIngredientGroup";
+import type { IngredientGroupForm } from "../hoooks/useIngredientGroupForm";
 
 type IngredientGroupDialogProps = {
   open: boolean;
   onClose: () => void;
-  group: NutritionGroup | null;
+  form: UseFormReturn<IngredientGroupForm>;
 };
 
-export function IngredientGroupDialog({ open, onClose, group }: IngredientGroupDialogProps) {
-  const { control, formState, handleSubmit, reset, watch, setValue, setError } =
-    useIngredientGroupForm(group);
-
+export function IngredientGroupDialog({ open, onClose, form }: IngredientGroupDialogProps) {
+  const [isPending, startTransition] = useTransition();
   const toast = useToast();
-  const selectedColor = watch("color");
 
-  const editingGroup = Boolean(group);
+  const { control, formState, handleSubmit, watch, setValue, setError, getValues } = form;
+
+  const selectedColor = watch("color");
+  const isEditing = !!getValues("id");
+  const isSubmitting = formState.isSubmitting;
 
   const onSubmit = handleSubmit((payload) => {
     startTransition(async () => {
       try {
-        if (group) {
-          await updateIngredientGroup({
-            ...payload,
-            id: group.id,
-          });
+        if (isEditing) {
+          const id = getValues("id");
+          await updateIngredientGroup({ ...payload, id });
           toast.success("Group updated successfully");
         } else {
           await createIngredientGroup(payload);
           toast.success("Group created successfully");
         }
-        handleClose();
+        onClose();
       } catch (error) {
         handleFormErrors(error, setError, toast, {
           name: "This name already exists",
@@ -56,41 +55,29 @@ export function IngredientGroupDialog({ open, onClose, group }: IngredientGroupD
     });
   });
 
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
-
-  const isSubmitting = formState.isSubmitting;
-  const submitButtonText = isSubmitting
-    ? editingGroup
-      ? "Updating..."
-      : "Creating..."
-    : editingGroup
-      ? "Update Group"
-      : "Create Group";
-
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        component: "form",
-        onSubmit: onSubmit,
+      slotProps={{
+        paper: {
+          component: "form",
+          onSubmit: onSubmit,
+        },
       }}
     >
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        {editingGroup ? "Edit Ingredient Group" : "Create Ingredient Group"}
-        <IconButton onClick={handleClose} aria-label="close dialog" disabled={isSubmitting}>
+        {isEditing ? "Edit Ingredient Group" : "Create Ingredient Group"}
+        <IconButton onClick={onClose} aria-label="close dialog">
           <Close />
         </IconButton>
       </DialogTitle>
 
       <DialogContent>
         <DialogContentText sx={{ mb: 2 }}>
-          {editingGroup
+          {isEditing
             ? "Update the details of this ingredient group."
             : "Create a new ingredient group to organize your nutrition database."}
         </DialogContentText>
@@ -103,8 +90,7 @@ export function IngredientGroupDialog({ open, onClose, group }: IngredientGroupD
             label="Group Name"
             name="name"
             required
-            disabled={isSubmitting}
-            autoFocus={!editingGroup}
+            autoFocus={!isEditing}
           />
 
           <ControlledTextField
@@ -115,7 +101,6 @@ export function IngredientGroupDialog({ open, onClose, group }: IngredientGroupD
             name="description"
             multiline
             rows={3}
-            disabled={isSubmitting}
             placeholder="Optional description for this group..."
           />
 
@@ -129,11 +114,17 @@ export function IngredientGroupDialog({ open, onClose, group }: IngredientGroupD
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={handleClose} disabled={isSubmitting} color="inherit">
+        <Button onClick={onClose} disabled={isPending} color="inherit">
           Cancel
         </Button>
-        <Button type="submit" variant="contained" disabled={isSubmitting}>
-          {submitButtonText}
+        <Button type="submit" variant="contained" loading={isPending}>
+          {isSubmitting
+            ? isEditing
+              ? "Updating..."
+              : "Creating..."
+            : isEditing
+              ? "Update Group"
+              : "Create Group"}
         </Button>
       </DialogActions>
     </Dialog>

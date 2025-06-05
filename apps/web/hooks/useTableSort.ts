@@ -19,7 +19,7 @@ export function useTableSort<T extends TableData>(data: T[]) {
   const [orderBy, setOrderBy] = useState<OrderByKeys<T>>("name" as OrderByKeys<T>);
   const [selected, setSelected] = useState<number[]>([]);
 
-  const handleRequestSort = (e: React.MouseEvent<unknown>, property: OrderByKeys<T>) => {
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: OrderByKeys<T>) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
@@ -38,7 +38,7 @@ export function useTableSort<T extends TableData>(data: T[]) {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
 

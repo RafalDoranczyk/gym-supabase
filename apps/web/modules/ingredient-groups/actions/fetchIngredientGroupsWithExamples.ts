@@ -2,23 +2,17 @@
 
 import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
 import {
-  type GetNutritionGroupsWithExamplesResponse,
-  GetNutritionGroupsWithExamplesResponseSchema,
+  type FetchIngredientGroupsWithExamplesResponse,
+  FetchIngredientGroupsWithExamplesResponseSchema,
   type Ingredient,
 } from "@repo/schemas";
 
-export async function fetchIngredientGroupsWithExamples(): Promise<GetNutritionGroupsWithExamplesResponse> {
+export async function fetchIngredientGroupsWithExamples(): Promise<FetchIngredientGroupsWithExamplesResponse> {
   const supabase = await createServerClient();
 
   const { data, error, count } = await supabase
     .from("ingredient_groups")
-    .select(
-      `
-      *,
-      ingredients:ingredients(name)
-    `,
-      { count: "exact" },
-    )
+    .select("*, ingredients:ingredients(name)", { count: "exact" })
     .order("name", { ascending: true });
 
   if (error) {
@@ -34,10 +28,8 @@ export async function fetchIngredientGroupsWithExamples(): Promise<GetNutritionG
       .map((ingredient: Ingredient) => ingredient.name),
   }));
 
-  const response = {
+  return assertZodParse(FetchIngredientGroupsWithExamplesResponseSchema, {
     data: transformedData,
     count: count || 0,
-  };
-
-  return assertZodParse(GetNutritionGroupsWithExamplesResponseSchema, response);
+  });
 }

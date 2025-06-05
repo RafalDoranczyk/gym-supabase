@@ -1,35 +1,26 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type CreateMeasurement, CreateMeasurementSchema } from "@repo/schemas";
+import {
+  CreateMeasurementPayloadSchema,
+  type CreateMeasurementPayload,
+  type UpdateMeasurementPayload,
+} from "@repo/schemas";
 import { useForm } from "react-hook-form";
 
-export type CreateMeasurementForm = CreateMeasurement;
+export type MeasurementForm = CreateMeasurementPayload | UpdateMeasurementPayload;
+
+export const measurementFormDefaultValues: MeasurementForm = {
+  measurement_type_id: "",
+  value: 0,
+  unit: "metric" as const,
+  notes: null,
+  measured_at: new Date().toISOString(),
+};
 
 export function useMeasurementForm() {
-  const form = useForm<CreateMeasurementForm>({
-    resolver: zodResolver(CreateMeasurementSchema),
-    defaultValues: {
-      measurement_type_id: "",
-      value: 0,
-      unit: "metric" as const,
-      notes: null,
-      measured_at: new Date().toISOString(),
-    },
+  return useForm<MeasurementForm>({
+    resolver: zodResolver(CreateMeasurementPayloadSchema),
+    defaultValues: measurementFormDefaultValues,
   });
-
-  const resetForm = () => {
-    form.reset({
-      measurement_type_id: "",
-      value: 0,
-      unit: "metric" as const,
-      notes: null,
-      measured_at: new Date().toISOString(),
-    });
-  };
-
-  return {
-    ...form,
-    resetForm,
-  };
 }

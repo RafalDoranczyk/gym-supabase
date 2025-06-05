@@ -1,4 +1,0 @@
-export const MEAL_NAME_MIN_LENGTH = 3;
-export const MEAL_NAME_MAX_LENGTH = 50;
-export const MEAL_DESCRIPTION_MAX_LENGTH = 500;
-export const MEALS_FETCH_LIMIT = 25;

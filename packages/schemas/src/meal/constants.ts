@@ -1,0 +1,3 @@
+export const MEAL_NAME_MIN_LENGTH = 2;
+export const MEAL_NAME_MAX_LENGTH = 100;
+export const MEAL_DESCRIPTION_MAX_LENGTH = 500;

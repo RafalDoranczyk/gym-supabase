@@ -60,7 +60,7 @@ export function MealsTable({
     >
       <NutritionTable.Head
         headCells={headCells}
-        onRequestSort={(e, property) => {
+        onRequestSort={(_event, property) => {
           const isAsc = orderBy === property && order === "asc";
           onSort(isAsc ? "desc" : "asc", property);
         }}
@@ -68,9 +68,9 @@ export function MealsTable({
         orderBy={orderBy}
       />
       <TableBody>
-        {meals.map((meal, index) => {
+        {meals.map((meal) => {
           const { calories, carbs, fat, price, protein } = calculateMealNutrition(
-            meal.meal_ingredients ?? [],
+            meal.meal_ingredients ?? []
           );
 
           return (

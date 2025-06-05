@@ -15,25 +15,25 @@ export function mapSupabaseErrorToAppError(error: SupabaseKnownError): AppError 
         return new AppError(
           AppErrorCodes.VALIDATION_ERROR,
           "Data too long for column",
-          error.details,
+          error.details
         );
       case "23503":
         return new AppError(
           AppErrorCodes.FOREIGN_KEY_VIOLATION,
           "Invalid foreign key reference",
-          error.details,
+          error.details
         );
       case "23505":
         return new AppError(
           AppErrorCodes.UNIQUE_VIOLATION,
           "Unique constraint violation",
-          error.details,
+          error.details
         );
       case "42501":
         return new AppError(
           AppErrorCodes.PERMISSION_DENIED,
           "Insufficient privileges to perform this action",
-          error.details,
+          error.details
         );
       default:
         return new AppError(AppErrorCodes.SERVER_ERROR, error.message, error.details);
@@ -55,7 +55,7 @@ export function mapSupabaseErrorToAppError(error: SupabaseKnownError): AppError 
         return new AppError(
           AppErrorCodes.VALIDATION_ERROR,
           "Invalid data provided.",
-          error.message,
+          error.message
         );
       default:
         return new AppError(AppErrorCodes.SERVER_ERROR, error.message);

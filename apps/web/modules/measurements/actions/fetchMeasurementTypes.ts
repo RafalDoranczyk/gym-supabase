@@ -1,24 +1,25 @@
 "use server";
 
 import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
-import { MeasurementTypeSchema } from "@repo/schemas";
-import { z } from "zod";
+import {
+  FetchMeasurementTypesResponseSchema,
+  type FetchMeasurementTypesResponse,
+} from "@repo/schemas";
 
-// Response schema for multiple measurement types
-const GetMeasurementTypesResponseSchema = z.array(MeasurementTypeSchema);
-export type GetMeasurementTypesResponse = z.infer<typeof GetMeasurementTypesResponseSchema>;
-
-export async function fetchMeasurementTypes(): Promise<GetMeasurementTypesResponse> {
+export async function fetchMeasurementTypes(): Promise<FetchMeasurementTypesResponse> {
   const supabase = await createServerClient();
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from("measurement_types")
-    .select("*")
-    .order("display_order", { ascending: true }); // Sort by display order
+    .select("*", { count: "exact" })
+    .order("display_order", { ascending: true });
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);
   }
 
-  return assertZodParse(GetMeasurementTypesResponseSchema, data);
+  return assertZodParse(FetchMeasurementTypesResponseSchema, {
+    data,
+    count,
+  });
 }

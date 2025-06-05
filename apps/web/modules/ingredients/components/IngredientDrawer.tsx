@@ -3,12 +3,11 @@
 import { ControlledSelect, ControlledTextField, Drawer } from "@/components";
 import { useToast } from "@/providers";
 import { handleFormErrors } from "@/utils";
-import { LoadingButton } from "@mui/lab";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { INGREDIENT_UNIT_TYPES, type NutritionGroup } from "@repo/schemas";
+import { INGREDIENT_UNIT_TYPES, type IngredientGroup } from "@repo/schemas";
 import Link from "next/link";
 
-import { useTransition } from "react";
+import { useMemo, useTransition } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
 import { createIngredient } from "../actions/createIngredient";
@@ -57,6 +56,7 @@ function SetupRequiredDrawer({ onClose, open }: SetupRequiredDrawerProps) {
   );
 }
 
+// Memoized unit type options to prevent recreation
 const unitTypeOptions = Object.entries(INGREDIENT_UNIT_TYPES).map(([id, name]) => ({
   id,
   name,
@@ -66,49 +66,45 @@ type IngredientDrawerProps = {
   form: UseFormReturn<IngredientForm>;
   onClose: () => void;
   open: boolean;
-  ingredientGroups: NutritionGroup[];
+  ingredientGroups: IngredientGroup[];
 };
 
 export function IngredientDrawer({ form, onClose, open, ingredientGroups }: IngredientDrawerProps) {
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
 
+  const { control, formState, handleSubmit, reset, setError, getValues } = form;
+
+  // Memoize mode calculation to prevent recalculation
+  const mode = useMemo(() => (getValues("id") ? "edit" : "create"), [getValues]);
+
   if (ingredientGroups.length === 0) {
     return <SetupRequiredDrawer onClose={onClose} open={open} />;
   }
 
-  const { control, formState, handleSubmit, reset, setError, watch, getValues } = form;
-  const mode = getValues("id") ? "edit" : "create";
-
-  const unitType = watch("unit_type");
-
   const onSubmit = handleSubmit((payload) => {
+    const handleSuccess = (isEdit: boolean) => {
+      reset();
+      toast.success(isEdit ? "Ingredient updated successfully" : "Ingredient saved successfully");
+      onClose();
+    };
+
+    const handleError = (error: unknown) => {
+      handleFormErrors(error, setError, toast, {
+        name: "This name already exists",
+      });
+    };
+
     startTransition(() => {
       if (mode === "edit") {
         const id = getValues("id");
         updateIngredient({ ...payload, id })
-          .then(() => {
-            reset();
-            toast.success("Ingredient updated successfully");
-            onClose();
-          })
-          .catch((error) => {
-            handleFormErrors(error, setError, toast, {
-              name: "This name already exists",
-            });
-          });
+          .then(() => handleSuccess(true))
+          .catch(handleError);
       } else {
         createIngredient(payload)
-          .then(() => {
-            reset();
-            toast.success("Ingredient saved successfully");
-            onClose();
-          })
-          .catch((error) => {
-            handleFormErrors(error, setError, toast, {
-              name: "This name already exists",
-            });
-          });
+          .then(() => handleSuccess(false))
+          .catch(handleError);
       }
     });
   });
@@ -136,7 +132,7 @@ export function IngredientDrawer({ form, onClose, open, ingredientGroups }: Ingr
             required
           />
 
-          <IngredientNumberFields control={control} errors={formState.errors} unitType={unitType} />
+          <IngredientNumberFields control={control} errors={formState.errors} />
 
           <ControlledSelect
             errorMessage={formState.errors.group_id?.message}
@@ -154,13 +150,13 @@ export function IngredientDrawer({ form, onClose, open, ingredientGroups }: Ingr
           />
 
           <Stack spacing={1.5} sx={{ pt: 1 }}>
-            <LoadingButton loading={isPending} onClick={onSubmit} variant="contained" size="medium">
+            <Button loading={isPending} onClick={onSubmit} variant="contained" size="medium">
               {mode === "edit" ? "Update" : "Save"}
-            </LoadingButton>
+            </Button>
 
-            <LoadingButton onClick={onClose} variant="text" disabled={isPending} size="medium">
+            <Button onClick={onClose} variant="text" disabled={isPending} size="medium">
               Cancel
-            </LoadingButton>
+            </Button>
           </Stack>
         </Stack>
       </Box>

@@ -1,6 +1,6 @@
 import type { TableData, TableOrder } from "@/hooks";
 import { assertZodParse } from "@/utils";
-import { type MealSearchParams, MealSearchParamsSchema, type MealTag } from "@repo/schemas";
+import { type FetchMealsPayload, FetchMealsPayloadSchema, type MealTag } from "@repo/schemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
@@ -8,9 +8,9 @@ export const useMealsFilters = (mealTags: MealTag[]) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentFilters: MealSearchParams = assertZodParse(
-    MealSearchParamsSchema,
-    Object.fromEntries(searchParams.entries()),
+  const currentFilters: FetchMealsPayload = assertZodParse(
+    FetchMealsPayloadSchema,
+    Object.fromEntries(searchParams.entries())
   );
 
   const {
@@ -34,7 +34,7 @@ export const useMealsFilters = (mealTags: MealTag[]) => {
 
   const activeOptions = useMemo(
     () => mealTags.map((tag) => ({ id: String(tag.id), name: tag.name })),
-    [mealTags],
+    [mealTags]
   );
 
   const handleTagChange = useCallback(
@@ -50,7 +50,7 @@ export const useMealsFilters = (mealTags: MealTag[]) => {
 
       router.push(`/dashboard/meals?${params}`);
     },
-    [router, searchParams],
+    [router, searchParams]
   );
 
   const handleSortChange = useCallback(
@@ -60,7 +60,7 @@ export const useMealsFilters = (mealTags: MealTag[]) => {
       params.set("orderBy", newOrderBy.toString());
       router.push(`/dashboard/meals?${params.toString()}`);
     },
-    [router, searchParams],
+    [router, searchParams]
   );
 
   const handleClearFilters = useCallback(() => {

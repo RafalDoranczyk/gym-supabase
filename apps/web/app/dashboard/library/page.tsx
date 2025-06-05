@@ -1,7 +1,9 @@
-import { IngredientsGroupPageView } from "@/modules/ingredient-groups";
-import { fetchIngredientGroupsWithExamples } from "@/modules/ingredients";
-import { fetchMealTagsWithExamples } from "@/modules/meal-tags";
-import { MealTagsPageView } from "@/modules/meal-tags";
+import {
+  fetchIngredientGroupsWithExamples,
+  IngredientsGroupPageContent,
+} from "@/modules/ingredient-groups";
+import { fetchMealTagsWithExamples, MealTagsPageContent } from "@/modules/meal-tags";
+
 import { Divider, Stack } from "@mui/material";
 
 export default async function DataManagement() {
@@ -13,12 +15,12 @@ export default async function DataManagement() {
   return (
     <Stack spacing={4}>
       {/* Ingredient Groups Section */}
-      <IngredientsGroupPageView groups={ingredientGroups.data} />
+      <IngredientsGroupPageContent ingredientGroups={ingredientGroups.data} />
 
       <Divider />
 
       {/* Meal Tags Section */}
-      <MealTagsPageView tags={mealTags.data} />
+      <MealTagsPageContent mealTags={mealTags.data} />
     </Stack>
   );
 }

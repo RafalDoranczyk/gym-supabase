@@ -1,11 +1,10 @@
 import { fetchIngredientGroups } from "@/modules/ingredient-groups";
 import { IngredientsPageContent, fetchIngredients } from "@/modules/ingredients";
-
 import { cleanSearchParams } from "@/utils";
 import { FetchIngredientsPayloadSchema } from "@repo/schemas";
 
 type PageProps = {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function IngredientsPage({ searchParams }: PageProps) {

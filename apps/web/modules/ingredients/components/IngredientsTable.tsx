@@ -44,7 +44,7 @@ const formatNumericValue = (value: number | null | undefined): string => {
 // Helper function to render nutrition cells consistently
 const renderNutritionCell = (
   value: number | null | undefined,
-  width = TABLE_CONFIG.NUTRITION_CELL_WIDTH,
+  width = TABLE_CONFIG.NUTRITION_CELL_WIDTH
 ) => (
   <TableCell align="right" sx={{ width }}>
     <Typography variant="body2" sx={{ color: value === 0 ? "text.disabled" : "inherit" }}>
@@ -72,7 +72,7 @@ export function IngredientsTable({
     >
       <NutritionTable.Head
         headCells={headCells}
-        onRequestSort={(e, property) => {
+        onRequestSort={(_event, property) => {
           const isAsc = orderBy === property && order === "asc";
           onSort(isAsc ? "desc" : "asc", property);
         }}

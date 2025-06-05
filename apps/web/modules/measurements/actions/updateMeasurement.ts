@@ -1,18 +1,25 @@
 "use server";
 
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
-import { type Measurement, MeasurementSchema, type UpdateMeasurement } from "@repo/schemas";
+import {
+  MeasurementSchema,
+  UpdateMeasurementPayloadSchema,
+  type UpdateMeasurementPayload,
+  type UpdateMeasurementResponse,
+} from "@repo/schemas";
+import { revalidatePath } from "next/cache";
 
 export async function updateMeasurement(
-  id: string,
-  payload: UpdateMeasurement,
-): Promise<Measurement> {
+  payload: UpdateMeasurementPayload
+): Promise<UpdateMeasurementResponse> {
+  const validatedPayload = assertZodParse(UpdateMeasurementPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
     .from("measurements")
-    .update(payload)
-    .eq("id", id)
+    .update(validatedPayload)
+    .eq("id", validatedPayload.id)
     .eq("user_id", user.id)
     .select()
     .single();
@@ -20,6 +27,8 @@ export async function updateMeasurement(
   if (error) {
     throw mapSupabaseErrorToAppError(error);
   }
+
+  revalidatePath("/dashboard/measurements");
 
   return assertZodParse(MeasurementSchema, data);
 }

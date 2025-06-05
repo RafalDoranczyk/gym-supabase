@@ -1,5 +1,5 @@
 import { formatDate } from "@/utils";
-import { Add, LocalOffer, MoreVert } from "@mui/icons-material";
+import { LocalOffer, MoreVert } from "@mui/icons-material";
 import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
 import type { MealTagWithExamples } from "@repo/schemas";
 import type React from "react";
@@ -7,26 +7,14 @@ import type React from "react";
 type MealTagCardProps = {
   tag: MealTagWithExamples;
   onMenuClick: (event: React.MouseEvent<HTMLButtonElement>, tag: MealTagWithExamples) => void;
-  onAddMeal?: (tag: MealTagWithExamples) => void;
 };
 
-export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
+export function MealTagCard({ tag, onMenuClick }: MealTagCardProps) {
   const totalMeals = tag.mealsCount || 0;
+  const hasExamples = tag.examples.length > 0;
 
   return (
-    <Card
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        transition: "all 0.2s",
-        "&:hover": {
-          borderColor: tag.color || "primary.main",
-          transform: "translateY(-2px)",
-          boxShadow: tag.color ? `0 8px 25px ${tag.color}20` : "0 8px 25px rgba(139, 92, 246, 0.2)",
-        },
-      }}
-    >
+    <Card>
       <CardContent
         sx={{
           display: "flex",
@@ -60,26 +48,10 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
             )}
             <Typography variant="h6">{tag.name}</Typography>
           </Box>
-          <Box sx={{ display: "flex", gap: 0.5 }}>
-            {onAddMeal && (
-              <IconButton
-                size="small"
-                sx={{
-                  color: tag.color || "primary.main",
-                  "&:hover": {
-                    bgcolor: tag.color ? `${tag.color}10` : "primary.main10",
-                  },
-                }}
-                onClick={() => onAddMeal(tag)}
-                title="Add meal with this tag"
-              >
-                <Add fontSize="small" />
-              </IconButton>
-            )}
-            <IconButton size="small" onClick={(e) => onMenuClick(e, tag)}>
-              <MoreVert />
-            </IconButton>
-          </Box>
+
+          <IconButton size="small" onClick={(e) => onMenuClick(e, tag)}>
+            <MoreVert />
+          </IconButton>
         </Box>
 
         {/* Description */}
@@ -101,7 +73,7 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
 
         {/* Examples */}
         <Box sx={{ flex: 1 }}>
-          {tag.examples.length === 0 ? (
+          {!hasExamples && (
             <Typography
               variant="caption"
               sx={{
@@ -113,7 +85,9 @@ export function MealTagCard({ tag, onMenuClick, onAddMeal }: MealTagCardProps) {
             >
               Add meals to see examples here
             </Typography>
-          ) : (
+          )}
+
+          {hasExamples && (
             <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap", gap: 0.5 }}>
               {tag.examples.slice(0, 3).map((example) => (
                 <Chip

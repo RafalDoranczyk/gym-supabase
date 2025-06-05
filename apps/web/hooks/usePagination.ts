@@ -15,7 +15,7 @@ export function usePagination({ limit }: UsePaginationProps) {
 
   const urlSearchParams = useMemo(
     () => new URLSearchParams(searchParams.toString()),
-    [searchParams],
+    [searchParams]
   );
 
   const onParamsChange = useCallback(
@@ -28,7 +28,7 @@ export function usePagination({ limit }: UsePaginationProps) {
 
       router.push(`${pathname}?${newSearchParams.toString()}`);
     },
-    [pathname, router, urlSearchParams],
+    [pathname, router, urlSearchParams]
   );
 
   const onSearchChange = useCallback(
@@ -45,14 +45,14 @@ export function usePagination({ limit }: UsePaginationProps) {
 
       router.push(`${pathname}?${newParams}`);
     },
-    [pathname, router, urlSearchParams],
+    [pathname, router, urlSearchParams]
   );
 
   const onPageChange = useCallback(
     (page: number) => {
       onParamsChange([{ param: "offset", value: page * limitParam }]);
     },
-    [limitParam, onParamsChange],
+    [limitParam, onParamsChange]
   );
 
   const onClearAllFilters = useCallback(() => {

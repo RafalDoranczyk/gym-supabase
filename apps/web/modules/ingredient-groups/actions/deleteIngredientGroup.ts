@@ -2,21 +2,24 @@
 
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
-  type DeleteNutritionGroupPayload,
-  type DeleteNutritionGroupResponse,
-  NutritionGroupSchema,
+  type DeleteIngredientGroupPayload,
+  DeleteIngredientGroupPayloadSchema,
+  type DeleteIngredientGroupResponse,
+  IngredientGroupSchema,
 } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function deleteIngredientGroup(
-  id: DeleteNutritionGroupPayload,
-): Promise<DeleteNutritionGroupResponse> {
+  payload: DeleteIngredientGroupPayload
+): Promise<DeleteIngredientGroupResponse> {
+  const validatedId = assertZodParse(DeleteIngredientGroupPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
     .from("ingredient_groups")
     .delete()
-    .eq("id", id)
+    .eq("id", validatedId.id)
     .eq("user_id", user.id)
     .select("*")
     .single();
@@ -25,7 +28,7 @@ export async function deleteIngredientGroup(
     throw mapSupabaseErrorToAppError(error);
   }
 
-  revalidatePath("/dashboard/data-management");
+  revalidatePath("/dashboard/library");
 
-  return assertZodParse(NutritionGroupSchema, data);
+  return assertZodParse(IngredientGroupSchema, data);
 }

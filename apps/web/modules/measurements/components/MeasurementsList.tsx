@@ -1,118 +1,63 @@
+import { SearchField, TooltipIconButton } from "@/components";
 import { formatDate } from "@/utils";
-import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  Sort as SortIcon,
-  Visibility as ViewIcon,
-} from "@mui/icons-material";
+import { Sort as SortIcon, Visibility as ViewIcon } from "@mui/icons-material";
 import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
-import type { MeasurementWithType } from "@repo/schemas";
+import type { Measurement } from "@repo/schemas";
+import { useMemo, useState } from "react";
 
 type MeasurementsListProps = {
-  measurements: MeasurementWithType[];
-  onEdit: (measurement: MeasurementWithType) => void;
-  onDelete: (measurement: MeasurementWithType) => void;
+  measurements: Measurement[];
+  onEdit: (measurement: Measurement) => void;
+  onDelete: (measurement: Measurement) => void;
   onViewAll: () => void;
 };
 
 type MeasurementItemProps = {
-  measurement: MeasurementWithType;
-  onEdit: () => void;
-  onDelete: () => void;
+  measurement: Measurement;
+  onEdit: (measurement: Measurement) => void;
+  onDelete: (measurement: Measurement) => void;
   isLast?: boolean;
 };
 
+const MAX_MEASUREMENT_TO_SHOW = 4;
+
 // Helper function to get the actual unit string
-function getDisplayUnit(measurement: MeasurementWithType): string {
-  const { unit, measurement_type } = measurement;
-
-  if (unit === "imperial" && measurement_type.unit_imperial) {
-    return measurement_type.unit_imperial;
-  }
-
-  return measurement_type.unit_metric;
+function getDisplayUnit(): string {
+  return "kg";
 }
 
 function MeasurementItem({ measurement, onEdit, onDelete, isLast }: MeasurementItemProps) {
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          py: 2,
-        }}
-      >
+      <Box display="flex" justifyContent="space-between" alignItems="center" py={2}>
         {/* Measurement Info */}
-        <Box sx={{ flex: 1 }}>
-          <Typography
-            variant="body1"
-            sx={{
-              fontWeight: 500,
-              mb: 0.5,
-              fontSize: "0.95rem",
-            }}
-          >
+        <Box flex={1}>
+          <Typography variant="body1" fontWeight={500} mb={0.5} fontSize="0.95rem">
             {measurement.measurement_type.name}
           </Typography>
-          <Typography
-            variant="caption"
-            sx={{
-              color: "#888",
-              fontSize: "0.75rem",
-            }}
-          >
+          <Typography variant="caption" color="text.secondary" fontSize="0.75rem">
             {formatDate(new Date(measurement.measured_at))}
           </Typography>
         </Box>
 
         {/* Value & Actions */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box display="flex" alignItems="center" gap={1}>
           <Typography
             variant="body1"
-            sx={{
-              fontWeight: 600,
-              fontSize: "1rem",
-              minWidth: "60px",
-              textAlign: "right",
-            }}
+            fontWeight={600}
+            fontSize="1rem"
+            textAlign="right"
+            sx={{ minWidth: "60px" }}
           >
-            {measurement.value} {getDisplayUnit(measurement)}
+            {measurement.value} {getDisplayUnit()}
           </Typography>
 
-          <Box sx={{ display: "flex", gap: 0.5 }}>
-            <IconButton
-              size="small"
-              onClick={onEdit}
-              sx={{
-                color: "#888",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  color: "white",
-                },
-              }}
-            >
-              <EditIcon sx={{ fontSize: 16 }} />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={onDelete}
-              sx={{
-                color: "#888",
-                "&:hover": {
-                  backgroundColor: "rgba(248, 113, 113, 0.1)",
-                  color: "#f87171",
-                },
-              }}
-            >
-              <DeleteIcon sx={{ fontSize: 16 }} />
-            </IconButton>
-          </Box>
+          <TooltipIconButton size="small" onClick={() => onEdit(measurement)} variant="edit" />
+          <TooltipIconButton size="small" onClick={() => onDelete(measurement)} variant="delete" />
         </Box>
       </Box>
 
-      {!isLast && <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />}
+      {!isLast && <Divider />}
     </>
   );
 }
@@ -123,44 +68,61 @@ export function MeasurementsList({
   onDelete,
   onViewAll,
 }: MeasurementsListProps) {
-  // Sort measurements by date (newest first) and take only the most recent 5
-  const recentMeasurements = [...measurements]
-    .sort((a, b) => new Date(b.measured_at).getTime() - new Date(a.measured_at).getTime())
-    .slice(0, 5);
+  const [search, setSearch] = useState("");
+
+  // Filter measurements based on search term
+  const filteredMeasurements = useMemo(() => {
+    if (!search.trim()) {
+      return measurements;
+    }
+
+    const searchLower = search.toLowerCase().trim();
+    return measurements.filter((measurement) => {
+      // Search in measurement type name
+      const typeNameMatch = measurement.measurement_type.name.toLowerCase().includes(searchLower);
+
+      // Search in value
+      const valueMatch = measurement.value.toString().includes(searchLower);
+
+      // Search in formatted date
+      const dateMatch = formatDate(new Date(measurement.measured_at))
+        .toLowerCase()
+        .includes(searchLower);
+
+      // Search in notes if they exist
+      const notesMatch = measurement.notes
+        ? measurement.notes.toLowerCase().includes(searchLower)
+        : false;
+
+      return typeNameMatch || valueMatch || dateMatch || notesMatch;
+    });
+  }, [measurements, search]);
+
+  // Sort filtered measurements by date (newest first) and take only the most recent MAX_MEASUREMENT_TO_SHOW
+  const recentMeasurements = useMemo(() => {
+    return [...filteredMeasurements]
+      .sort((a, b) => new Date(b.measured_at).getTime() - new Date(a.measured_at).getTime())
+      .slice(0, MAX_MEASUREMENT_TO_SHOW);
+  }, [filteredMeasurements]);
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+  };
 
   if (measurements.length === 0) {
     return (
       <Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              fontSize: "1.125rem",
-            }}
-          >
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h6" fontWeight={600} fontSize="1.125rem">
             Recent Measurements
           </Typography>
         </Box>
 
-        <Box
-          sx={{
-            textAlign: "center",
-            py: 6,
-            color: "#666",
-          }}
-        >
-          <Typography variant="body1" sx={{ mb: 1 }}>
+        <Box textAlign="center" py={6} color="text.disabled">
+          <Typography variant="body1" mb={1}>
             No measurements yet
           </Typography>
-          <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
+          <Typography variant="body2" fontSize="0.875rem">
             Add your first measurement to get started
           </Typography>
         </Box>
@@ -171,29 +133,14 @@ export function MeasurementsList({
   return (
     <Box>
       {/* Header */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 2.5,
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 600,
-            fontSize: "1.125rem",
-          }}
-        >
-          Recent Measurements
-        </Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2.5}>
+        <Typography variant="h5">Recent Measurements</Typography>
         <IconButton
           size="small"
+          color="default"
           sx={{
-            color: "#888",
             "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "action.hover",
             },
           }}
         >
@@ -201,41 +148,56 @@ export function MeasurementsList({
         </IconButton>
       </Box>
 
+      <SearchField
+        value={search}
+        onChange={handleSearchChange}
+        placeholder="Search measurements..."
+      />
+
       {/* Measurements List */}
       <Box>
-        {recentMeasurements.map((measurement, index) => (
-          <MeasurementItem
-            key={measurement.id}
-            measurement={measurement}
-            onEdit={() => onEdit(measurement)}
-            onDelete={() => onDelete(measurement)}
-            isLast={index === recentMeasurements.length - 1}
-          />
-        ))}
+        {recentMeasurements.length > 0 ? (
+          recentMeasurements.map((measurement, index) => (
+            <MeasurementItem
+              key={measurement.id}
+              measurement={measurement}
+              onEdit={() => onEdit(measurement)}
+              onDelete={() => onDelete(measurement)}
+              isLast={index === recentMeasurements.length - 1}
+            />
+          ))
+        ) : (
+          <Box textAlign="center" py={4} color="text.disabled">
+            <Typography variant="body2">No measurements found for "{search}"</Typography>
+          </Box>
+        )}
       </Box>
 
-      {/* View All Button */}
-      {measurements.length > 5 && (
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={onViewAll}
-          startIcon={<ViewIcon />}
-          sx={{
-            mt: 2,
-            borderColor: "rgba(102, 126, 234, 0.3)",
-            color: "#667eea",
-            backgroundColor: "rgba(102, 126, 234, 0.1)",
-            textTransform: "none",
-            fontWeight: 500,
-            "&:hover": {
-              borderColor: "#667eea",
-              backgroundColor: "rgba(102, 126, 234, 0.2)",
-            },
-          }}
-        >
-          View All Measurements ({measurements.length})
-        </Button>
+      {search ? (
+        <Box mt={2}>
+          <Typography variant="body2" color="text.secondary" textAlign="center">
+            Showing {recentMeasurements.length} of {filteredMeasurements.length} results
+            {filteredMeasurements.length > MAX_MEASUREMENT_TO_SHOW &&
+              `(first ${MAX_MEASUREMENT_TO_SHOW})`}
+          </Typography>
+        </Box>
+      ) : (
+        measurements.length > MAX_MEASUREMENT_TO_SHOW && (
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={onViewAll}
+            startIcon={<ViewIcon />}
+            color="primary"
+            sx={{
+              mt: 2,
+              textTransform: "none",
+              fontWeight: 500,
+            }}
+          >
+            View All Measurements ({measurements.length})
+          </Button>
+        )
       )}
     </Box>
   );

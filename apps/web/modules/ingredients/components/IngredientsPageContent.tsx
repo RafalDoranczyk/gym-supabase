@@ -2,9 +2,8 @@
 
 import { ConfirmActionDialog } from "@/components";
 import { TablePagination } from "@mui/material";
-import type { Ingredient, NutritionGroup } from "@repo/schemas";
+import type { Ingredient, IngredientGroup } from "@repo/schemas";
 
-import { INGREDIENT_MESSAGES } from "../constants";
 import { useIngredientsPageLogic } from "../hooks/useIngredientsPageLogic";
 import { IngredientDrawer } from "./IngredientDrawer";
 import { IngredientsEmptyState } from "./IngredientsEmptyState";
@@ -12,7 +11,7 @@ import { IngredientsTable } from "./IngredientsTable";
 import { IngredientsToolbar } from "./IngredientsToolbar";
 
 type IngredientsPageContentProps = {
-  ingredientGroups: NutritionGroup[];
+  ingredientGroups: IngredientGroup[];
   ingredients: Ingredient[];
   ingredientsCount: number;
 };
@@ -25,7 +24,7 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
   const { limitParam, page, onSearchChange, onClearAllFilters } = pagination;
 
   // UI state
-  const { drawer, ingredientToDelete, setDeleteIngredient, closeDeleteDialog } = ui;
+  const { drawerOpen, ingredientToDelete, setDeleteIngredient, closeDeleteDialog } = ui;
 
   // Handlers
   const { handleDeleteIngredient, handleOpenDrawer, handlePageChange, handleRowsPerPageChange } =
@@ -95,11 +94,11 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
         form={form}
         ingredientGroups={ingredientGroups}
         onClose={ui.closeDrawer}
-        open={drawer.open}
+        open={drawerOpen}
       />
 
       <ConfirmActionDialog
-        description={INGREDIENT_MESSAGES.CONFIRM_DELETE(ingredientToDelete?.name)}
+        description={`Are you sure you want to remove ${ingredientToDelete?.name ?? "this ingredient"}?`}
         handleClose={closeDeleteDialog}
         loading={isPending}
         onConfirm={handleDeleteIngredient}

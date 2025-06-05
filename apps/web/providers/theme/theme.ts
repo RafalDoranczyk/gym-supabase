@@ -3,6 +3,12 @@
 import { createTheme } from "@mui/material/styles";
 import { Roboto } from "next/font/google";
 
+declare module "@mui/material/styles" {
+  interface BreakpointOverrides {
+    xxl: true;
+  }
+}
+
 export const fonts = Roboto({
   display: "swap",
   subsets: ["latin"],
@@ -12,7 +18,16 @@ export const fonts = Roboto({
 
 export const theme = createTheme({
   cssVariables: true,
-
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
+      xxl: 1920,
+    },
+  },
   palette: {
     mode: "dark",
 

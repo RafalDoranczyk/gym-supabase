@@ -1,39 +1,23 @@
 import { formatDate } from "@/utils";
-import { Add, MoreVert } from "@mui/icons-material";
+import { MoreVert } from "@mui/icons-material";
 import { Box, Card, CardContent, Chip, IconButton, Stack, Typography } from "@mui/material";
-import type { NutritionGroupWithExamples } from "@repo/schemas";
+import type { IngredientGroupWithExamples } from "@repo/schemas";
 import type React from "react";
 
 type IngredientGroupCardProps = {
-  group: NutritionGroupWithExamples;
+  group: IngredientGroupWithExamples;
   onMenuClick: (
     event: React.MouseEvent<HTMLButtonElement>,
-    group: NutritionGroupWithExamples,
+    group: IngredientGroupWithExamples
   ) => void;
-  onAddIngredient?: (group: NutritionGroupWithExamples) => void;
 };
 
-export function IngredientGroupCard({
-  group,
-  onMenuClick,
-  onAddIngredient,
-}: IngredientGroupCardProps) {
+export function IngredientGroupCard({ group, onMenuClick }: IngredientGroupCardProps) {
   const totalIngredients = group.ingredientsCount || 0;
+  const hasExamples = group.examples.length > 0;
 
   return (
-    <Card
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        transition: "all 0.2s",
-        "&:hover": {
-          borderColor: group.color,
-          transform: "translateY(-2px)",
-          boxShadow: `0 8px 25px ${group.color}20`,
-        },
-      }}
-    >
+    <Card>
       <CardContent
         sx={{
           display: "flex",
@@ -43,13 +27,7 @@ export function IngredientGroupCard({
         }}
       >
         {/* Header */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
+        <Stack flexDirection="row" justifyContent="space-between" alignItems="center">
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Box
               sx={{
@@ -63,27 +41,10 @@ export function IngredientGroupCard({
             />
             <Typography variant="h6">{group.name}</Typography>
           </Box>
-          <Box sx={{ display: "flex", gap: 0.5 }}>
-            {onAddIngredient && (
-              <IconButton
-                size="small"
-                sx={{
-                  color: group.color,
-                  "&:hover": {
-                    bgcolor: `${group.color}10`,
-                  },
-                }}
-                onClick={() => onAddIngredient(group)}
-                title="Add ingredient to this group"
-              >
-                <Add fontSize="small" />
-              </IconButton>
-            )}
-            <IconButton size="small" onClick={(e) => onMenuClick(e, group)}>
-              <MoreVert />
-            </IconButton>
-          </Box>
-        </Box>
+          <IconButton size="small" onClick={(e) => onMenuClick(e, group)}>
+            <MoreVert />
+          </IconButton>
+        </Stack>
 
         {/* Description */}
         <Typography
@@ -104,7 +65,7 @@ export function IngredientGroupCard({
 
         {/* Examples */}
         <Box sx={{ flex: 1 }}>
-          {group.examples.length === 0 ? (
+          {!hasExamples && (
             <Typography
               variant="caption"
               sx={{
@@ -116,7 +77,9 @@ export function IngredientGroupCard({
             >
               Add ingredients to see examples here
             </Typography>
-          ) : (
+          )}
+
+          {hasExamples && (
             <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap", gap: 0.5 }}>
               {group.examples.slice(0, 3).map((example) => (
                 <Chip

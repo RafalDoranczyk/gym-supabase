@@ -1,9 +1,12 @@
 "use server";
 
 import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
-import { type GetNutritionGroupsResponse, GetNutritionGroupsResponseSchema } from "@repo/schemas";
+import {
+  type FetchIngredientGroupsResponse,
+  FetchIngredientGroupsResponseSchema,
+} from "@repo/schemas";
 
-export async function fetchIngredientGroups(): Promise<GetNutritionGroupsResponse> {
+export async function fetchIngredientGroups(): Promise<FetchIngredientGroupsResponse> {
   const supabase = await createServerClient();
 
   const { data, error, count } = await supabase
@@ -15,5 +18,8 @@ export async function fetchIngredientGroups(): Promise<GetNutritionGroupsRespons
     throw mapSupabaseErrorToAppError(error);
   }
 
-  return assertZodParse(GetNutritionGroupsResponseSchema, { data: data || [], count: count || 0 });
+  return assertZodParse(FetchIngredientGroupsResponseSchema, {
+    data: data || [],
+    count: count || 0,
+  });
 }

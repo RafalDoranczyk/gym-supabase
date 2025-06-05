@@ -25,7 +25,7 @@ export function handleFormErrors<T extends FieldValues>(
   error: unknown,
   setError: UseFormSetError<T>,
   toast: ToastContextType,
-  uniqueFields: Record<string, string> = {},
+  uniqueFields: Record<string, string> = {}
 ): void {
   // Safely extract error message from unknown error
   const getErrorMessage = (err: unknown): string => {

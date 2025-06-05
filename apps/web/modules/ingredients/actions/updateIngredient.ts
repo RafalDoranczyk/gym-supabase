@@ -10,9 +10,8 @@ import {
 import { revalidatePath } from "next/cache";
 
 export async function updateIngredient(
-  payload: UpdateIngredientPayload,
+  payload: UpdateIngredientPayload
 ): Promise<UpdateIngredientResponse> {
-  // Validate input - security boundary
   const validatedPayload = assertZodParse(UpdateIngredientPayloadSchema, payload);
 
   const { user, supabase } = await getUserScopedQuery();
@@ -31,6 +30,5 @@ export async function updateIngredient(
 
   revalidatePath("/dashboard/ingredients");
 
-  // Validate output - ensure type safety
   return assertZodParse(IngredientSchema, data);
 }

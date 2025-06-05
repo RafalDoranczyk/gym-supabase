@@ -10,7 +10,7 @@ import {
 import { useToast } from "@/providers";
 import { Button, Stack, TablePagination, Toolbar } from "@mui/material";
 import type { Ingredient, Meal, MealTag } from "@repo/schemas";
-import { useTransition } from "react";
+import { useMemo, useTransition } from "react";
 
 import { Add, FilterList } from "@mui/icons-material";
 import { deleteMeal } from "../actions/deleteMeal";
@@ -31,6 +31,7 @@ export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsP
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
 
+  // Hooks for state management
   const { limitParam, onPageChange, onParamsChange, onSearchChange, page } = useMealsPagination();
 
   const {
@@ -50,35 +51,24 @@ export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsP
     setMealToDelete,
   } = useMealsUI();
 
-  const handleDeleteMeal = () => {
-    if (mealToDelete) {
-      startTransition(() => {
-        deleteMeal(mealToDelete.id)
-          .then(() => {
-            toast.success(`Meal ${mealToDelete.name} removed successfully`);
-            closeConfirmDialog();
-          })
-          .catch((error) => {
-            toast.error(`Failed to remove meal: ${error.message}`);
-            closeConfirmDialog();
-          });
-      });
-    }
-  };
+  // Computed values
+  const hasActiveFilters = useMemo(
+    () =>
+      search.trim() !== "" ||
+      (selectedTagIds.length > 0 && selectedTagIds.length < mealTags.length),
+    [search, selectedTagIds.length, mealTags.length]
+  );
 
-  // Check if any filters are active
-  const hasActiveFilters =
-    search.trim() !== "" || (selectedTagIds.length > 0 && selectedTagIds.length < mealTags.length);
+  const hasMeals = meals.length > 0;
 
-  // Determine empty state content
-  const getEmptyStateContent = () => {
+  const emptyStateContent = useMemo(() => {
     if (hasActiveFilters) {
+      const trimmedSearch = search?.trim();
       return {
         title: "No meals found",
-        subtitle:
-          search?.trim() !== ""
-            ? `No meals match "${search?.trim()}"`
-            : "No meals found with current filters",
+        subtitle: trimmedSearch
+          ? `No meals match "${trimmedSearch}"`
+          : "No meals found with current filters",
         action: (
           <Button variant="outlined" startIcon={<FilterList />} onClick={handleClearFilters}>
             Clear Filters
@@ -91,17 +81,64 @@ export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsP
       title: "No meals found",
       subtitle: "Please add some meals to your list",
       action: (
-        <Button variant="outlined" startIcon={<Add />} onClick={() => openDrawer(null)}>
+        <Button variant="outlined" startIcon={<Add />} onClick={() => handleOpenDialog()}>
           Add Meal
         </Button>
       ),
     };
+  }, [hasActiveFilters, search, handleClearFilters]);
+
+  // Dialog handlers
+  const handleOpenDialog = (meal?: Meal | null) => {
+    openDrawer(meal ?? null);
   };
 
-  const emptyStateContent = getEmptyStateContent();
+  const handleCloseDialog = () => {
+    closeDrawer();
+  };
+
+  // Delete handlers
+  const handleOpenDeleteDialog = (meal: Meal) => {
+    setMealToDelete(meal);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    closeConfirmDialog();
+  };
+
+  const handleConfirmDelete = () => {
+    if (!mealToDelete) return;
+
+    startTransition(async () => {
+      try {
+        await deleteMeal({ id: mealToDelete.id });
+        toast.success(`Meal "${mealToDelete.name}" removed successfully`);
+        handleCloseDeleteDialog();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        toast.error(`Failed to remove meal: ${errorMessage}`);
+        handleCloseDeleteDialog();
+      }
+    });
+  };
+
+  // Table handlers
+  const handleRowClick = (meal: Meal) => {
+    handleOpenDialog(meal);
+  };
+
+  // Pagination handlers
+  const handlePageChange = (_event: unknown, newPage: number) => {
+    onPageChange(newPage);
+  };
+
+  const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onParamsChange([{ param: "limit", value: Number(event.target.value) }]);
+  };
 
   return (
     <>
+      {/* Toolbar with filters and actions */}
       <Toolbar sx={{ mb: 2 }}>
         <Stack alignItems="center" direction="row" spacing={2}>
           <MultiSelect
@@ -116,10 +153,10 @@ export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsP
         </Stack>
 
         <Stack alignItems="center" direction="row" spacing={2} sx={{ ml: "auto" }}>
-          <SearchField onChange={onSearchChange} value={search} />
+          <SearchField onChange={onSearchChange} value={search} placeholder="Search meals..." />
           <Button
             aria-label="Add new meal"
-            onClick={() => openDrawer()}
+            onClick={() => handleOpenDialog()}
             variant="contained"
             size="small"
             startIcon={<Add />}
@@ -129,7 +166,8 @@ export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsP
         </Stack>
       </Toolbar>
 
-      {meals.length === 0 ? (
+      {/* Main content area */}
+      {!hasMeals ? (
         <EmptyState
           title={emptyStateContent.title}
           subtitle={emptyStateContent.subtitle}
@@ -138,38 +176,49 @@ export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsP
       ) : (
         <MealsTable
           meals={meals}
-          onRowClick={(meal) => openDrawer(meal)}
+          onRowClick={handleRowClick}
           onSort={handleSortChange}
           order={order}
           orderBy={orderBy}
-          setMealToDelete={setMealToDelete}
+          setMealToDelete={handleOpenDeleteDialog}
         />
       )}
 
-      {meals.length > 0 && (
+      {/* Pagination - only show when there are meals */}
+      {hasMeals && (
         <TablePagination
           component="div"
           count={total}
-          onPageChange={(_event, newPage) => onPageChange(newPage)}
-          onRowsPerPageChange={(e) => onParamsChange([{ param: "limit", value: +e.target.value }])}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
           page={page}
           rowsPerPage={limitParam}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          showFirstButton
+          showLastButton
         />
       )}
 
+      {/* Drawer for adding/editing meals */}
       <MealDrawer
         ingredients={ingredients}
         meal={drawerState.meal}
         mealTags={mealTags}
-        onClose={closeDrawer}
+        onClose={handleCloseDialog}
         open={drawerState.open}
       />
 
+      {/* Confirmation dialog for deletion */}
       <ConfirmActionDialog
-        description={`Are you sure you want to remove ${mealToDelete?.name ?? "this meal"}?`}
-        handleClose={closeConfirmDialog}
+        title="Delete Meal"
+        description={
+          mealToDelete
+            ? `Are you sure you want to remove "${mealToDelete.name}"? This action cannot be undone.`
+            : "Are you sure you want to remove this meal?"
+        }
+        handleClose={handleCloseDeleteDialog}
         loading={isPending}
-        onConfirm={handleDeleteMeal}
+        onConfirm={handleConfirmDelete}
         open={Boolean(mealToDelete)}
       />
     </>

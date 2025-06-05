@@ -1,5 +1,5 @@
 import { ControlledTextField } from "@/components";
-import type { IngredientUnitType } from "@repo/schemas";
+import { memo, useMemo } from "react";
 import type { Control, FieldErrors } from "react-hook-form";
 import type { IngredientForm } from "../hooks/useIngredientForm";
 
@@ -24,32 +24,60 @@ const FIELD_LABELS: Record<keyof Pick<IngredientForm, NumberField>, string> = {
 type IngredientNumberFieldsProps = {
   control: Control<IngredientForm>;
   errors: FieldErrors<IngredientForm>;
-  unitType: IngredientUnitType;
 };
 
-const getFieldLabel = (key: NumberField, unitType: IngredientUnitType) => {
-  const baseLabel = FIELD_LABELS[key];
-  return key === "price" ? baseLabel : `${baseLabel} / ${unitType}`;
-};
+// Memoized individual field component to prevent unnecessary re-renders
+const NumberField = memo<{
+  control: Control<IngredientForm>;
+  fieldKey: NumberField;
+  label: string;
+  error?: string;
+}>(({ control, fieldKey, label, error }) => {
+  return (
+    <ControlledTextField
+      control={control}
+      helperText={error}
+      key={fieldKey}
+      label={label}
+      name={fieldKey}
+      type={fieldKey === "price" ? "number" : "text"}
+      slotProps={{
+        htmlInput: {
+          inputMode: fieldKey === "price" ? "decimal" : "numeric",
+        },
+      }}
+    />
+  );
+});
 
-export function IngredientNumberFields({ control, errors, unitType }: IngredientNumberFieldsProps) {
+// Main component - now gets unitType directly from form context
+export const IngredientNumberFields = memo<IngredientNumberFieldsProps>(({ control, errors }) => {
+  // Generate field configs with memoization
+  const fieldConfigs = useMemo(
+    () =>
+      numberFields.map((fieldKey) => {
+        const baseLabel = FIELD_LABELS[fieldKey];
+
+        return {
+          fieldKey,
+          label: baseLabel,
+          error: errors[fieldKey]?.message,
+        };
+      }),
+    [errors]
+  );
+
   return (
     <>
-      {numberFields.map((key) => (
-        <ControlledTextField
+      {fieldConfigs.map(({ fieldKey, label, error }) => (
+        <NumberField
+          key={fieldKey}
           control={control}
-          helperText={errors[key]?.message}
-          key={key}
-          label={getFieldLabel(key, unitType)}
-          name={key}
-          type={key === "price" ? "number" : "text"}
-          slotProps={{
-            htmlInput: {
-              inputMode: key === "price" ? "decimal" : "numeric",
-            },
-          }}
+          fieldKey={fieldKey}
+          label={label}
+          error={error}
         />
       ))}
     </>
   );
-}
+});

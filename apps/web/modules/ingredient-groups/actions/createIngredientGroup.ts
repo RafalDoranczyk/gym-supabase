@@ -2,20 +2,23 @@
 
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
-  type CreateNutritionGroupPayload,
-  type CreateNutritionGroupResponse,
-  NutritionGroupSchema,
+  type CreateIngredientGroupPayload,
+  CreateIngredientGroupPayloadSchema,
+  type CreateIngredientGroupResponse,
+  IngredientGroupSchema,
 } from "@repo/schemas";
 import { revalidatePath } from "next/cache";
 
 export async function createIngredientGroup(
-  payload: CreateNutritionGroupPayload,
-): Promise<CreateNutritionGroupResponse> {
+  payload: CreateIngredientGroupPayload
+): Promise<CreateIngredientGroupResponse> {
+  const validatedPayload = assertZodParse(CreateIngredientGroupPayloadSchema, payload);
+
   const { user, supabase } = await getUserScopedQuery();
 
   const { data, error } = await supabase
     .from("ingredient_groups")
-    .insert([{ ...payload, user_id: user.id }])
+    .insert([{ ...validatedPayload, user_id: user.id }])
     .select("*")
     .single();
 
@@ -23,7 +26,7 @@ export async function createIngredientGroup(
     throw mapSupabaseErrorToAppError(error);
   }
 
-  revalidatePath("/dashboard/data-management");
+  revalidatePath("/dashboard/library");
 
-  return assertZodParse(NutritionGroupSchema, data);
+  return assertZodParse(IngredientGroupSchema, data);
 }

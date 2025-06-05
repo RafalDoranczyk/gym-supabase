@@ -24,7 +24,7 @@ const ImageMap: Record<ImageType, React.FC<{ height: number; width: number }>> =
   default: DefaultSvg,
 };
 
-export default function EmptyState({
+export function EmptyState({
   action,
   fullHeight = true,
   size = "big",

@@ -1,7 +1,7 @@
 import { AppBar, Box, Toolbar } from "@mui/material";
 
 import { NavigationActionButtons } from "../NavigationActionButtons";
-import MobileDrawerToggler from "./DrawerToggler";
+import MobileDrawerToggler from "./MobileDrawerToggler";
 
 type MobileNavigationBarProps = {
   toggleOpen: () => void;

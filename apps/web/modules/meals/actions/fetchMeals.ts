@@ -2,104 +2,130 @@
 
 import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
 import {
-  type GetMealsResponse,
-  GetMealsResponseSchema,
-  MEALS_FETCH_LIMIT,
-  type MealSearchParams,
-  MealSearchParamsSchema,
+  type FetchMealsPayload,
+  FetchMealsPayloadSchema,
+  type FetchMealsResponse,
+  FetchMealsResponseSchema,
 } from "@repo/schemas";
+import {
+  MEALS_DEFAULT_OFFSET,
+  MEALS_DEFAULT_ORDER,
+  MEALS_DEFAULT_ORDER_BY,
+  MEALS_DEFAULT_PAGE_SIZE,
+} from "../constants/pagination";
 
-export async function fetchMeals(params: MealSearchParams): Promise<GetMealsResponse> {
-  // Validate input parameters
-  const validatedParams = assertZodParse(MealSearchParamsSchema, params);
-
-  const supabase = await createServerClient();
-
-  const {
-    limit = MEALS_FETCH_LIMIT,
-    offset = 0,
-    order = "asc",
-    orderBy = "name",
-    search,
-    tag,
-  } = validatedParams;
+/**
+ * Pre-filters meal IDs by tags if specified
+ */
+async function getFilteredMealIdsByTags(
+  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  tagFilter?: string
+): Promise<string[] | undefined> {
+  if (!tagFilter?.trim()) {
+    return undefined;
+  }
 
   // Parse and validate tag IDs
-  const tagIds =
-    tag
-      ?.split(",")
-      .map((id) => id.trim())
-      .filter(Boolean) ?? [];
+  const tagIds = tagFilter
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
 
-  let filteredMealIds: string[] | undefined = undefined;
-
-  // Pre-filter by tags if specified
-  if (tagIds.length > 0) {
-    const { data: tagLinks, error: tagError } = await supabase
-      .from("meal_to_tags")
-      .select("meal_id")
-      .in("tag_id", tagIds);
-
-    if (tagError) {
-      throw mapSupabaseErrorToAppError(tagError);
-    }
-
-    filteredMealIds = tagLinks?.map((link) => link.meal_id) ?? [];
-
-    // Early return if no meals match the tag filter
-    if (filteredMealIds.length === 0) {
-      return { count: 0, data: [] };
-    }
+  if (tagIds.length === 0) {
+    return undefined;
   }
 
-  // Build the main query
-  let mealsQuery = supabase.from("meals").select(
-    `
-    *,
-    meal_to_tags (
-      tag:meal_tags (
-        id,
-        name
-      )
-    ),
-    meal_ingredients (
-      amount,
-      ingredient:ingredients (
-        id,
-        name,
-        unit_type,
-        calories,
-        protein,
-        carbs,
-        fat,
-        price
-      )
-    )
-  `,
-    { count: "exact" },
-  );
-
-  // Apply filters
-  if (filteredMealIds) {
-    mealsQuery = mealsQuery.in("id", filteredMealIds);
-  }
-
-  if (search?.trim()) {
-    mealsQuery = mealsQuery.ilike("name", `%${search.trim()}%`);
-  }
-
-  // Apply sorting and pagination
-  mealsQuery = mealsQuery
-    .order(orderBy, { ascending: order === "asc" })
-    .range(offset, offset + limit - 1);
-
-  const { count, data, error } = await mealsQuery;
+  const { data: tagLinks, error } = await supabase
+    .from("meal_to_tags")
+    .select("meal_id")
+    .in("tag_id", tagIds);
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);
   }
 
-  return assertZodParse(GetMealsResponseSchema, {
+  return tagLinks?.map((link) => link.meal_id) ?? [];
+}
+
+/**
+ * Builds Supabase query with filters, search, and pagination
+ */
+function buildMealsQuery(
+  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  params: FetchMealsPayload,
+  filteredMealIds?: string[]
+) {
+  let query = supabase.from("meals").select(
+    `
+      *,
+      meal_to_tags (
+        tag:meal_tags (
+          id,
+          name
+        )
+      ),
+      meal_ingredients (
+        amount,
+        ingredient:ingredients (
+          id,
+          name,
+          unit_type,
+          calories,
+          protein,
+          carbs,
+          fat,
+          price
+        )
+      )
+    `,
+    { count: "exact" }
+  );
+
+  // Filter by pre-filtered meal IDs (from tag filtering)
+  if (filteredMealIds) {
+    query = query.in("id", filteredMealIds);
+  }
+
+  // Search by meal name
+  if (params.search?.trim()) {
+    query = query.ilike("name", `%${params.search.trim()}%`);
+  }
+
+  // Apply sorting and pagination with fallbacks
+  const offset = params.offset ?? MEALS_DEFAULT_OFFSET;
+  const limit = params.limit ?? MEALS_DEFAULT_PAGE_SIZE;
+  const orderBy = params.orderBy ?? MEALS_DEFAULT_ORDER_BY;
+  const order = params.order ?? MEALS_DEFAULT_ORDER;
+
+  return query.range(offset, offset + limit - 1).order(orderBy, { ascending: order === "asc" });
+}
+
+export async function fetchMeals(payload?: FetchMealsPayload): Promise<FetchMealsResponse> {
+  const validatedPayload = assertZodParse(FetchMealsPayloadSchema, payload);
+
+  const supabase = await createServerClient();
+
+  // Pre-filter by tags if specified
+  const filteredMealIds = await getFilteredMealIdsByTags(supabase, validatedPayload.tag);
+
+  // Early return if no meals match the tag filter
+  if (filteredMealIds && filteredMealIds.length === 0) {
+    return assertZodParse(FetchMealsResponseSchema, {
+      count: 0,
+      data: [],
+    });
+  }
+
+  // Build and execute query
+  const query = buildMealsQuery(supabase, validatedPayload, filteredMealIds);
+  const { count, data, error } = await query;
+
+  if (error) {
+    throw mapSupabaseErrorToAppError(error);
+  }
+
+  // Validate output
+  return assertZodParse(FetchMealsResponseSchema, {
     count: count ?? 0,
     data: data ?? [],
   });
