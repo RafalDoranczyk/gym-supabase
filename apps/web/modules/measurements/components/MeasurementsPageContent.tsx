@@ -2,20 +2,15 @@
 
 import { ConfirmActionDialog } from "@/components";
 import { useToast } from "@/providers";
-import { Grid, Paper, Stack } from "@mui/material";
+import { Grid, Paper } from "@mui/material";
 import type { Measurement, MeasurementType, MeasurementTypeId } from "@repo/schemas";
 import { type PropsWithChildren, useState, useTransition } from "react";
 import { deleteMeasurement } from "../actions/deleteMeasurement";
 import { measurementFormDefaultValues, useMeasurementForm } from "../hooks/useMeasurementsForm";
 import { AllMeasurementsDialog } from "./AllMeasurementsDialog";
-import { CurrentWeightCard } from "./cards/CurrentWeightCard";
-import { GoalProgressCard } from "./cards/GoalProgressCard";
-import { LatestMeasurementsCard } from "./cards/LatestMeasurementsCard";
-import { WeeklyStatsCard } from "./cards/WeeklyStatsCard";
 import { MeasurementDialog } from "./MeasurementDialog";
 import { MeasurementsChart } from "./MeasurementsChart";
 import { MeasurementsList } from "./MeasurementsList";
-import { MeasurementsToolbar } from "./MeasurementsToolbar";
 
 function ElevatedPaper({ children }: PropsWithChildren) {
   return (
@@ -35,13 +30,11 @@ function ElevatedPaper({ children }: PropsWithChildren) {
 
 type MeasurementsPageContentProps = {
   measurements: Measurement[];
-  measurementsCount: number;
   measurementTypes: MeasurementType[];
 };
 
 export function MeasurementsPageContent({
   measurements,
-  measurementsCount,
   measurementTypes,
 }: MeasurementsPageContentProps) {
   const toast = useToast();
@@ -117,29 +110,7 @@ export function MeasurementsPageContent({
   };
 
   return (
-    <Stack spacing={4}>
-      <MeasurementsToolbar
-        measurementsCount={measurementsCount}
-        onAddMeasurement={handleOpenMeasurementDialog}
-      />
-
-      <Grid container spacing={{ xs: 2, sm: 3 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <CurrentWeightCard measurements={measurements} />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <GoalProgressCard measurements={measurements} />
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <WeeklyStatsCard measurements={measurements} />
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <LatestMeasurementsCard measurements={measurements} />
-        </Grid>
-      </Grid>
-
+    <>
       <Grid container spacing={{ xs: 2, lg: 3 }}>
         <Grid size={{ xs: 12, lg: 12, xxl: 9 }}>
           <ElevatedPaper>
@@ -157,6 +128,7 @@ export function MeasurementsPageContent({
               onEdit={handleEditMeasurement}
               onDelete={handleOpenDeleteDialog}
               onViewAll={handleOpenAllMeasurementsDialog}
+              onAddMeasurement={() => handleOpenMeasurementDialog()}
             />
           </ElevatedPaper>
         </Grid>
@@ -190,6 +162,6 @@ export function MeasurementsPageContent({
         onConfirm={handleConfirmDelete}
         loading={isPending}
       />
-    </Stack>
+    </>
   );
 }

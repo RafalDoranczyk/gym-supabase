@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components";
 import { fetchIngredientGroups } from "@/modules/ingredient-groups";
 import { IngredientsPageContent, fetchIngredients } from "@/modules/ingredients";
 import { cleanSearchParams } from "@/utils";
@@ -13,16 +14,19 @@ export default async function IngredientsPage({ searchParams }: PageProps) {
 
   const validatedParams = FetchIngredientsPayloadSchema.parse(cleanedParams);
 
-  const [groupsResponse, ingredientsResponse] = await Promise.all([
+  const [{ data: groupsResponse }, { data: ingredientsResponse, count }] = await Promise.all([
     fetchIngredientGroups(),
     fetchIngredients(validatedParams),
   ]);
 
   return (
-    <IngredientsPageContent
-      ingredientGroups={groupsResponse.data}
-      ingredients={ingredientsResponse.data}
-      ingredientsCount={ingredientsResponse.count}
-    />
+    <div>
+      <PageHeader title="Ingredients" description="Build and manage your nutrition database" />
+      <IngredientsPageContent
+        ingredientGroups={groupsResponse}
+        ingredients={ingredientsResponse}
+        ingredientsCount={count}
+      />
+    </div>
   );
 }

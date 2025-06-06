@@ -4,3 +4,4 @@ export * from "./meal";
 export * from "./meal-tag";
 export * from "./measurement-types";
 export * from "./measurements";
+export * from "./user-settings";

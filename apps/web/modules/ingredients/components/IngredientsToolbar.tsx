@@ -1,4 +1,4 @@
-import { CountIndicator, SearchField } from "@/components";
+import { CountIndicator, DebouncedSearchFieldURL } from "@/components";
 import { Add, Category } from "@mui/icons-material";
 import { Button, Chip, Menu, MenuItem, Stack, Toolbar } from "@mui/material";
 import { useState } from "react";
@@ -6,14 +6,13 @@ import { useState } from "react";
 const TOOLBAR_CONFIG = {
   MENU_ID: "ingredients-toolbar-menu",
   SPACING: 2,
-  MARGIN_BOTTOM: 2,
   CHIP_PADDING: 3,
 } as const;
 
 const MENU_ANCHOR_ORIGIN = {
-  horizontal: "left" as const,
-  vertical: "top" as const,
-};
+  horizontal: "left",
+  vertical: "top",
+} as const;
 
 type GroupOption = {
   id: string | number;
@@ -67,7 +66,7 @@ export function IngredientsToolbar({
   };
 
   return (
-    <Toolbar sx={{ mb: TOOLBAR_CONFIG.MARGIN_BOTTOM }}>
+    <Toolbar>
       <Stack alignItems="center" direction="row" spacing={TOOLBAR_CONFIG.SPACING}>
         <div>
           <Chip
@@ -105,7 +104,7 @@ export function IngredientsToolbar({
         spacing={TOOLBAR_CONFIG.SPACING}
         sx={{ ml: "auto" }}
       >
-        <SearchField onChange={onSearchChange} value={search} />
+        <DebouncedSearchFieldURL onChange={onSearchChange} value={search} />
         <Button
           aria-label="Add new ingredient"
           onClick={() => openDrawer()}

@@ -14,6 +14,25 @@ export const useIngredientsFilters = (ingredientGroups: IngredientGroup[]) => {
     Object.fromEntries(searchParams.entries())
   );
 
+  // Handle search changes
+  const handleSearchChange = useCallback(
+    (search: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      // Reset pagination when search changes
+      params.set("offset", "0");
+
+      if (search.trim()) {
+        params.set("search", search);
+      } else {
+        params.delete("search");
+      }
+
+      router.push(`/dashboard/ingredients?${params}`, { scroll: false });
+    },
+    [router, searchParams]
+  );
+
   const handleGroupChange = useCallback(
     (group: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -42,6 +61,15 @@ export const useIngredientsFilters = (ingredientGroups: IngredientGroup[]) => {
     [router, searchParams]
   );
 
+  // Clear all filters
+  const handleClearAllFilters = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    params.delete("group");
+    params.set("offset", "0");
+    router.push(`/dashboard/ingredients?${params}`);
+  }, [router, searchParams]);
+
   // Transform empty group to "All" for consistent UI display
   const displayGroup = !currentFilters.group ? "All" : currentFilters.group;
 
@@ -58,8 +86,10 @@ export const useIngredientsFilters = (ingredientGroups: IngredientGroup[]) => {
       ...currentFilters,
       group: displayGroup,
     },
+    handleSearchChange, // 👈 NEW: Added search handler
     handleGroupChange,
     handleSortChange,
+    handleClearAllFilters, // 👈 NEW: Clear all filters
     hasActiveFilters,
   };
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { ConfirmActionDialog } from "@/components";
-import { TablePagination } from "@mui/material";
+import { Box, TablePagination } from "@mui/material";
 import type { Ingredient, IngredientGroup } from "@repo/schemas";
 
 import { useIngredientsPageLogic } from "../hooks/useIngredientsPageLogic";
@@ -18,13 +18,14 @@ type IngredientsPageContentProps = {
 
 export function IngredientsPageContent(props: IngredientsPageContentProps) {
   const { ingredients, ingredientsCount, ingredientGroups } = props;
-
   const { isPending, pagination, filters, ui, form, handlers } = useIngredientsPageLogic(props);
 
+  // Pagination
   const { limitParam, page, onSearchChange, onClearAllFilters } = pagination;
 
   // UI state
-  const { drawerOpen, ingredientToDelete, setDeleteIngredient, closeDeleteDialog } = ui;
+  const { drawerOpen, ingredientToDelete, setDeleteIngredient, closeDeleteDialog, closeDrawer } =
+    ui;
 
   // Handlers
   const { handleDeleteIngredient, handleOpenDrawer, handlePageChange, handleRowsPerPageChange } =
@@ -48,7 +49,7 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
       handleGroupChange,
     },
     ingredientsCount,
-  };
+  } as const;
 
   const tableProps = {
     ingredients,
@@ -57,12 +58,12 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
     order,
     orderBy,
     setIngredientToDelete: setDeleteIngredient,
-  };
+  } as const;
 
   const hasIngredients = ingredients.length > 0;
 
   return (
-    <>
+    <Box>
       <IngredientsToolbar {...toolbarProps} />
 
       {/* Conditional rendering based on ingredients availability */}
@@ -89,11 +90,10 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
         </>
       )}
 
-      {/* Always present UI elements */}
       <IngredientDrawer
         form={form}
         ingredientGroups={ingredientGroups}
-        onClose={ui.closeDrawer}
+        onClose={closeDrawer}
         open={drawerOpen}
       />
 
@@ -104,6 +104,6 @@ export function IngredientsPageContent(props: IngredientsPageContentProps) {
         onConfirm={handleDeleteIngredient}
         open={Boolean(ingredientToDelete)}
       />
-    </>
+    </Box>
   );
 }

@@ -3,8 +3,8 @@ import {
   type TextFieldProps as MaterialTextFieldProps,
 } from "@mui/material";
 import {
-  type Control,
   Controller,
+  type Control,
   type FieldValues,
   type Path,
   type PathValue,

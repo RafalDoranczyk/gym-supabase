@@ -17,7 +17,7 @@ export function IngredientGroupCard({ group, onMenuClick }: IngredientGroupCardP
   const hasExamples = group.examples.length > 0;
 
   return (
-    <Card>
+    <Card sx={{ height: "100%" }}>
       <CardContent
         sx={{
           display: "flex",

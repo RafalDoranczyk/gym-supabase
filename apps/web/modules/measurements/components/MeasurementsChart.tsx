@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Chart,
   formatDateByFilter,
@@ -12,7 +14,7 @@ import { useState } from "react";
 const MEASUREMENT_CHART_HEIGHT = 490;
 const MEASUREMENTS_MIN_TO_SHOW_CHART = 3;
 const WEIGHT_MEASUREMENT_TYPE_ID = "weight";
-const DEFAULT_GOAL_WEIGHT = 70; // Should come from user settings/props
+const DEFAULT_GOAL_WEIGHT = 70;
 
 type BaseChartProps = {
   timeFilter: TimeFilterOption;

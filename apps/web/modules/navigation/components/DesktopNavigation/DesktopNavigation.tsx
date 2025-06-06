@@ -1,4 +1,4 @@
-import { NavigationLinks } from "../NavigationLinks/NavigationLinks";
+import { NavigationLinks } from "../NavigationLinks";
 import { DesktopNavigationBar } from "./DesktopNavigationBar";
 import { DesktopNavigationDrawer } from "./DesktopNavigationDrawer";
 

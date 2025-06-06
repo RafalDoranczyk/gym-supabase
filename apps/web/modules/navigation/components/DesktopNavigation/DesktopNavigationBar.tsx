@@ -13,7 +13,6 @@ export function DesktopNavigationBar() {
         borderBottom: "1px solid",
         borderColor: "divider",
         boxShadow: 0,
-
         pl: { lg: DESKTOP_APP_NAVIGATION_DRAWER_WIDTH },
         top: "var(--template-frame-height, 0px)",
       }}

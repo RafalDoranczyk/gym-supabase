@@ -1,9 +1,9 @@
 "use client";
 
-import { ConfirmActionDialog } from "@/components";
+import { ConfirmActionDialog, SearchFieldURL, SectionHeader } from "@/components";
 import { useToast } from "@/providers";
-import { Delete, Edit } from "@mui/icons-material";
-import { Divider, Grid, Menu, MenuItem } from "@mui/material";
+import { Add, Delete, Edit } from "@mui/icons-material";
+import { Button, Grid, Menu, MenuItem, Stack } from "@mui/material";
 import type { MealTag, MealTagWithExamples } from "@repo/schemas";
 import { useMemo, useState, useTransition } from "react";
 
@@ -12,7 +12,6 @@ import { mealTagDefaultValues, useMealTagForm } from "../hooks/useMealTagForm";
 import { MealTagCard } from "./MealTagCard";
 import { MealTagDialog } from "./MealTagDialog";
 import { MealTagEmptyState } from "./MealTagEmptyState";
-import { MealTagToolbar } from "./MealTagToolbar";
 
 type MealTagsPageContentProps = {
   mealTags: MealTagWithExamples[];
@@ -104,13 +103,25 @@ export function MealTagsPageContent({ mealTags }: MealTagsPageContentProps) {
 
   return (
     <div>
-      <MealTagToolbar
-        onCreateClick={() => handleOpenDialog()}
-        onSearchChange={handleSearchChange}
-        search={search}
+      <SectionHeader
+        title="Meal Tags"
+        description="Tag meals by dietary properties to quickly find what you need."
+        action={
+          <Stack direction="row" spacing={2} alignItems="center">
+            <SearchFieldURL onChange={handleSearchChange} value={search} />
+            <Button
+              size="small"
+              color="primary"
+              variant="contained"
+              startIcon={<Add />}
+              onClick={() => handleOpenDeleteDialog()}
+              aria-label="Add new meal tag"
+            >
+              Add Tag
+            </Button>
+          </Stack>
+        }
       />
-
-      <Divider sx={{ mb: 3 }} />
 
       {!hasTags && (
         <MealTagEmptyState

@@ -8,10 +8,6 @@ import { useForm } from "react-hook-form";
 
 export type IngredientGroupForm = CreateIngredientGroupPayload | UpdateIngredientGroupPayload;
 
-/**
- * Default values for creating a new ingredient
- * Used for form initialization and reset operations
- */
 export const ingredientGroupDefaultValues: IngredientGroupForm = {
   id: "",
   name: "",

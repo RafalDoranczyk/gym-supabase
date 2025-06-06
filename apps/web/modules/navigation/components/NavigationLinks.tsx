@@ -1,17 +1,17 @@
+"use client";
+
 import {
   AnalyticsRounded,
   DashboardRounded,
   DinnerDiningRounded,
   MonitorWeightRounded,
   RestaurantRounded,
+  SettingsApplications,
 } from "@mui/icons-material";
-import { Box, List, Typography } from "@mui/material";
-import { NavigationLinkElement, type NavigationLinkElementProps } from "./NavigationLinkElement";
-
-type NavigationSection = {
-  elements: NavigationLinkElementProps[];
-  title: string;
-};
+import { Box, List, ListItemButton, ListItemIcon, Typography } from "@mui/material";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 
 const NAVIGATION_MODULES: NavigationSection[] = [
   {
@@ -64,6 +64,17 @@ const NAVIGATION_MODULES: NavigationSection[] = [
     ],
     title: "library",
   },
+  {
+    elements: [
+      {
+        icon: <SettingsApplications />,
+        id: "settings",
+        to: "/dashboard/settings",
+        text: "Settings",
+      },
+    ],
+    title: "Profile",
+  },
 ] as const;
 
 const SECTION_TITLE_STYLES = {
@@ -74,6 +85,46 @@ const SECTION_TITLE_STYLES = {
   pl: 2,
   textTransform: "uppercase",
 } as const;
+
+export type NavigationLinkElementProps = {
+  icon: ReactNode;
+  id: string;
+  text: string;
+  to: string;
+};
+
+type NavigationSection = {
+  elements: NavigationLinkElementProps[];
+  title: string;
+};
+
+function NavigationLinkElement({ icon, text, to }: NavigationLinkElementProps) {
+  const pathname = usePathname();
+
+  const isSelected = (current: string, target: string) => {
+    return target === "/dashboard" ? current === target : current.includes(target);
+  };
+
+  const selected = isSelected(pathname, to);
+
+  return (
+    <ListItemButton component={Link} href={to} selected={selected} sx={{ textDecoration: "none" }}>
+      <ListItemIcon
+        sx={{
+          svg: {
+            color: ({ palette }) => (selected ? palette.primary.main : "unset"),
+            height: 20,
+          },
+        }}
+      >
+        {icon}
+      </ListItemIcon>
+      <Typography color="textPrimary" fontWeight={selected ? "bold" : "normal"} variant="subtitle2">
+        {text}
+      </Typography>
+    </ListItemButton>
+  );
+}
 
 export function NavigationLinks() {
   return (

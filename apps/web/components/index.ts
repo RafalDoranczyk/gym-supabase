@@ -1,16 +1,18 @@
 export { Autocomplete } from "./Autocomplete";
+export * from "./Chart";
 export { ColorPicker } from "./ColorPicker";
 export { ConfirmActionDialog } from "./ConfirmActionDialog";
 export { ControlledSelect } from "./ControlledSelect";
 export { ControlledTextField } from "./ControlledTextField";
 export { CountIndicator } from "./CountIndicator";
+export { DebouncedSearchFieldURL } from "./DebouncedSearchFieldURL";
 export { Drawer } from "./Drawer";
 export { EmptyState } from "./EmptyState/EmptyState";
 export { ErrorPage } from "./ErrorPage";
 export { MultiSelect } from "./MultiSelect";
 export { NutritionTable } from "./NutritionTable";
 export type { NutritionTableHeadCell } from "./NutritionTable";
-export { SearchField } from "./SearchField";
+export { PageHeader, PageHeaderSkeleton } from "./PageHeader";
+export { SearchFieldURL } from "./SearchFieldURL";
+export { SectionHeader } from "./SectionHeader";
 export { TooltipIconButton } from "./TooltipIconButton";
-
-export * from "./Chart";

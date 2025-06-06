@@ -32,12 +32,12 @@ export interface ChartTimeFilterProps<T extends string = TimeFilterOption> {
   variant?: "outlined" | "contained" | "text";
 }
 
-const DEFAULT_FILTERS: TimeFilterOption[] = ["1W", "1M", "3M", "6M", "1Y", "All"];
+export const CHART_TIME_FILTERS: TimeFilterOption[] = ["1W", "1M", "3M", "6M", "1Y", "All"];
 
 export function ChartTimeFilter<T extends string = TimeFilterOption>({
   activeFilter,
   onFilterChange,
-  filters = DEFAULT_FILTERS as unknown as readonly T[],
+  filters = CHART_TIME_FILTERS as unknown as readonly T[],
   size = "small",
   variant = "outlined",
 }: ChartTimeFilterProps<T>) {

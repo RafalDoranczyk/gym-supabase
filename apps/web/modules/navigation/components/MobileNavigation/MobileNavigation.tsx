@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { NavigationLinks } from "../NavigationLinks/NavigationLinks";
+import { NavigationLinks } from "../NavigationLinks";
 import { MobileNavigationBar } from "./MobileNavigationBar";
 import { MobileNavigationDrawer } from "./MobileNavigationDrawer";
 

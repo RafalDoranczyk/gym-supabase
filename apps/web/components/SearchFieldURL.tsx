@@ -3,7 +3,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase, { type InputBaseProps } from "@mui/material/InputBase";
 import { alpha, styled } from "@mui/material/styles";
-import { useDeferredValue, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Search = styled("div")(({ theme }) => ({
   "&:hover": {
@@ -33,7 +33,6 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     [theme.breakpoints.up("sm")]: {
       "&:focus": {
@@ -47,28 +46,55 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: "100%",
 }));
 
-export function SearchField(
-  props: Omit<InputBaseProps, "onChange" | "value"> & {
-    onChange: (value: string) => void;
-    value?: string;
-  }
-) {
-  const { onChange, value } = props;
+type SearchFieldURLProps = Omit<InputBaseProps, "onChange" | "value"> & {
+  onChange: (value: string) => void;
+  value?: string;
+  debounceMs?: number;
+};
 
-  const [searchTerm, setSearchTerm] = useState<string>(value || "");
-  const deferredSearchTerm = useDeferredValue(searchTerm);
+export function SearchFieldURL({
+  onChange,
+  value = "",
+  debounceMs = 150,
+  ...props
+}: SearchFieldURLProps) {
+  const [localValue, setLocalValue] = useState(value);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isTypingRef = useRef(false);
 
-  // Synchronize local state with external value changes
   useEffect(() => {
-    setSearchTerm(value || "");
-  }, [value]);
-
-  useEffect(() => {
-    const normalizedValue = value || "";
-    if (deferredSearchTerm !== normalizedValue) {
-      onChange(deferredSearchTerm);
+    if (value !== localValue && !isTypingRef.current) {
+      setLocalValue(value);
     }
-  }, [deferredSearchTerm, onChange, value]);
+  }, [value, localValue]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleChange = (inputValue: string) => {
+    // Mark as actively typing
+    isTypingRef.current = true;
+
+    // Update local value immediately
+    setLocalValue(inputValue);
+
+    // Clear existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Debounced onChange call
+    timeoutRef.current = setTimeout(() => {
+      onChange(inputValue);
+      // Mark typing as finished after URL update
+      isTypingRef.current = false;
+    }, debounceMs);
+  };
 
   return (
     <Search>
@@ -78,11 +104,9 @@ export function SearchField(
       <StyledInputBase
         {...props}
         inputProps={{ "aria-label": "search" }}
-        onChange={(e) => {
-          setSearchTerm(e.target.value);
-        }}
+        onChange={(e) => handleChange(e.target.value)}
         placeholder="Search…"
-        value={searchTerm}
+        value={localValue}
       />
     </Search>
   );

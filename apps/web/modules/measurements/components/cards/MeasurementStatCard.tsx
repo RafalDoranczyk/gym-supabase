@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Assessment,
   Scale,
@@ -6,7 +8,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "@mui/icons-material";
-import { Box, Card, LinearProgress, Tooltip, Typography } from "@mui/material";
+import { Box, Card, LinearProgress, Paper, Skeleton, Tooltip, Typography } from "@mui/material";
 
 type StatCardProps = {
   variant: "current-weight" | "this-week" | "goal-progress" | "latest-measurements";
@@ -261,5 +263,43 @@ export function MeasurementStatCard({ variant, value, change, progress }: StatCa
         )}
       </Box>
     </Card>
+  );
+}
+
+export function MeasurementStatCardSekeleton() {
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        minHeight: 160,
+        border: (theme) => `1px solid ${theme.palette.divider}`,
+        borderRadius: 2,
+      }}
+    >
+      {/* Header with icon and label */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2.5 }}>
+        <Skeleton variant="rectangular" width={44} height={44} sx={{ borderRadius: 1.5 }} />
+        <Skeleton variant="text" width={120} height={20} />
+      </Box>
+
+      {/* Main value */}
+      <Skeleton variant="text" width={100} height={40} sx={{ mb: 1.5 }} />
+
+      {/* Change indicator */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 2 }}>
+        <Skeleton variant="rectangular" width={24} height={16} sx={{ borderRadius: 1 }} />
+        <Skeleton variant="text" width={80} height={16} />
+      </Box>
+
+      {/* Progress bar */}
+      <Box>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+          <Skeleton variant="text" width={80} height={12} />
+          <Skeleton variant="text" width={30} height={12} />
+        </Box>
+        <Skeleton variant="rectangular" width="100%" height={6} sx={{ borderRadius: 3 }} />
+      </Box>
+    </Paper>
   );
 }

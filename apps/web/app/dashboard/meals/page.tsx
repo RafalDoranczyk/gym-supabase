@@ -14,18 +14,19 @@ export default async function MealsPage({ searchParams }: PageProps) {
 
   const validatedParams = FetchMealsPayloadSchema.parse(cleanedParams);
 
-  const [mealTags, ingredients, meals] = await Promise.all([
-    fetchMealTagsWithExamples(),
-    fetchIngredients(),
-    fetchMeals(validatedParams),
-  ]);
+  const [{ data: mealTags }, { data: ingredients }, { data: meals, count: mealsCount }] =
+    await Promise.all([
+      fetchMealTagsWithExamples(),
+      fetchIngredients(),
+      fetchMeals(validatedParams),
+    ]);
 
   return (
     <MealsPageContent
-      ingredients={ingredients.data}
-      meals={meals.data}
-      mealTags={mealTags.data}
-      total={meals.count}
+      ingredients={ingredients}
+      meals={meals}
+      mealTags={mealTags}
+      total={mealsCount}
     />
   );
 }

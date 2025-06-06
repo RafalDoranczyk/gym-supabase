@@ -1,15 +1,23 @@
-import { SearchField, TooltipIconButton } from "@/components";
+"use client";
+
+import { SearchFieldURL, TooltipIconButton } from "@/components";
 import { formatDate } from "@/utils";
-import { Sort as SortIcon, Visibility as ViewIcon } from "@mui/icons-material";
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import { Add, Sort as SortIcon, Visibility as ViewIcon } from "@mui/icons-material";
+import { Box, Button, Divider, IconButton, Stack, Typography } from "@mui/material";
 import type { Measurement } from "@repo/schemas";
 import { useMemo, useState } from "react";
+
+// Constants moved to top for better organization
+const MAX_MEASUREMENTS_TO_SHOW = 4;
+const DISPLAY_UNIT = "kg";
 
 type MeasurementsListProps = {
   measurements: Measurement[];
   onEdit: (measurement: Measurement) => void;
   onDelete: (measurement: Measurement) => void;
   onViewAll: () => void;
+  onAddMeasurement: () => void;
+  isLoading?: boolean;
 };
 
 type MeasurementItemProps = {
@@ -17,16 +25,21 @@ type MeasurementItemProps = {
   onEdit: (measurement: Measurement) => void;
   onDelete: (measurement: Measurement) => void;
   isLast?: boolean;
+  isLoading?: boolean;
 };
 
-const MAX_MEASUREMENT_TO_SHOW = 4;
-
-// Helper function to get the actual unit string
+// Helper function extracted and simplified
 function getDisplayUnit(): string {
-  return "kg";
+  return DISPLAY_UNIT;
 }
 
-function MeasurementItem({ measurement, onEdit, onDelete, isLast }: MeasurementItemProps) {
+function MeasurementItem({
+  measurement,
+  onEdit,
+  onDelete,
+  isLast,
+  isLoading,
+}: MeasurementItemProps) {
   return (
     <>
       <Box display="flex" justifyContent="space-between" alignItems="center" py={2}>
@@ -52,8 +65,18 @@ function MeasurementItem({ measurement, onEdit, onDelete, isLast }: MeasurementI
             {measurement.value} {getDisplayUnit()}
           </Typography>
 
-          <TooltipIconButton size="small" onClick={() => onEdit(measurement)} variant="edit" />
-          <TooltipIconButton size="small" onClick={() => onDelete(measurement)} variant="delete" />
+          <TooltipIconButton
+            size="small"
+            onClick={() => onEdit(measurement)}
+            variant="edit"
+            disabled={isLoading}
+          />
+          <TooltipIconButton
+            size="small"
+            onClick={() => onDelete(measurement)}
+            variant="delete"
+            disabled={isLoading}
+          />
         </Box>
       </Box>
 
@@ -62,11 +85,76 @@ function MeasurementItem({ measurement, onEdit, onDelete, isLast }: MeasurementI
   );
 }
 
+function EmptyMeasurementsState() {
+  return (
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography variant="h6" fontWeight={600} fontSize="1.125rem">
+          Recent Measurements
+        </Typography>
+      </Box>
+
+      <Box textAlign="center" py={6} color="text.disabled">
+        <Typography variant="body1" mb={1}>
+          No measurements yet
+        </Typography>
+        <Typography variant="body2" fontSize="0.875rem">
+          Add your first measurement to get started
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
+function SearchResults({
+  resultCount,
+  totalFiltered,
+}: {
+  resultCount: number;
+  totalFiltered: number;
+}) {
+  return (
+    <Box mt={2}>
+      <Typography variant="body2" color="text.secondary" textAlign="center">
+        Showing {resultCount} of {totalFiltered} results
+        {totalFiltered > MAX_MEASUREMENTS_TO_SHOW && ` (first ${MAX_MEASUREMENTS_TO_SHOW})`}
+      </Typography>
+    </Box>
+  );
+}
+
+function ViewAllButton({
+  totalCount,
+  onViewAll,
+}: {
+  totalCount: number;
+  onViewAll: () => void;
+}) {
+  return (
+    <Button
+      variant="outlined"
+      fullWidth
+      onClick={onViewAll}
+      startIcon={<ViewIcon />}
+      color="primary"
+      sx={{
+        mt: 2,
+        textTransform: "none",
+        fontWeight: 500,
+      }}
+    >
+      View All Measurements ({totalCount})
+    </Button>
+  );
+}
+
 export function MeasurementsList({
   measurements,
   onEdit,
   onDelete,
   onViewAll,
+  onAddMeasurement,
+  isLoading = false,
 }: MeasurementsListProps) {
   const [search, setSearch] = useState("");
 
@@ -98,37 +186,26 @@ export function MeasurementsList({
     });
   }, [measurements, search]);
 
-  // Sort filtered measurements by date (newest first) and take only the most recent MAX_MEASUREMENT_TO_SHOW
+  // Sort filtered measurements by date (newest first) and take only the most recent
   const recentMeasurements = useMemo(() => {
     return [...filteredMeasurements]
       .sort((a, b) => new Date(b.measured_at).getTime() - new Date(a.measured_at).getTime())
-      .slice(0, MAX_MEASUREMENT_TO_SHOW);
+      .slice(0, MAX_MEASUREMENTS_TO_SHOW);
   }, [filteredMeasurements]);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
   };
 
+  // Early return for empty state
   if (measurements.length === 0) {
-    return (
-      <Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h6" fontWeight={600} fontSize="1.125rem">
-            Recent Measurements
-          </Typography>
-        </Box>
-
-        <Box textAlign="center" py={6} color="text.disabled">
-          <Typography variant="body1" mb={1}>
-            No measurements yet
-          </Typography>
-          <Typography variant="body2" fontSize="0.875rem">
-            Add your first measurement to get started
-          </Typography>
-        </Box>
-      </Box>
-    );
+    return <EmptyMeasurementsState />;
   }
+
+  // Computed values
+  const hasSearch = search.trim().length > 0;
+  const hasResults = recentMeasurements.length > 0;
+  const shouldShowViewAll = !hasSearch && measurements.length > MAX_MEASUREMENTS_TO_SHOW;
 
   return (
     <Box>
@@ -138,6 +215,7 @@ export function MeasurementsList({
         <IconButton
           size="small"
           color="default"
+          disabled={isLoading}
           sx={{
             "&:hover": {
               backgroundColor: "action.hover",
@@ -148,15 +226,31 @@ export function MeasurementsList({
         </IconButton>
       </Box>
 
-      <SearchField
-        value={search}
-        onChange={handleSearchChange}
-        placeholder="Search measurements..."
-      />
+      {/* Controls */}
+      <Stack spacing={2}>
+        <SearchFieldURL
+          value={search}
+          onChange={handleSearchChange}
+          placeholder="Search measurements..."
+          disabled={isLoading}
+        />
+
+        <Button
+          aria-label="Add new measurement"
+          onClick={onAddMeasurement}
+          variant="contained"
+          size="medium"
+          startIcon={<Add />}
+          disabled={isLoading}
+          loading={isLoading}
+        >
+          Add Measurement
+        </Button>
+      </Stack>
 
       {/* Measurements List */}
       <Box>
-        {recentMeasurements.length > 0 ? (
+        {hasResults ? (
           recentMeasurements.map((measurement, index) => (
             <MeasurementItem
               key={measurement.id}
@@ -164,6 +258,7 @@ export function MeasurementsList({
               onEdit={() => onEdit(measurement)}
               onDelete={() => onDelete(measurement)}
               isLast={index === recentMeasurements.length - 1}
+              isLoading={isLoading}
             />
           ))
         ) : (
@@ -173,30 +268,15 @@ export function MeasurementsList({
         )}
       </Box>
 
-      {search ? (
-        <Box mt={2}>
-          <Typography variant="body2" color="text.secondary" textAlign="center">
-            Showing {recentMeasurements.length} of {filteredMeasurements.length} results
-            {filteredMeasurements.length > MAX_MEASUREMENT_TO_SHOW &&
-              `(first ${MAX_MEASUREMENT_TO_SHOW})`}
-          </Typography>
-        </Box>
+      {/* Footer */}
+      {hasSearch ? (
+        <SearchResults
+          resultCount={recentMeasurements.length}
+          totalFiltered={filteredMeasurements.length}
+        />
       ) : (
-        measurements.length > MAX_MEASUREMENT_TO_SHOW && (
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={onViewAll}
-            startIcon={<ViewIcon />}
-            color="primary"
-            sx={{
-              mt: 2,
-              textTransform: "none",
-              fontWeight: 500,
-            }}
-          >
-            View All Measurements ({measurements.length})
-          </Button>
+        shouldShowViewAll && (
+          <ViewAllButton totalCount={measurements.length} onViewAll={onViewAll} />
         )
       )}
     </Box>

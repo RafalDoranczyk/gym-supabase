@@ -17,7 +17,7 @@ import { handleFormErrors } from "@/utils";
 import type { UseFormReturn } from "react-hook-form";
 import { createIngredientGroup } from "../actions/createIngredientGroup";
 import { updateIngredientGroup } from "../actions/updateIngredientGroup";
-import type { IngredientGroupForm } from "../hoooks/useIngredientGroupForm";
+import type { IngredientGroupForm } from "../hooks/useIngredientGroupForm";
 
 type IngredientGroupDialogProps = {
   open: boolean;
@@ -33,7 +33,6 @@ export function IngredientGroupDialog({ open, onClose, form }: IngredientGroupDi
 
   const selectedColor = watch("color");
   const isEditing = !!getValues("id");
-  const isSubmitting = formState.isSubmitting;
 
   const onSubmit = handleSubmit((payload) => {
     startTransition(async () => {
@@ -118,7 +117,7 @@ export function IngredientGroupDialog({ open, onClose, form }: IngredientGroupDi
           Cancel
         </Button>
         <Button type="submit" variant="contained" loading={isPending}>
-          {isSubmitting
+          {isPending
             ? isEditing
               ? "Updating..."
               : "Creating..."

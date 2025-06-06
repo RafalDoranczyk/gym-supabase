@@ -5,7 +5,7 @@ import {
   CountIndicator,
   EmptyState,
   MultiSelect,
-  SearchField,
+  SearchFieldURL,
 } from "@/components";
 import { useToast } from "@/providers";
 import { Button, Stack, TablePagination, Toolbar } from "@mui/material";
@@ -153,7 +153,7 @@ export function MealsPageContent({ ingredients, meals, mealTags, total }: MealsP
         </Stack>
 
         <Stack alignItems="center" direction="row" spacing={2} sx={{ ml: "auto" }}>
-          <SearchField onChange={onSearchChange} value={search} placeholder="Search meals..." />
+          <SearchFieldURL onChange={onSearchChange} value={search} placeholder="Search meals..." />
           <Button
             aria-label="Add new meal"
             onClick={() => handleOpenDialog()}

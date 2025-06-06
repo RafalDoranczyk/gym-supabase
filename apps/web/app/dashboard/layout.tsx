@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 
 export default function DashboardLayout({ children }: React.PropsWithChildren) {
   return (
-    <>
+    <div>
       <Navigation />
       <Box
         ml={{
@@ -14,6 +14,6 @@ export default function DashboardLayout({ children }: React.PropsWithChildren) {
       >
         {children}
       </Box>
-    </>
+    </div>
   );
 }

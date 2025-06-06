@@ -1,4 +1,4 @@
-import { SearchField, TooltipIconButton } from "@/components";
+import { SearchFieldURL, TooltipIconButton } from "@/components";
 import { formatDate } from "@/utils";
 import { Close, Remove, TrendingDown, TrendingUp } from "@mui/icons-material";
 import {
@@ -77,7 +77,6 @@ function MeasurementItem({ index, data, style }: MeasurementItemProps) {
   };
 
   const changeInfo = getChangeInfo();
-
   return (
     <ListItem
       style={style}
@@ -94,10 +93,15 @@ function MeasurementItem({ index, data, style }: MeasurementItemProps) {
         <ListItemText
           primary={
             <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
-              <Typography variant="overline" sx={{ color: "text.secondary" }}>
+              {/* ZMIANA: Typography z component="span" */}
+              <Typography component="span" variant="overline" sx={{ color: "text.secondary" }}>
                 {measurement.measurement_type_id}
               </Typography>
-              <Typography variant="h6" sx={{ color: "text.primary", fontWeight: 600 }}>
+              <Typography
+                component="span"
+                variant="h6"
+                sx={{ color: "text.primary", fontWeight: 600 }}
+              >
                 {measurement.value} {measurement.unit}
               </Typography>
               {changeInfo && (
@@ -116,11 +120,20 @@ function MeasurementItem({ index, data, style }: MeasurementItemProps) {
           }
           secondary={
             <Box mt={0.5}>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              {/* ZMIANA: Typography z component="span" */}
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ color: "text.secondary", display: "block" }}
+              >
                 {formatDate(measurement.measured_at)}
               </Typography>
               {measurement.notes && (
-                <Typography variant="caption" sx={{ color: "text.disabled", fontStyle: "italic" }}>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{ color: "text.disabled", fontStyle: "italic", display: "block" }}
+                >
                   {measurement.notes}
                 </Typography>
               )}
@@ -196,7 +209,7 @@ export function AllMeasurementsDialog({
 
       <DialogContent sx={{ p: 0, flex: 1, display: "flex", flexDirection: "column" }}>
         <Box p={2} borderBottom="1px solid" borderColor="divider">
-          <SearchField value={search} onChange={setSearch} />
+          <SearchFieldURL value={search} onChange={setSearch} />
         </Box>
 
         {showVirtualiedList && (

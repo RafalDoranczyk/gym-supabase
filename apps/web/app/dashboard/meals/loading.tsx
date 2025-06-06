@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeaderSkeleton } from "@/components";
 import {
   Box,
   Paper,
@@ -19,8 +20,9 @@ const COL_COUNT = 8;
 
 export default function Loading() {
   return (
-    <Box p={3}>
+    <Box>
       {/* Filters and Search */}
+      <PageHeaderSkeleton />
       <Stack alignItems="center" direction="row" mb={3} spacing={2}>
         <Skeleton height={36} sx={{ borderRadius: 1 }} variant="rounded" width={60} />
         <Skeleton height={36} sx={{ borderRadius: 1 }} variant="rounded" width={30} />

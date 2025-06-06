@@ -1,5 +1,6 @@
 export { Chart } from "./Chart";
-export type { TimeFilterOption } from "./ChartTimeFilter";
+export { ChartSkeleton } from "./ChartSkeleton";
+export type { CHART_TIME_FILTERS, TimeFilterOption } from "./ChartTimeFilter";
 export {
   filterDataByTime,
   formatDateByFilter,
