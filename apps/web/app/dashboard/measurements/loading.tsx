@@ -1,11 +1,9 @@
-"use client";
-
-import { ChartSkeleton, PageHeaderSkeleton } from "@/components";
-import { MeasurementStatCardSekeleton } from "@/modules/measurements";
+import { ChartSkeleton, PageHeader } from "@/components";
+import { MeasurementStatCardSekeleton } from "@/modules/measurement";
 import { Box, Grid, Paper, Skeleton } from "@mui/material";
 
 // Skeleton for measurements list
-function MeasurementsListSkeleton() {
+function MeasurementListSkeleton() {
   return (
     <Paper
       elevation={0}
@@ -65,10 +63,10 @@ function MeasurementsListSkeleton() {
 export default function MeasurementsLoadingPage() {
   return (
     <div>
-      <PageHeaderSkeleton />
+      <PageHeader.Skeleton />
 
       {/* Quick Stats Skeleton */}
-      <Box sx={{ mb: 4 }}>
+      <Box mb={4}>
         <Grid container spacing={{ xs: 2, sm: 3 }}>
           {[1, 2, 3].map((el) => (
             <Grid key={el} size={{ xs: 12, sm: 4 }}>
@@ -87,7 +85,7 @@ export default function MeasurementsLoadingPage() {
 
         {/* Measurements List */}
         <Grid size={{ xs: 12, lg: 4 }}>
-          <MeasurementsListSkeleton />
+          <MeasurementListSkeleton />
         </Grid>
       </Grid>
     </div>

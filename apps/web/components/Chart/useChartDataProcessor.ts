@@ -1,15 +1,15 @@
 import { useMemo } from "react";
 import type { TimeFilterOption } from "./ChartTimeFilter";
 
-export interface TimeSeriesDataPoint {
+export type TimeSeriesDataPoint = {
   measured_at: string;
   value: number;
   notes?: string | null;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   [key: string]: any;
-}
+};
 
-export interface ProcessedChartData {
+export type ProcessedChartData = {
   xAxisData: Date[];
   yAxisData: number[];
   chartData: Array<{
@@ -23,7 +23,7 @@ export interface ProcessedChartData {
     change: number;
     hasData: boolean;
   };
-}
+};
 
 export function formatDateByFilter(dateString: string, timeFilter: TimeFilterOption): string {
   const date = new Date(dateString);

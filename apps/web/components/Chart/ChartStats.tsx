@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
-export interface ChartStatsProps {
+export type ChartStatsProps = {
   /**
    * Left side content (usually help text or info)
    */
@@ -47,7 +47,7 @@ export interface ChartStatsProps {
    * @default true
    */
   showBorder?: boolean;
-}
+};
 
 export function ChartStats({
   leftContent,
@@ -95,12 +95,12 @@ export function ChartStats({
 }
 
 // Helper component for common info text pattern
-export interface ChartInfoTextProps {
+export type ChartInfoTextProps = {
   icon?: ReactNode;
   text: string;
   variant?: "caption" | "body2";
   color?: string;
-}
+};
 
 export function ChartInfoText({
   icon,

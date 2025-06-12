@@ -6,9 +6,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { type Dayjs } from "dayjs";
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 
-interface ButtonFieldProps {
+type ButtonFieldProps = {
   label?: React.ReactNode;
   onClick?: () => void;
   onKeyDown?: (event: React.KeyboardEvent) => void;
@@ -18,7 +18,7 @@ interface ButtonFieldProps {
   inputProps?: {
     "aria-label"?: string;
   };
-}
+};
 
 const ButtonField = forwardRef<HTMLButtonElement, ButtonFieldProps>((props, ref) => {
   const {
@@ -48,20 +48,45 @@ const ButtonField = forwardRef<HTMLButtonElement, ButtonFieldProps>((props, ref)
   );
 });
 
-export function DatePicker() {
-  const [value, setValue] = useState<Dayjs | null>(dayjs(new Date()));
+type DatePickerProps = {
+  value?: Dayjs | null;
+  onChange?: (newValue: Dayjs | null) => void;
+  maxDate?: Dayjs;
+  minDate?: Dayjs;
+};
+
+export function DatePicker({
+  value: externalValue,
+  onChange: externalOnChange,
+  maxDate,
+  minDate,
+}: DatePickerProps = {}) {
+  const [internalValue, setInternalValue] = useState<Dayjs | null>(dayjs(new Date()));
   const [open, setOpen] = useState(false);
+
+  // Use external value if provided, otherwise use internal state
+  const value = externalValue !== undefined ? externalValue : internalValue;
+  const onChange = externalOnChange || setInternalValue;
+
+  // Sync internal state with external value
+  useEffect(() => {
+    if (externalValue !== undefined) {
+      setInternalValue(externalValue);
+    }
+  }, [externalValue]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MuiDatePicker
         label={value?.format("MMM DD, YYYY") || null}
         value={value}
-        onChange={(newValue) => setValue(newValue)}
+        onChange={onChange}
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         views={["day", "month", "year"]}
+        maxDate={maxDate}
+        minDate={minDate}
         slots={{
           field: ButtonField,
         }}

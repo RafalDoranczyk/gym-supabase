@@ -1,6 +1,13 @@
 "use client";
 
-import { BugReport, ExpandMore, Home, Refresh, ReportProblemRounded } from "@mui/icons-material";
+import {
+  BugReport,
+  ExpandMore,
+  Home,
+  Lightbulb,
+  Refresh,
+  ReportProblemRounded,
+} from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -9,6 +16,12 @@ import {
   Button,
   Chip,
   Container,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -20,6 +33,8 @@ type Props = {
   showDetails?: boolean;
   errorCode?: string;
   digest?: string;
+  technicalDetails?: Record<string, unknown>;
+  suggestions?: string[];
 };
 
 export function ErrorPage({
@@ -29,21 +44,23 @@ export function ErrorPage({
   showDetails = false,
   errorCode,
   digest,
+  technicalDetails,
+  suggestions,
 }: Props) {
   const handleReportBug = () => {
-    // You could integrate with error reporting service here
     const errorInfo = {
       title,
       description,
       errorCode,
       digest,
-      url: window.location.href,
-      userAgent: navigator.userAgent,
+      technicalDetails,
+      url: typeof window !== "undefined" ? window.location.href : "N/A",
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "N/A",
       timestamp: new Date().toISOString(),
     };
 
     console.log("Bug report data:", errorInfo);
-    // Could send to your error tracking service
+    // In production, send to error tracking service
     alert(
       "Error details logged to console. In production, this would be sent to our error tracking service."
     );
@@ -53,187 +70,253 @@ export function ErrorPage({
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0A0B0E 0%, #141721 100%)",
+        bgcolor: "background.default",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         px: 2,
       }}
     >
-      <Container maxWidth="sm">
-        <Stack spacing={4} alignItems="center" textAlign="center">
-          {/* Error Icon */}
-          <Box
-            sx={{
-              width: 120,
-              height: 120,
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #DC2626 0%, #EF4444 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 8px 32px rgba(220, 38, 38, 0.3)",
-            }}
-          >
-            <ReportProblemRounded sx={{ fontSize: 60, color: "white" }} />
-          </Box>
-
-          {/* Error Code Chip */}
-          {errorCode && (
-            <Chip
-              label={`Error: ${errorCode}`}
-              size="small"
+      <Container maxWidth="md">
+        <Paper
+          elevation={8}
+          sx={{
+            p: 6,
+            borderRadius: 4,
+            textAlign: "center",
+          }}
+        >
+          <Stack spacing={4} alignItems="center">
+            {/* Error Icon */}
+            <Box
               sx={{
-                bgcolor: "rgba(220, 38, 38, 0.1)",
-                color: "#F87171",
-                border: "1px solid rgba(220, 38, 38, 0.2)",
-                fontFamily: "monospace",
-              }}
-            />
-          )}
-
-          {/* Error Title */}
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 700,
-              color: "text.primary",
-              mb: 1,
-            }}
-          >
-            {title}
-          </Typography>
-
-          {/* Error Description */}
-          {description && (
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{
-                maxWidth: 500,
-                lineHeight: 1.6,
-                fontSize: "1.1rem",
+                width: 120,
+                height: 120,
+                borderRadius: "50%",
+                bgcolor: "error.main",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: 6,
               }}
             >
-              {description}
-            </Typography>
-          )}
+              <ReportProblemRounded sx={{ fontSize: 60, color: "error.contrastText" }} />
+            </Box>
 
-          {/* Action Buttons */}
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 3 }}>
-            {reset && (
+            {/* Error Code Chip */}
+            {errorCode && (
+              <Chip
+                label={`Error: ${errorCode}`}
+                size="small"
+                color="error"
+                variant="outlined"
+                sx={{
+                  fontFamily: "monospace",
+                  fontWeight: 600,
+                }}
+              />
+            )}
+
+            {/* Error Title */}
+            <Typography
+              variant="h3"
+              color="text.primary"
+              sx={{
+                fontWeight: 700,
+                mb: 1,
+              }}
+            >
+              {title}
+            </Typography>
+
+            {/* Error Description */}
+            {description && (
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{
+                  maxWidth: 600,
+                  lineHeight: 1.6,
+                  fontSize: "1.1rem",
+                }}
+              >
+                {description}
+              </Typography>
+            )}
+
+            {/* Action Buttons */}
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 3 }}>
+              {reset && (
+                <Button
+                  onClick={reset}
+                  size="large"
+                  variant="contained"
+                  color="primary"
+                  startIcon={<Refresh />}
+                  sx={{
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 3,
+                    "&:hover": {
+                      transform: "translateY(-1px)",
+                    },
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  Try Again
+                </Button>
+              )}
+
               <Button
-                onClick={reset}
+                href="/"
                 size="large"
-                variant="contained"
-                startIcon={<Refresh />}
+                variant="outlined"
+                color="primary"
+                startIcon={<Home />}
                 sx={{
                   px: 4,
                   py: 1.5,
                   borderRadius: 3,
-                  background: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)",
                     transform: "translateY(-1px)",
-                    boxShadow: "0 8px 25px rgba(139, 92, 246, 0.4)",
                   },
                   transition: "all 0.3s ease",
                 }}
               >
-                Try Again
+                Go Home
               </Button>
-            )}
 
-            <Button
-              href="/"
-              size="large"
-              variant="outlined"
-              startIcon={<Home />}
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 3,
-                borderColor: "#374151",
-                color: "#9CA3AF",
-                "&:hover": {
-                  borderColor: "#6B7280",
-                  backgroundColor: "rgba(107, 114, 128, 0.1)",
-                  transform: "translateY(-1px)",
-                },
-                transition: "all 0.3s ease",
-              }}
-            >
-              Go Home
-            </Button>
-
-            <Button
-              onClick={handleReportBug}
-              size="large"
-              variant="text"
-              startIcon={<BugReport />}
-              sx={{
-                color: "#6B7280",
-                "&:hover": {
-                  backgroundColor: "rgba(107, 114, 128, 0.1)",
-                },
-              }}
-            >
-              Report Bug
-            </Button>
-          </Stack>
-
-          {/* Debug Details (Development Only) */}
-          {showDetails && (errorCode || digest) && (
-            <Box sx={{ width: "100%", mt: 4 }}>
-              <Accordion
+              <Button
+                onClick={handleReportBug}
+                size="large"
+                variant="text"
+                color="primary"
+                startIcon={<BugReport />}
                 sx={{
-                  bgcolor: "rgba(31, 41, 55, 0.5)",
-                  border: "1px solid #374151",
-                  "&:before": { display: "none" },
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                  },
                 }}
               >
-                <AccordionSummary
-                  expandIcon={<ExpandMore sx={{ color: "#9CA3AF" }} />}
+                Report Bug
+              </Button>
+            </Stack>
+
+            {/* Suggestions */}
+            {suggestions && suggestions.length > 0 && (
+              <Box sx={{ width: "100%", mt: 4 }}>
+                <Paper
+                  variant="outlined"
                   sx={{
-                    "& .MuiAccordionSummary-content": {
-                      alignItems: "center",
-                    },
+                    p: 3,
+                    textAlign: "left",
+                    bgcolor: "background.paper",
                   }}
                 >
-                  <Typography variant="body2" color="text.secondary">
-                    Debug Information
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Stack spacing={1} alignItems="flex-start">
-                    {errorCode && (
-                      <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
-                        <strong>Code:</strong> {errorCode}
+                  <Stack spacing={2}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Lightbulb color="primary" />
+                      <Typography variant="h6" color="text.primary">
+                        Suggested Solutions
                       </Typography>
-                    )}
-                    {digest && (
-                      <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
-                        <strong>Digest:</strong> {digest}
-                      </Typography>
-                    )}
-                    <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
-                      <strong>Time:</strong> {new Date().toISOString()}
-                    </Typography>
-                    <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
-                      <strong>URL:</strong>{" "}
-                      {typeof window !== "undefined" ? window.location.href : "N/A"}
-                    </Typography>
-                  </Stack>
-                </AccordionDetails>
-              </Accordion>
-            </Box>
-          )}
+                    </Box>
 
-          {/* Help Text */}
-          <Typography variant="caption" color="text.disabled" sx={{ mt: 2, opacity: 0.7 }}>
-            If this problem persists, please contact support or try refreshing the page.
-          </Typography>
-        </Stack>
+                    <Divider />
+
+                    <List dense>
+                      {suggestions.map((suggestion) => (
+                        <ListItem key={suggestion} sx={{ py: 0.5 }}>
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <Box
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: "50%",
+                                bgcolor: "primary.main",
+                              }}
+                            />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={suggestion}
+                            primaryTypographyProps={{
+                              variant: "body2",
+                              color: "text.secondary",
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Stack>
+                </Paper>
+              </Box>
+            )}
+
+            {/* Debug Details (Development Only) */}
+            {showDetails && (technicalDetails || errorCode || digest) && (
+              <Box sx={{ width: "100%", mt: 4 }}>
+                <Accordion
+                  sx={{
+                    bgcolor: "background.paper",
+                    border: 1,
+                    borderColor: "divider",
+                    "&:before": { display: "none" },
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={<ExpandMore />}
+                    sx={{
+                      "& .MuiAccordionSummary-content": {
+                        alignItems: "center",
+                      },
+                    }}
+                  >
+                    <Typography variant="body2" color="text.secondary">
+                      Technical Details
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Stack spacing={1} alignItems="flex-start">
+                      {errorCode && (
+                        <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
+                          <strong>Error Code:</strong> {errorCode}
+                        </Typography>
+                      )}
+                      {digest && (
+                        <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
+                          <strong>Digest:</strong> {digest}
+                        </Typography>
+                      )}
+                      {technicalDetails &&
+                        Object.entries(technicalDetails).map(([key, value]) => (
+                          <Typography key={key} variant="caption" sx={{ fontFamily: "monospace" }}>
+                            <strong>{key}:</strong>{" "}
+                            {typeof value === "object"
+                              ? JSON.stringify(value, null, 2)
+                              : String(value)}
+                          </Typography>
+                        ))}
+                      <Typography variant="caption" sx={{ fontFamily: "monospace" }}>
+                        <strong>Current Time:</strong> {new Date().toISOString()}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ fontFamily: "monospace", wordBreak: "break-all" }}
+                      >
+                        <strong>URL:</strong>{" "}
+                        {typeof window !== "undefined" ? window.location.href : "N/A"}
+                      </Typography>
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+              </Box>
+            )}
+
+            {/* Help Text */}
+            <Typography variant="caption" color="text.disabled" sx={{ mt: 2, opacity: 0.7 }}>
+              If this problem persists, please contact support with the error details above.
+            </Typography>
+          </Stack>
+        </Paper>
       </Container>
     </Box>
   );

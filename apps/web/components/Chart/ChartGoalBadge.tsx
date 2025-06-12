@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-export interface GoalBadgeProps {
+export type GoalBadgeProps = {
   /**
    * Current value
    */
@@ -48,7 +48,7 @@ export interface GoalBadgeProps {
     achieved: string;
     inProgress: string;
   };
-}
+};
 
 const defaultColors = {
   achieved: "#4ade80",

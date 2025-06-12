@@ -2,7 +2,7 @@ import { Add, Timeline } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
-export interface ChartEmptyStateProps {
+export type ChartEmptyStateProps = {
   /**
    * Title displayed in the empty state
    * @default "Need More Data Points"
@@ -47,7 +47,7 @@ export interface ChartEmptyStateProps {
    * @default 3
    */
   minDataPoints?: number;
-}
+};
 
 export function ChartEmptyState({
   title = "Need More Data Points",

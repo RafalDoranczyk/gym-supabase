@@ -1,6 +1,17 @@
+"use client";
+
 import { Box, type BoxProps, Fade, Stack, Typography } from "@mui/material";
 
-import DefaultSvg from "./EmptySvg";
+import { DefaultImage } from "./DefaultImage";
+import { EmptyChartImage } from "./EmptyChartImage";
+import { EmptyFoodImage } from "./EmptyFoodImage";
+import { EmptyHistoryImage } from "./EmptyHistoryImage";
+import { EmptyPlateImage } from "./EmptyPlateImage";
+
+export type EmptySvgProps = {
+  height: number;
+  width: number;
+};
 
 type EmptyStateProps = BoxProps & {
   action?: React.ReactNode;
@@ -10,7 +21,16 @@ type EmptyStateProps = BoxProps & {
   title?: string;
   type?: ImageType;
 };
-type ImageType = "default";
+
+type ImageType = "default" | "plate" | "food" | "chart" | "history";
+
+const ImageMap: Record<ImageType, React.FC<{ height: number; width: number }>> = {
+  default: DefaultImage,
+  plate: EmptyPlateImage,
+  food: EmptyFoodImage,
+  chart: EmptyChartImage,
+  history: EmptyHistoryImage,
+};
 
 type Sizes = "big" | "medium" | "small";
 
@@ -18,10 +38,6 @@ const ImageSizesMap: Record<Sizes, { height: number; width: number }> = {
   big: { height: 200, width: 200 },
   medium: { height: 150, width: 150 },
   small: { height: 100, width: 100 },
-};
-
-const ImageMap: Record<ImageType, React.FC<{ height: number; width: number }>> = {
-  default: DefaultSvg,
 };
 
 export function EmptyState({
@@ -37,7 +53,7 @@ export function EmptyState({
   const imageSize = ImageSizesMap[size];
 
   return (
-    <Fade in>
+    <Fade in timeout={600}>
       <Box
         alignItems="center"
         aria-label={title}
@@ -47,17 +63,33 @@ export function EmptyState({
         p={3}
         {...boxProps}
       >
-        <Stack alignItems="center" maxWidth={360} spacing={2} textAlign="center">
-          <Image {...imageSize} />
+        <Stack alignItems="center" maxWidth={360} spacing={3} textAlign="center">
+          {/* Simple Image */}
+          <Box
+            sx={{
+              opacity: 0.8,
+              transition: "opacity 0.2s ease",
+              "&:hover": {
+                opacity: 1,
+              },
+            }}
+          >
+            <Image {...imageSize} />
+          </Box>
 
-          <Typography variant="h6">{title}</Typography>
+          {/* Title */}
+          <Typography variant="h6" color="text.primary" sx={{ fontWeight: 600 }}>
+            {title}
+          </Typography>
 
+          {/* Subtitle */}
           {subtitle && (
-            <Typography color="text.secondary" variant="body2">
+            <Typography variant="body2" color="text.secondary">
               {subtitle}
             </Typography>
           )}
 
+          {/* Action */}
           {action && <Box mt={1}>{action}</Box>}
         </Stack>
       </Box>

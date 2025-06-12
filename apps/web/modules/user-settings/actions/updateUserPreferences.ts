@@ -1,5 +1,6 @@
 "use server";
 
+import { PATHS } from "@/constants";
 import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   UpdateUserPreferencesPayloadSchema,
@@ -26,7 +27,7 @@ export async function updateUserPreferences(
     throw mapSupabaseErrorToAppError(error);
   }
 
-  revalidatePath("/dashboard/settings");
+  revalidatePath(PATHS.SETTINGS);
 
   return assertZodParse(UserPreferencesSchema, data);
 }

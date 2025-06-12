@@ -1,7 +1,7 @@
 import { Box, type SxProps } from "@mui/material";
 import type { ReactNode } from "react";
 
-export interface ChartContainerProps {
+export type ChartContainerProps = {
   /**
    * Chart content
    */
@@ -53,7 +53,7 @@ export interface ChartContainerProps {
    * Additional sx props
    */
   sx?: SxProps;
-}
+};
 
 export function ChartContainer({
   children,

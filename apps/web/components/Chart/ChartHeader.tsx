@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
-export interface ChartHeaderProps {
+export type ChartHeaderProps = {
   /**
    * Chart title
    */
@@ -33,7 +33,7 @@ export interface ChartHeaderProps {
    * @default 3
    */
   mb?: number;
-}
+};
 
 export function ChartHeader({
   title,

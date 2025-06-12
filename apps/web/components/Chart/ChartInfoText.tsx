@@ -1,12 +1,12 @@
 import { Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
-export interface ChartInfoTextProps {
+export type ChartInfoTextProps = {
   icon?: ReactNode;
   text: string;
   variant?: "caption" | "body2";
   color?: string;
-}
+};
 
 export function ChartInfoText({
   icon,

@@ -5,19 +5,26 @@ type UsePaginationProps = {
   limit: number;
 };
 
+/**
+ * Pure pagination hook - only handles page/limit changes
+ * Does NOT handle search, filters, or other concerns
+ */
 export function usePagination({ limit }: UsePaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // ✅ Read current pagination state from URL
   const limitParam = Number(searchParams.get("limit")) || limit;
   const offsetParam = Number(searchParams.get("offset")) || 0;
+  const currentPage = Math.floor(offsetParam / limitParam);
 
   const urlSearchParams = useMemo(
     () => new URLSearchParams(searchParams.toString()),
     [searchParams]
   );
 
+  // ✅ Generic method to update any URL params while preserving others
   const onParamsChange = useCallback(
     (params: { param: string; value: number | string }[]) => {
       const newSearchParams = new URLSearchParams(urlSearchParams.toString());
@@ -31,23 +38,7 @@ export function usePagination({ limit }: UsePaginationProps) {
     [pathname, router, urlSearchParams]
   );
 
-  const onSearchChange = useCallback(
-    (search: string) => {
-      const newParams = new URLSearchParams(urlSearchParams.toString());
-
-      newParams.set("offset", "0");
-
-      if (search.trim()) {
-        newParams.set("search", search);
-      } else {
-        newParams.delete("search");
-      }
-
-      router.push(`${pathname}?${newParams}`);
-    },
-    [pathname, router, urlSearchParams]
-  );
-
+  // ✅ Specific pagination handlers
   const onPageChange = useCallback(
     (page: number) => {
       onParamsChange([{ param: "offset", value: page * limitParam }]);
@@ -55,17 +46,33 @@ export function usePagination({ limit }: UsePaginationProps) {
     [limitParam, onParamsChange]
   );
 
-  const onClearAllFilters = useCallback(() => {
-    router.push(pathname);
-  }, [pathname, router]);
+  const onLimitChange = useCallback(
+    (newLimit: number) => {
+      onParamsChange([
+        { param: "limit", value: newLimit },
+        { param: "offset", value: 0 }, // Reset to first page when limit changes
+      ]);
+    },
+    [onParamsChange]
+  );
+
+  // ✅ Reset pagination to first page (useful for other hooks)
+  const resetPagination = useCallback(() => {
+    onParamsChange([{ param: "offset", value: 0 }]);
+  }, [onParamsChange]);
 
   return {
+    // State
     limitParam,
+    page: currentPage,
+
+    // Actions
     onPageChange,
+    onLimitChange,
     onParamsChange,
-    onSearchChange,
-    page: Math.floor(offsetParam / limitParam),
+    resetPagination,
+
+    // Utils
     searchParams: urlSearchParams,
-    onClearAllFilters,
   };
 }

@@ -1,9 +1,9 @@
 import { PageHeader } from "@/components";
 import {
   fetchIngredientGroupsWithExamples,
-  IngredientGroupsPageContent,
-} from "@/modules/ingredient-groups";
-import { fetchMealTagsWithExamples, MealTagsPageContent } from "@/modules/meal-tags";
+  IngredientGroupPageContent,
+} from "@/modules/ingredient-group";
+import { fetchMealTagsWithExamples, MealTagPageContent } from "@/modules/meal-tag";
 
 import { Divider, Stack } from "@mui/material";
 
@@ -15,14 +15,14 @@ export default async function LibraryPage() {
 
   return (
     <Stack spacing={4}>
-      <PageHeader
+      <PageHeader.Root
         title="Library"
         description="Manage ingredient groups, meal categories, and measurement types for your nutrition tracking."
       />
       <Divider />
-      <IngredientGroupsPageContent ingredientGroups={ingredientGroups} />
+      <IngredientGroupPageContent ingredientGroups={ingredientGroups} />
       <Divider />
-      <MealTagsPageContent mealTags={mealTags} />
+      <MealTagPageContent mealTags={mealTags} />
     </Stack>
   );
 }

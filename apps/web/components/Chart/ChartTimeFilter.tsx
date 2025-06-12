@@ -2,7 +2,7 @@ import { Button, ButtonGroup } from "@mui/material";
 
 export type TimeFilterOption = "1W" | "1M" | "3M" | "6M" | "1Y" | "All";
 
-export interface ChartTimeFilterProps<T extends string = TimeFilterOption> {
+export type ChartTimeFilterProps<T extends string = TimeFilterOption> = {
   /**
    * Currently active filter
    */
@@ -30,7 +30,7 @@ export interface ChartTimeFilterProps<T extends string = TimeFilterOption> {
    * @default "outlined"
    */
   variant?: "outlined" | "contained" | "text";
-}
+};
 
 export const CHART_TIME_FILTERS: TimeFilterOption[] = ["1W", "1M", "3M", "6M", "1Y", "All"];
 

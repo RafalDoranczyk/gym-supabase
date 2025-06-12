@@ -1,7 +1,9 @@
 "use client";
 
+import { PATHS } from "@/constants";
 import {
-  AnalyticsRounded,
+  BookRounded,
+  CalendarTodayRounded,
   DashboardRounded,
   DinnerDiningRounded,
   MonitorWeightRounded,
@@ -20,7 +22,7 @@ const NAVIGATION_MODULES: NavigationSection[] = [
         icon: <DashboardRounded />,
         id: "dashboard",
         text: "Dashboard",
-        to: "/dashboard",
+        to: PATHS.DASHBOARD,
       },
     ],
     title: "overview",
@@ -31,7 +33,7 @@ const NAVIGATION_MODULES: NavigationSection[] = [
         icon: <MonitorWeightRounded />,
         id: "measurements",
         text: "Measurements",
-        to: "/dashboard/measurements",
+        to: PATHS.MEASUREMENTS,
       },
     ],
     title: "tracking",
@@ -39,16 +41,10 @@ const NAVIGATION_MODULES: NavigationSection[] = [
   {
     elements: [
       {
-        icon: <RestaurantRounded />,
-        id: "ingredients",
-        text: "Ingredients",
-        to: "/dashboard/ingredients",
-      },
-      {
-        icon: <DinnerDiningRounded />,
-        id: "meals",
-        text: "Meals",
-        to: "/dashboard/meals",
+        icon: <CalendarTodayRounded />,
+        id: "food-diary",
+        text: "Food Diary",
+        to: PATHS.NUTRITION.FOOD_DIARY,
       },
     ],
     title: "nutrition",
@@ -56,10 +52,22 @@ const NAVIGATION_MODULES: NavigationSection[] = [
   {
     elements: [
       {
-        icon: <AnalyticsRounded />,
+        icon: <BookRounded />,
         id: "library",
         text: "Library",
-        to: "/dashboard/library",
+        to: PATHS.LIBRARY.ROOT,
+      },
+      {
+        icon: <RestaurantRounded />,
+        id: "ingredients",
+        text: "Ingredients",
+        to: PATHS.LIBRARY.INGREDIENTS,
+      },
+      {
+        icon: <DinnerDiningRounded />,
+        id: "meals",
+        text: "Meals",
+        to: PATHS.LIBRARY.MEALS,
       },
     ],
     title: "library",
@@ -69,7 +77,7 @@ const NAVIGATION_MODULES: NavigationSection[] = [
       {
         icon: <SettingsApplications />,
         id: "settings",
-        to: "/dashboard/settings",
+        to: PATHS.SETTINGS,
         text: "Settings",
       },
     ],
@@ -77,6 +85,21 @@ const NAVIGATION_MODULES: NavigationSection[] = [
   },
 ] as const;
 
+// Helper function dla linków w komponentach
+export const createLibraryPath = (section: string) => `${PATHS.LIBRARY.ROOT}/${section}`;
+
+// Type safety
+type LibrarySection = "ingredients" | "meals" | "exercises";
+export const getLibraryPath = (section: LibrarySection) => {
+  const pathMap = {
+    ingredients: PATHS.LIBRARY.INGREDIENTS,
+    meals: PATHS.LIBRARY.MEALS,
+    exercises: `${PATHS.LIBRARY.ROOT}/exercises`, // future
+  };
+  return pathMap[section];
+};
+
+// Rest of navigation component stays the same...
 const SECTION_TITLE_STYLES = {
   color: "text.secondary",
   cursor: "default",
@@ -102,7 +125,7 @@ function NavigationLinkElement({ icon, text, to }: NavigationLinkElementProps) {
   const pathname = usePathname();
 
   const isSelected = (current: string, target: string) => {
-    return target === "/dashboard" ? current === target : current.includes(target);
+    return target === PATHS.DASHBOARD ? current === target : current.includes(target);
   };
 
   const selected = isSelected(pathname, to);

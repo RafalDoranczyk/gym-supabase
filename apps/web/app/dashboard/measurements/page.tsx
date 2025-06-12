@@ -3,11 +3,11 @@ import {
   CurrentWeightCard,
   GoalProgressCard,
   LatestMeasurementsCard,
-  MeasurementsPageContent,
+  MeasurementPageContent,
   WeeklyStatsCard,
   fetchMeasurementTypes,
   fetchMeasurements,
-} from "@/modules/measurements";
+} from "@/modules/measurement";
 import { Grid, Stack } from "@mui/material";
 
 export default async function MeasurementsPage() {
@@ -18,7 +18,7 @@ export default async function MeasurementsPage() {
 
   return (
     <div>
-      <PageHeader
+      <PageHeader.Root
         title="Measurements"
         description="Track your fitness progress with detailed measurements and charts."
       />
@@ -41,7 +41,7 @@ export default async function MeasurementsPage() {
         </Grid>
 
         {/* Client-side interactive section */}
-        <MeasurementsPageContent measurements={measurements} measurementTypes={measurementTypes} />
+        <MeasurementPageContent measurements={measurements} measurementTypes={measurementTypes} />
       </Stack>
     </div>
   );

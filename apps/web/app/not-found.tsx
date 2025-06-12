@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowBack, Home, SearchOff } from "@mui/icons-material";
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 
@@ -8,7 +6,7 @@ export default function NotFound() {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #0A0B0E 0%, #141721 100%)",
+        bgcolor: "grey.900",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -23,31 +21,29 @@ export default function NotFound() {
               width: 120,
               height: 120,
               borderRadius: "50%",
-              background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
+              bgcolor: "grey.800",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "2px solid #374151",
+              border: 2,
+              borderColor: "grey.700",
             }}
           >
             <SearchOff
               sx={{
                 fontSize: 60,
-                color: "#6B7280",
-                opacity: 0.7,
+                color: "grey.500",
               }}
             />
           </Box>
 
           {/* 404 Number */}
           <Typography
+            variant="h1"
             sx={{
               fontSize: { xs: 80, sm: 120 },
               fontWeight: 800,
-              background: "linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              color: "primary.main",
               lineHeight: 0.8,
               letterSpacing: "-0.02em",
             }}
@@ -57,13 +53,7 @@ export default function NotFound() {
 
           {/* Error Messages */}
           <Stack spacing={2} maxWidth={400}>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 600,
-                color: "text.primary",
-              }}
-            >
+            <Typography variant="h4" fontWeight={600} color="text.primary">
               Page Not Found
             </Typography>
 
@@ -86,16 +76,14 @@ export default function NotFound() {
               href="/"
               size="large"
               variant="contained"
+              color="primary"
               startIcon={<Home />}
               sx={{
                 px: 4,
                 py: 1.5,
                 borderRadius: 3,
-                background: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)",
                 "&:hover": {
-                  background: "linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)",
                   transform: "translateY(-1px)",
-                  boxShadow: "0 8px 25px rgba(139, 92, 246, 0.4)",
                 },
                 transition: "all 0.3s ease",
               }}
@@ -103,20 +91,22 @@ export default function NotFound() {
               Go Home
             </Button>
 
+            {/* Server Component friendly back button */}
             <Button
-              onClick={() => window.history.back()}
+              href="javascript:history.back()"
               size="large"
               variant="outlined"
+              color="inherit"
               startIcon={<ArrowBack />}
               sx={{
                 px: 4,
                 py: 1.5,
                 borderRadius: 3,
-                borderColor: "#374151",
-                color: "#9CA3AF",
+                color: "grey.400",
+                borderColor: "grey.600",
                 "&:hover": {
-                  borderColor: "#6B7280",
-                  backgroundColor: "rgba(107, 114, 128, 0.1)",
+                  borderColor: "grey.500",
+                  backgroundColor: "grey.800",
                   transform: "translateY(-1px)",
                 },
                 transition: "all 0.3s ease",

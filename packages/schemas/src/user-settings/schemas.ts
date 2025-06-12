@@ -1,13 +1,14 @@
 import { z } from "zod";
+import { CreatedAt } from "../shared";
 import { UNIT_SYSTEMS } from "./constants";
 
 // Base schema for the database table - minimal start
 export const UserPreferencesSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
-  unit_system: z.enum(Object.values(UNIT_SYSTEMS) as [string, ...string[]]),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  unit_system: z.nativeEnum(UNIT_SYSTEMS),
+  created_at: CreatedAt,
+  updated_at: CreatedAt,
 });
 
 // Schema for creating new preferences (omits generated fields)
@@ -26,7 +27,7 @@ export const UpdateUserPreferencesPayloadSchema = UserPreferencesSchema.omit({
 }).partial();
 
 // Schema for fetching preferences response
-export const FetchUserPreferencesResponseSchema = UserPreferencesSchema.nullable();
+export const FetchUserPreferencesResponseSchema = UserPreferencesSchema;
 
 // Type exports
 export type UserPreferences = z.infer<typeof UserPreferencesSchema>;

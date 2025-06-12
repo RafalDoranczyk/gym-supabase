@@ -1,4 +1,5 @@
 import { getUser } from "@/actions";
+import { APP_NAME } from "@/constants";
 import { Box, Drawer, Typography } from "@mui/material";
 import type { PropsWithChildren } from "react";
 
@@ -25,7 +26,7 @@ export async function DesktopNavigationDrawer({ children }: PropsWithChildren) {
         pl={2}
         sx={{ cursor: "default" }}
       >
-        <Typography variant="button">Gym supabase</Typography>
+        <Typography variant="button">{APP_NAME}</Typography>
         <Typography variant="caption">
           {user?.user_metadata?.user_name ?? "Unknown user"}
         </Typography>

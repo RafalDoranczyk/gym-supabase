@@ -12,13 +12,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-type MUIColorPickerProps = {
-  selectedColor: string;
-  onChange: (color: string) => void;
-  error?: boolean;
-  helperText?: string;
-};
-
 const colorPalette = {
   "Theme Colors": ["#8B5CF6", "#A78BFA", "#7C3AED", "#FF6B6B", "#FF8E8E", "#E55555"],
   "Material Purple": [
@@ -113,6 +106,13 @@ const colorPalette = {
   ],
 };
 
+type MUIColorPickerProps = {
+  selectedColor: string;
+  onChange: (color: string) => void;
+  error?: boolean;
+  helperText?: string;
+};
+
 // Enhanced palette with theme colors first
 function MUIColorPalette({
   selectedColor,
@@ -201,32 +201,34 @@ export function ColorPicker({ selectedColor, onChange, error, helperText }: MUIC
         value={inputValue}
         onChange={(e) => handleInputChange(e.target.value)}
         placeholder="#8B5CF6"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Box
-                sx={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 1,
-                  bgcolor: isValidColor ? inputValue : "transparent",
-                  border: "1px solid",
-                  borderColor: isValidColor ? "divider" : "error.main",
-                }}
-              />
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                size="small"
-                sx={{ color: "primary.main" }}
-              >
-                <Palette />
-              </IconButton>
-            </InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Box
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: 1,
+                    bgcolor: isValidColor ? inputValue : "transparent",
+                    border: "1px solid",
+                    borderColor: isValidColor ? "divider" : "error.main",
+                  }}
+                />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                  size="small"
+                  sx={{ color: "primary.main" }}
+                >
+                  <Palette />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
         }}
         error={error || !isValidColor}
         helperText={

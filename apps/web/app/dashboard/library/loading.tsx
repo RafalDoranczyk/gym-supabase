@@ -1,4 +1,4 @@
-import { PageHeaderSkeleton } from "@/components";
+import { PageHeader } from "@/components";
 import { Box, Card, CardContent, Divider, Grid, Skeleton, Stack } from "@mui/material";
 
 const CARDS_PER_SECTION = 8; // 4 per row, 2 rows
@@ -6,7 +6,7 @@ const CARDS_PER_SECTION = 8; // 4 per row, 2 rows
 export default function Loading() {
   return (
     <Stack spacing={4}>
-      <PageHeaderSkeleton />
+      <PageHeader.Skeleton />
 
       {/* Ingredient Groups Section */}
       <Box>

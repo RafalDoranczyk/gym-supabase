@@ -1,16 +1,16 @@
 import { PageHeader } from "@/components";
-import { SettingsPageContent } from "@/modules/user-settings";
-import { Stack } from "@mui/material";
+import { UserSettingsPageContent, fetchUserPreferences } from "@/modules/user-settings";
 
-export default function SettingsPage() {
+export default async function UserSettingsPage() {
+  const preferences = await fetchUserPreferences();
+
   return (
-    <Stack spacing={4}>
-      <PageHeader
+    <div>
+      <PageHeader.Root
         title="Settings"
         description="Manage your account preferences and application settings"
       />
-
-      <SettingsPageContent />
-    </Stack>
+      <UserSettingsPageContent preferences={preferences} />
+    </div>
   );
 }

@@ -1,1 +1,2 @@
-export { SettingsPageContent } from "./components/SettingsPageContent";
+export { fetchUserPreferences } from "./actions/fetchUserPreferences";
+export { UserSettingsPageContent } from "./components/UserSettingsPageContent";

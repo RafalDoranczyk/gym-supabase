@@ -1,0 +1,2 @@
+export const FOOD_DIARY_MEAL_NAME_MIN_LENGTH = 1;
+export const FOOD_DIARY_MEAL_NAME_MAX_LENGTH = 100;
