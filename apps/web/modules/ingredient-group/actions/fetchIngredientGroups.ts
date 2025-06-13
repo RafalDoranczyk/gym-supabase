@@ -1,18 +1,19 @@
 "use server";
 
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
 import {
   type FetchIngredientGroupsResponse,
   FetchIngredientGroupsResponseSchema,
 } from "@repo/schemas";
 
 export async function fetchIngredientGroups(): Promise<FetchIngredientGroupsResponse> {
-  const supabase = await createServerClient();
+  const { user, supabase } = await getUserScopedQuery();
 
   const { data, error, count } = await supabase
     .from("ingredient_groups")
     .select("*", { count: "exact" })
-    .order("name", { ascending: true });
+    .order("name", { ascending: true })
+    .eq("user_id", user.id);
 
   if (error) {
     throw mapSupabaseErrorToAppError(error);

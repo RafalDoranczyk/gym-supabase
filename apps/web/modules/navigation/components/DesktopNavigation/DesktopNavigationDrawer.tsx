@@ -9,6 +9,8 @@ export const APP_BAR_HEIGHT = 64;
 export async function DesktopNavigationDrawer({ children }: PropsWithChildren) {
   const user = await getUser();
 
+  const userName = user.user_metadata?.user_name || user.user_metadata?.name || "Unknown user";
+
   return (
     <Drawer
       aria-label="Main navigation"
@@ -27,9 +29,7 @@ export async function DesktopNavigationDrawer({ children }: PropsWithChildren) {
         sx={{ cursor: "default" }}
       >
         <Typography variant="button">{APP_NAME}</Typography>
-        <Typography variant="caption">
-          {user?.user_metadata?.user_name ?? "Unknown user"}
-        </Typography>
+        <Typography variant="caption">{userName}</Typography>
       </Box>
       {children}
     </Drawer>

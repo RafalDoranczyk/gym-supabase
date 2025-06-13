@@ -31,3 +31,24 @@ export async function createIngredient(
 
   return assertZodParse(IngredientSchema, data);
 }
+
+// Setup version
+export async function createIngredientForSetup(
+  payload: CreateIngredientPayload
+): Promise<CreateIngredientResponse> {
+  const validatedPayload = assertZodParse(CreateIngredientPayloadSchema, payload);
+
+  const { user, supabase } = await getUserScopedQuery();
+
+  const { data, error } = await supabase
+    .from("ingredients")
+    .insert([{ ...validatedPayload, user_id: user.id }])
+    .select("*")
+    .single();
+
+  if (error) {
+    throw mapSupabaseErrorToAppError(error);
+  }
+
+  return assertZodParse(IngredientSchema, data);
+}

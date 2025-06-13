@@ -29,3 +29,23 @@ export async function createMealTag(payload: CreateMealTagPayload): Promise<Crea
 
   return assertZodParse(MealTagSchema, data);
 }
+
+export async function createMealTagForSetup(
+  payload: CreateMealTagPayload
+): Promise<CreateMealTagResponse> {
+  const validatedPayload = assertZodParse(CreateMealTagPayloadSchema, payload);
+
+  const { user, supabase } = await getUserScopedQuery();
+
+  const { data, error } = await supabase
+    .from("meal_tags")
+    .insert([{ ...validatedPayload, user_id: user.id }])
+    .select("*")
+    .single();
+
+  if (error) {
+    throw mapSupabaseErrorToAppError(error);
+  }
+
+  return assertZodParse(MealTagSchema, data);
+}

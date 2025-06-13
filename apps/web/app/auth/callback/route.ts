@@ -1,3 +1,4 @@
+import { setupUserDefaults } from "@/actions";
 import { PATHS } from "@/constants";
 import { createServerClient } from "@/utils";
 import { type NextRequest, NextResponse } from "next/server";
@@ -40,11 +41,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   try {
     const supabase = await createServerClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
       console.error("OAuth exchange error:", error);
       return redirectToError(origin);
+    }
+
+    try {
+      console.log("🚀 Setting up defaults for new user:", data.user.id);
+      await setupUserDefaults();
+      console.log("✅ User defaults setup completed");
+    } catch (setupError) {
+      console.error("❌ Failed to setup user defaults:", setupError);
     }
 
     const redirectBase = getRedirectBase(request, origin);

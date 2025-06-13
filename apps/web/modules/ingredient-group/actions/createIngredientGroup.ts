@@ -31,3 +31,22 @@ export async function createIngredientGroup(
 
   return assertZodParse(IngredientGroupSchema, data);
 }
+
+// New function dla setup (bez revalidation)
+export async function createIngredientGroupForSetup(payload: CreateIngredientGroupPayload) {
+  const validatedPayload = assertZodParse(CreateIngredientGroupPayloadSchema, payload);
+  const { user, supabase } = await getUserScopedQuery();
+
+  const { data, error } = await supabase
+    .from("ingredient_groups")
+    .insert([{ ...validatedPayload, user_id: user.id }])
+    .select("*")
+    .single();
+
+  if (error) {
+    throw mapSupabaseErrorToAppError(error);
+  }
+
+  // NO revalidatePath - bo to setup
+  return assertZodParse(IngredientGroupSchema, data);
+}
