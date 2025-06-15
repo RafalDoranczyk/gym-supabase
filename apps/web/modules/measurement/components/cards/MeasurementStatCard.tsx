@@ -266,7 +266,7 @@ export function MeasurementStatCard({ variant, value, change, progress }: StatCa
   );
 }
 
-export function MeasurementStatCardSekeleton() {
+export function MeasurementStatCardSkeleton() {
   return (
     <Paper
       elevation={0}

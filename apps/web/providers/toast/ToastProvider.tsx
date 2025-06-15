@@ -3,7 +3,6 @@
 import { Error as ErrorIcon, CheckCircle as SuccessIcon } from "@mui/icons-material";
 import { Box, Snackbar as MuiSnackbar, SnackbarContent } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import type React from "react";
 import { createContext, useState } from "react";
 
 export type ToastContextType = {

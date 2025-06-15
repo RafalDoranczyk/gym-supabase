@@ -38,33 +38,29 @@ export function CategoryCard<T extends BaseItem>({
       <CardContent
         sx={{
           display: "flex",
+          flex: 1,
           flexDirection: "column",
           gap: 2,
-          flex: 1,
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+          <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
             {item.color ? (
               <Box
+                width={16}
+                height={16}
+                borderRadius="50%"
+                bgcolor={item.color}
+                flexShrink={0}
                 sx={{
-                  width: 16,
-                  height: 16,
-                  borderRadius: "50%",
-                  bgcolor: item.color,
                   border: `2px solid ${item.color}40`,
-                  flexShrink: 0,
                 }}
               />
             ) : (
               fallbackIcon && (
-                <Box sx={{ fontSize: 16, color: "text.secondary" }}>{fallbackIcon}</Box>
+                <Box color="text.secondary" sx={{ fontSize: 16 }}>
+                  {fallbackIcon}
+                </Box>
               )
             )}
             <Typography variant="h6">{item.name}</Typography>
@@ -77,8 +73,8 @@ export function CategoryCard<T extends BaseItem>({
 
         <Typography
           variant="body2"
+          color={item.description ? "text.secondary" : "text.disabled"}
           sx={{
-            color: item.description ? "text.secondary" : "text.disabled",
             minHeight: "2.5em",
             flex: "0 0 auto",
           }}
@@ -86,20 +82,20 @@ export function CategoryCard<T extends BaseItem>({
           {item.description || "No description provided"}
         </Typography>
 
-        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+        <Typography variant="body2" color="text.secondary" fontWeight={500}>
           {countValue} {countLabel.slice(0, -1)}
           {countValue !== 1 ? countLabel.slice(-1) : ""}
         </Typography>
 
-        <Box sx={{ flex: 1 }}>
+        <Box flex={1}>
           {!hasExamples && (
             <Typography
               variant="caption"
+              color="text.disabled"
+              display="block"
+              py={1}
               sx={{
-                color: "text.disabled",
                 fontStyle: "italic",
-                display: "block",
-                py: 1,
               }}
             >
               {emptyExamplesText}
@@ -137,14 +133,14 @@ export function CategoryCard<T extends BaseItem>({
           )}
         </Box>
 
-        <Box sx={{ mt: "auto", pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="caption" sx={{ color: "text.disabled" }}>
+        <Box mt="auto" pt={1} borderTop="1px solid" borderColor="divider">
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="caption" color="text.disabled">
               Created {formatDate(item.created_at)}
             </Typography>
 
             {item.updated_at && item.updated_at !== item.created_at && (
-              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+              <Typography variant="caption" color="text.disabled">
                 Updated {formatDate(item.updated_at)}
               </Typography>
             )}

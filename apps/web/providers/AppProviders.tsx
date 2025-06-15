@@ -1,4 +1,3 @@
-import type React from "react";
 import { DateProvider } from "./date/DateProvider";
 import { ThemeProvider } from "./theme/ThemeProvider";
 import { ToastProvider } from "./toast/ToastProvider";

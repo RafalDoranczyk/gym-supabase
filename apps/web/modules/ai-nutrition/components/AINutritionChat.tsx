@@ -1,5 +1,5 @@
 "use client";
-import { useAutoScroll } from "@/hooks/useAutoScroll";
+import { useAutoScroll } from "@/hooks";
 import { SmartToy as BotIcon, Person as PersonIcon, Send as SendIcon } from "@mui/icons-material";
 import {
   alpha,
@@ -16,8 +16,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import { chatWithNutritionAssistant } from "../lib/chat";
-import { QUICK_RESPONSES } from "../lib/prompts";
+import { chatWithNutritionAssistant } from "../config/nutrition-ai";
+import { QUICK_RESPONSES } from "../config/prompts";
 
 type Message = {
   id: string;

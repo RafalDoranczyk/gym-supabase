@@ -1,13 +1,14 @@
 "use server";
 
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { createSupabase, mapSupabaseErrorToAppError } from "@/core/supabase";
+import { assertZodParse } from "@/utils";
 import {
   FetchMeasurementTypesResponseSchema,
   type FetchMeasurementTypesResponse,
 } from "@repo/schemas";
 
 export async function fetchMeasurementTypes(): Promise<FetchMeasurementTypesResponse> {
-  const supabase = await createServerClient();
+  const supabase = await createSupabase();
 
   const { data, error, count } = await supabase
     .from("measurement_types")

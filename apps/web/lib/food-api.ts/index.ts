@@ -1,1 +1,0 @@
-export { searchFoodProductsFromExternalAPI } from "./searchFoodProducts";

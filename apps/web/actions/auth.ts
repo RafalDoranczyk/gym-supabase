@@ -1,33 +1,13 @@
 "use server";
 
 import { AppError, AppErrorCodes } from "@/core";
-import { createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { createSupabase, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { redirect } from "next/navigation";
 
 type OAuthProvider = "github" | "google";
 
-export async function loginWithGithub() {
-  return loginWithOAuth("github");
-}
-
-export async function loginWithGoogle() {
-  return loginWithOAuth("google");
-}
-
-export async function logout() {
-  const supabase = await createServerClient();
-
-  const { error } = await supabase.auth.signOut({ scope: "global" });
-
-  if (error) {
-    throw mapSupabaseErrorToAppError(error);
-  }
-
-  redirect("/");
-}
-
 async function loginWithOAuth(provider: OAuthProvider) {
-  const supabase = await createServerClient();
+  const supabase = await createSupabase();
 
   const redirectTo = process.env.NEXT_PUBLIC_AUTH_CALLBACK_URL;
 
@@ -50,4 +30,24 @@ async function loginWithOAuth(provider: OAuthProvider) {
   }
 
   redirect(data.url);
+}
+
+export async function loginWithGithub() {
+  return loginWithOAuth("github");
+}
+
+export async function loginWithGoogle() {
+  return loginWithOAuth("google");
+}
+
+export async function logout() {
+  const supabase = await createSupabase();
+
+  const { error } = await supabase.auth.signOut({ scope: "global" });
+
+  if (error) {
+    throw mapSupabaseErrorToAppError(error);
+  }
+
+  redirect("/");
 }

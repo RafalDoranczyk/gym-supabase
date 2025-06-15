@@ -1,6 +1,7 @@
 "use server";
 
-import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
+import { assertZodParse } from "@/utils";
 import { type FetchMeasurementsResponse, FetchMeasurementsResponseSchema } from "@repo/schemas";
 
 export async function fetchMeasurements(): Promise<FetchMeasurementsResponse> {

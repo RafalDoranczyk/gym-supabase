@@ -4,30 +4,26 @@ import { Box, Button, Container, Stack, Typography } from "@mui/material";
 export default function NotFound() {
   return (
     <Box
-      sx={{
-        minHeight: "100vh",
-        bgcolor: "grey.900",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        px: 2,
-      }}
+      minHeight="100vh"
+      bgcolor="grey.900"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      px={2}
     >
       <Container maxWidth="sm">
         <Stack spacing={4} alignItems="center" textAlign="center">
           {/* 404 Icon */}
           <Box
-            sx={{
-              width: 120,
-              height: 120,
-              borderRadius: "50%",
-              bgcolor: "grey.800",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: 2,
-              borderColor: "grey.700",
-            }}
+            width={120}
+            height={120}
+            borderRadius="50%"
+            bgcolor="grey.800"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            border={2}
+            borderColor="grey.700"
           >
             <SearchOff
               sx={{
@@ -40,10 +36,10 @@ export default function NotFound() {
           {/* 404 Number */}
           <Typography
             variant="h1"
+            fontWeight={800}
+            color="primary.main"
             sx={{
               fontSize: { xs: 80, sm: 120 },
-              fontWeight: 800,
-              color: "primary.main",
               lineHeight: 0.8,
               letterSpacing: "-0.02em",
             }}
@@ -71,7 +67,7 @@ export default function NotFound() {
           </Stack>
 
           {/* Action Buttons */}
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 3 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} mt={3}>
             <Button
               href="/"
               size="large"
@@ -120,8 +116,8 @@ export default function NotFound() {
           <Typography
             variant="caption"
             color="text.disabled"
+            mt={2}
             sx={{
-              mt: 2,
               opacity: 0.7,
             }}
           >

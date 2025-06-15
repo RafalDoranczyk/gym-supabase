@@ -1,12 +1,8 @@
 "use server";
 
-import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import type { UserIngredientForAI, UserIngredientsForAIResponse } from "./types";
 
-/**
- * Fetch user's ingredients with group names for AI analysis
- * No pagination - AI needs to see all ingredients to make good suggestions
- */
 export async function fetchUserIngredientsForAI(): Promise<UserIngredientsForAIResponse> {
   const { user, supabase } = await getUserScopedQuery();
 
@@ -43,7 +39,7 @@ export async function fetchUserIngredientsForAI(): Promise<UserIngredientsForAIR
     .map((item) => ({
       id: item.id,
       name: item.name,
-      group_name: item.ingredient_groups[0]?.name || "Unknown",
+      group_name: item.ingredient_groups[0].name || "Unknown",
       calories: item.calories || 0,
       protein: item.protein || 0,
       carbs: item.carbs || 0,

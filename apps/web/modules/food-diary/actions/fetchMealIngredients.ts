@@ -1,5 +1,4 @@
-// utils/fetchMealIngredients.ts
-import { mapSupabaseErrorToAppError } from "@/utils";
+import { mapSupabaseErrorToAppError } from "@/core/supabase";
 import type { FoodDiaryIngredient, MealNutritionSummary } from "@repo/schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 

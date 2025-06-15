@@ -1,56 +1,45 @@
-import { loginWithGithub, loginWithGoogle } from "@/actions";
+import { loginWithGithub, loginWithGoogle } from "@/actions/auth";
 import { APP_NAME } from "@/constants";
 import { Analytics, FitnessCenter, GitHub, Google, Restaurant } from "@mui/icons-material";
 import { Box, Button, Chip, Container, Paper, Stack, Typography } from "@mui/material";
 
-export default function HomePage() {
+export default function Home() {
   return (
     <Box
-      sx={{
-        minHeight: "100vh",
-        bgcolor: "background.default",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        py: 4,
-      }}
+      minHeight="100vh"
+      bgcolor="background.default"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      py={4}
     >
       <Container maxWidth="sm">
         <Paper
-          elevation={8}
           sx={{
-            bgcolor: "background.default",
             p: 6,
             borderRadius: 4,
             textAlign: "center",
+            bgcolor: "background.default",
           }}
+          elevation={8}
         >
           {/* Header */}
           <Stack spacing={3} alignItems="center" mb={4}>
             <Box
-              sx={{
-                width: 80,
-                height: 80,
-                borderRadius: "50%",
-                bgcolor: "primary.main",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: 4,
-              }}
+              width={80}
+              height={80}
+              borderRadius="50%"
+              bgcolor="primary.main"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              boxShadow={4}
             >
               <FitnessCenter sx={{ fontSize: 40, color: "primary.contrastText" }} />
             </Box>
 
             <Stack spacing={1} alignItems="center">
-              <Typography
-                variant="h3"
-                color="primary"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                }}
-              >
+              <Typography variant="h3" color="primary" fontWeight={700} mb={1}>
                 {APP_NAME}
               </Typography>
 
@@ -129,7 +118,7 @@ export default function HomePage() {
           </Stack>
 
           {/* Footer */}
-          <Typography variant="caption" color="text.disabled" sx={{ mt: 4, display: "block" }}>
+          <Typography variant="caption" color="text.disabled" display="block" mt={4}>
             Track meals • Build muscle • Achieve goals
           </Typography>
         </Paper>

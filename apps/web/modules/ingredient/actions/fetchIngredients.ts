@@ -1,6 +1,7 @@
 "use server";
 
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { createSupabase, mapSupabaseErrorToAppError } from "@/core/supabase";
+import { assertZodParse } from "@/utils";
 import {
   type FetchIngredientsPayload,
   FetchIngredientsPayloadSchema,
@@ -19,7 +20,7 @@ import {
  */
 
 function buildIngredientsQuery(
-  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  supabase: Awaited<ReturnType<typeof createSupabase>>,
   params: FetchIngredientsPayload
 ) {
   let query = supabase.from("ingredients").select(
@@ -54,7 +55,7 @@ export async function fetchIngredients(
 ): Promise<FetchIngredientsResponse> {
   const validatedPayload = assertZodParse(FetchIngredientsPayloadSchema, payload || {});
 
-  const supabase = await createServerClient();
+  const supabase = await createSupabase();
 
   // Build and execute query
   const query = buildIngredientsQuery(supabase, validatedPayload);

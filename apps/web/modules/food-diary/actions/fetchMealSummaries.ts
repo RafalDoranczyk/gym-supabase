@@ -1,4 +1,4 @@
-import { mapSupabaseErrorToAppError } from "@/utils";
+import { mapSupabaseErrorToAppError } from "@/core/supabase";
 import type { MealNutritionSummary } from "@repo/schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 

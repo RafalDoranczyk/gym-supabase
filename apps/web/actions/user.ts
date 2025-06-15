@@ -1,21 +1,29 @@
 import { AppError, AppErrorCodes } from "@/core";
-import { createServerClient } from "@/utils";
+import { createSupabase, mapSupabaseErrorToAppError } from "@/core/supabase";
 
 export async function getUser() {
-  const supabase = await createServerClient();
+  try {
+    const supabase = await createSupabase();
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-  if (error) {
-    throw new AppError(AppErrorCodes.SERVER_ERROR, error.message);
+    if (error) {
+      throw mapSupabaseErrorToAppError(error);
+    }
+
+    if (!user) {
+      throw new AppError(AppErrorCodes.UNAUTHORIZED, "User not authenticated");
+    }
+
+    return user;
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    throw new AppError(AppErrorCodes.SERVER_ERROR, "Failed to get user");
   }
-
-  if (!user) {
-    throw new AppError(AppErrorCodes.UNAUTHORIZED);
-  }
-
-  return user;
 }

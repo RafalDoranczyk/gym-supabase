@@ -1,21 +1,24 @@
-import { type FunctionDeclaration, SchemaType } from "@google/generative-ai";
+import type { Tool } from "@anthropic-ai/sdk/resources/index";
+import type { IngredientHandlerNames } from "./handlers";
+
+type IngredientToolFunction = Tool & {
+  name: IngredientHandlerNames;
+};
 
 export const ingredientFunctions = [
   {
-    name: "getExistingIngredients",
+    name: "getExistingIngredients" as const,
     description:
       "Get user's current ingredients organized by groups. Use this when user asks about their database.",
-    parameters: {
-      type: SchemaType.OBJECT,
+    input_schema: {
+      type: "object",
       properties: {
         groupName: {
-          type: SchemaType.STRING,
+          type: "string",
           description: "Optional: filter by specific group name",
         },
       },
       required: [],
     },
   },
-] as const satisfies readonly FunctionDeclaration[];
-
-export type IngredientFunctionNames = (typeof ingredientFunctions)[number]["name"];
+] satisfies IngredientToolFunction[];

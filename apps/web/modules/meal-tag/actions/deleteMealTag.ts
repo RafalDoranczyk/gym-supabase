@@ -1,7 +1,8 @@
 "use server";
 
 import { PATHS } from "@/constants";
-import { assertZodParse, getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
+import { assertZodParse } from "@/utils";
 import {
   type DeleteMealTagPayload,
   DeleteMealTagPayloadSchema,

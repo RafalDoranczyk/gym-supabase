@@ -1,8 +1,5 @@
 import { useEffect, useRef } from "react";
 
-/**
- * Hook do automatycznego scrollowania w dół przy nowych wiadomościach
- */
 export function useAutoScroll<T = HTMLDivElement>(dependencies: unknown[] = []) {
   const scrollRef = useRef<T>(null);
 

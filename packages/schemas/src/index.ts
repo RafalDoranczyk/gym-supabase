@@ -5,4 +5,5 @@ export * from "./meal";
 export * from "./meal-tag";
 export * from "./measurement";
 export * from "./measurement-types";
+export * from "./nutrition-goals";
 export * from "./user-settings";

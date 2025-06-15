@@ -1,4 +1,4 @@
-import { getUser } from "@/actions";
+import { getUser } from "@/actions/user";
 import { APP_NAME } from "@/constants";
 import { Box, Drawer, Typography } from "@mui/material";
 import type { PropsWithChildren } from "react";

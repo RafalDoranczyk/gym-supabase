@@ -1,6 +1,7 @@
 "use server";
 
-import { assertZodParse, createServerClient, mapSupabaseErrorToAppError } from "@/utils";
+import { createSupabase, mapSupabaseErrorToAppError } from "@/core/supabase";
+import { assertZodParse } from "@/utils";
 import {
   type FetchMealsPayload,
   FetchMealsPayloadSchema,
@@ -18,7 +19,7 @@ import {
  * Pre-filters meal IDs by tags if specified
  */
 async function getFilteredMealIdsByTags(
-  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  supabase: Awaited<ReturnType<typeof createSupabase>>,
   tagFilter?: string
 ): Promise<string[] | undefined> {
   if (!tagFilter?.trim()) {
@@ -51,7 +52,7 @@ async function getFilteredMealIdsByTags(
  * Builds Supabase query with filters, search, and pagination
  */
 function buildMealsQuery(
-  supabase: Awaited<ReturnType<typeof createServerClient>>,
+  supabase: Awaited<ReturnType<typeof createSupabase>>,
   params: FetchMealsPayload,
   filteredMealIds?: string[]
 ) {
@@ -103,7 +104,7 @@ function buildMealsQuery(
 export async function fetchMeals(payload?: FetchMealsPayload): Promise<FetchMealsResponse> {
   const validatedPayload = assertZodParse(FetchMealsPayloadSchema, payload);
 
-  const supabase = await createServerClient();
+  const supabase = await createSupabase();
 
   // Pre-filter by tags if specified
   const filteredMealIds = await getFilteredMealIdsByTags(supabase, validatedPayload.tag);

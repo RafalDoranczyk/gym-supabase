@@ -1,6 +1,6 @@
 "use server";
 
-import { chatWithNutritionAssistant } from "../lib/chat";
+import { chatWithNutritionAssistant } from "../config/nutrition-ai";
 
 export async function chatWithAI(message: string) {
   console.log("Received message:", message);

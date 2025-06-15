@@ -1,7 +1,7 @@
 "use server";
 
 import { PATHS } from "@/constants";
-import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/utils";
+import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { revalidatePath } from "next/cache";
 
 export async function deleteFoodDiaryMeal(mealId: string): Promise<void> {
