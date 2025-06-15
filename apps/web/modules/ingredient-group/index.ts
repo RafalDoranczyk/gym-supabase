@@ -1,7 +1,3 @@
-export {
-  createIngredientGroup,
-  createIngredientGroupForSetup,
-} from "./actions/createIngredientGroup";
-export { fetchIngredientGroups } from "./actions/fetchIngredientGroups";
-export { fetchIngredientGroupsWithExamples } from "./actions/fetchIngredientGroupsWithExamples";
+export * from "./actions";
 export { IngredientGroupPageContent } from "./components/IngredientGroupPageContent";
+export * from "./schemas";

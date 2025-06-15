@@ -3,17 +3,17 @@
 import { createSupabase, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
 import {
-  type FetchMealsPayload,
-  FetchMealsPayloadSchema,
-  type FetchMealsResponse,
-  FetchMealsResponseSchema,
-} from "@repo/schemas";
-import {
   MEALS_DEFAULT_OFFSET,
   MEALS_DEFAULT_ORDER,
   MEALS_DEFAULT_ORDER_BY,
   MEALS_DEFAULT_PAGE_SIZE,
-} from "../constants/pagination";
+} from "../constants";
+import {
+  type FetchMealsPayload,
+  FetchMealsPayloadSchema,
+  type FetchMealsResponse,
+  FetchMealsResponseSchema,
+} from "../schemas";
 
 /**
  * Pre-filters meal IDs by tags if specified

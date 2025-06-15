@@ -1,6 +1,6 @@
+import type { CreateMealTagPayload } from "@/modules/meal-tag";
 import { CheckCircle } from "@mui/icons-material";
 import { Box, Chip, Typography } from "@mui/material";
-import type { CreateMealTagPayload } from "@repo/schemas";
 import { MEAL_STARTER_TAGS } from "../../constants";
 
 type OnboardingTagStepProps = {

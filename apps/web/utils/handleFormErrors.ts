@@ -1,4 +1,4 @@
-import type { ToastContextType } from "@/providers/toast/ToastProvider";
+import type { ToastContextType } from "@/providers";
 import type { FieldValues, Path, UseFormSetError } from "react-hook-form";
 
 /**

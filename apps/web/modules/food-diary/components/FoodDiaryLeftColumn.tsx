@@ -1,11 +1,11 @@
 import { EmptyState } from "@/components";
+import type { Ingredient } from "@/modules/ingredient";
 import { AddRounded } from "@mui/icons-material";
 import { Button, Stack } from "@mui/material";
-import type { CombinedMeal, Ingredient } from "@repo/schemas";
+import type { MealSaveHandler } from "../hooks/useFoodDiaryMealForm";
+import type { CombinedMeal } from "../schemas";
 import { FoodDiaryMealForm } from "./FoodDiaryMealForm";
 import { FoodDiaryMealList } from "./FoodDiaryMealList";
-
-import type { MealSaveHandler } from "../hooks/useFoodDiaryMealForm";
 import { FoodDiaryLeftColumnSkeleton } from "./loading/FoodDiaryLeftColumnSkeleton";
 
 type FoodDiaryLeftColumnProps = {
@@ -20,6 +20,7 @@ type FoodDiaryLeftColumnProps = {
   ingredients: Ingredient[];
   selectedDate: string;
 };
+
 export function FoodDiaryLeftColumn({
   isCreating,
   editingMealId,

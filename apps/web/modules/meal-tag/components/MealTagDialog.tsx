@@ -1,6 +1,9 @@
+"use client";
+
 import { ColorPicker, ControlledTextField } from "@/components";
 import { useToast } from "@/providers";
 import { handleFormErrors } from "@/utils";
+import { Close } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -15,16 +18,13 @@ import {
 } from "@mui/material";
 import { useTransition } from "react";
 import type { UseFormReturn } from "react-hook-form";
-
-import { Close } from "@mui/icons-material";
-import { createMealTag } from "../actions/createMealTag";
-import { updateMealTag } from "../actions/updateMealTag";
-import type { MealTagForm } from "../hooks/useMealTagForm";
+import { createMealTag, updateMealTag } from "../actions";
+import type { MealTagFormData } from "../schemas";
 
 type MealTagDialogProps = {
   open: boolean;
   onClose: () => void;
-  form: UseFormReturn<MealTagForm>;
+  form: UseFormReturn<MealTagFormData>;
 };
 
 export function MealTagDialog({ open, onClose, form }: MealTagDialogProps) {
@@ -42,6 +42,9 @@ export function MealTagDialog({ open, onClose, form }: MealTagDialogProps) {
       try {
         if (isEditing) {
           const id = getValues("id");
+          if (!id) {
+            return toast.error("Meal tag ID is missing.");
+          }
           await updateMealTag({ ...payload, id });
           toast.success("Meal tag updated successfully");
         } else {

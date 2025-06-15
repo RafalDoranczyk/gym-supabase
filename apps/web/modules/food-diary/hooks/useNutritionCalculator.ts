@@ -1,7 +1,8 @@
 import type { NutritionData } from "@/components";
+import type { Ingredient } from "@/modules/ingredient";
 import { roundToTwoDecimals } from "@/utils";
-import type { CombinedMeal, Ingredient } from "@repo/schemas";
 import { useMemo } from "react";
+import type { CombinedMeal } from "../schemas";
 
 type MealNutrition = NutritionData & {
   mealId: string;

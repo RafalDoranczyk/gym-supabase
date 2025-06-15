@@ -3,17 +3,17 @@
 import { createSupabase, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
 import {
-  type FetchIngredientsPayload,
-  FetchIngredientsPayloadSchema,
-  type FetchIngredientsResponse,
-  FetchIngredientsResponseSchema,
-} from "@repo/schemas";
-import {
   INGREDIENTS_DEFAULT_OFFSET,
   INGREDIENTS_DEFAULT_ORDER,
   INGREDIENTS_DEFAULT_ORDER_BY,
   INGREDIENTS_DEFAULT_PAGE_SIZE,
-} from "../constants/pagination";
+} from "../constants";
+import {
+  type FetchIngredientsPayload,
+  FetchIngredientsPayloadSchema,
+  type FetchIngredientsResponse,
+  FetchIngredientsResponseSchema,
+} from "../schemas";
 
 /**
  * Builds Supabase query with filters, search, and pagination

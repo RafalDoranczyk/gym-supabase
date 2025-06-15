@@ -1,4 +1,4 @@
-import type { ActivityLevel, FitnessPhase } from "@repo/schemas";
+import type { ActivityLevel, FitnessPhase } from "../schemas";
 
 // ========================================
 // TYPES

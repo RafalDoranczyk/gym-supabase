@@ -1,14 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  type CreateMealPayload,
-  CreateMealPayloadSchema,
-  type UpdateMealPayload,
-} from "@repo/schemas";
 import { useForm } from "react-hook-form";
+import { CreateMealPayloadSchema, type MealFormData } from "../schemas";
 
-export type MealForm = CreateMealPayload | UpdateMealPayload;
-
-export const mealDefaultValues: MealForm = {
+export const mealDefaultValues: MealFormData = {
   name: "",
   description: "",
   ingredients: [],
@@ -16,7 +10,7 @@ export const mealDefaultValues: MealForm = {
 };
 
 export function useMealForm() {
-  return useForm<MealForm>({
+  return useForm<MealFormData>({
     resolver: zodResolver(CreateMealPayloadSchema),
     defaultValues: mealDefaultValues,
     mode: "onChange",

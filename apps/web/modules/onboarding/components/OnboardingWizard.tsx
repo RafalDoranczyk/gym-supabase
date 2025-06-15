@@ -2,7 +2,9 @@
 
 import { PATHS } from "@/constants";
 import { useHydration } from "@/hooks";
-import { calculatePhaseTargets } from "@/modules/nutrition-goals";
+import type { CreateIngredientGroupPayload } from "@/modules/ingredient-group";
+import type { CreateMealTagPayload } from "@/modules/meal-tag";
+import { calculatePhaseTargets, type NutritionGoalsForm } from "@/modules/nutrition-goals";
 import { ArrowBack, ArrowForward, CheckCircle } from "@mui/icons-material";
 import {
   Box,
@@ -15,14 +17,9 @@ import {
   Stepper,
   Typography,
 } from "@mui/material";
-import type {
-  CreateIngredientGroupPayload,
-  CreateMealTagPayload,
-  NutritionGoalsForm,
-} from "@repo/schemas";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { completeOnboarding } from "../actions/completeOnboarding";
+import { completeOnboarding } from "../actions";
 import { ONBOARDING_STEPS, TOTAL_ONBOARDING_STEPS } from "../constants";
 import { useOnboardingStore } from "../hooks/useOnboardingStore";
 import { OnboardingComplete } from "./OnboardingComplete";

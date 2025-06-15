@@ -1,5 +1,4 @@
-export { fetchMeasurements } from "./actions/fetchMeasurements";
-export { fetchMeasurementTypes } from "./actions/fetchMeasurementTypes";
+export * from "./actions";
 export { CurrentWeightCard } from "./components/cards/CurrentWeightCard";
 export { GoalProgressCard } from "./components/cards/GoalProgressCard";
 export { LatestMeasurementsCard } from "./components/cards/LatestMeasurementsCard";

@@ -1,9 +1,8 @@
 import { PageHeader } from "@/components";
 import { fetchIngredients } from "@/modules/ingredient";
-import { MealPageContent, fetchMeals } from "@/modules/meal";
+import { FetchMealsPayloadSchema, MealPageContent, fetchMeals } from "@/modules/meal";
 import { fetchMealTagsWithExamples } from "@/modules/meal-tag";
 import { cleanSearchParams } from "@/utils";
-import { FetchMealsPayloadSchema } from "@repo/schemas";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -30,7 +29,7 @@ export default async function Meals({ searchParams }: PageProps) {
     ]);
 
   return (
-    <div>
+    <>
       <PageHeader.Root
         title="Meals"
         description="Log your meals, monitor nutrition intake, and analyze your eating patterns over time."
@@ -41,6 +40,6 @@ export default async function Meals({ searchParams }: PageProps) {
         mealTags={mealTags}
         mealsCount={mealsCount}
       />
-    </div>
+    </>
   );
 }

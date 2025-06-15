@@ -1,14 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  type CreateIngredientGroupPayload,
-  CreateIngredientGroupPayloadSchema,
-  type UpdateIngredientGroupPayload,
-} from "@repo/schemas";
 import { useForm } from "react-hook-form";
+import { CreateIngredientGroupPayloadSchema, type IngredientGroupFormData } from "../schemas";
 
-export type IngredientGroupForm = CreateIngredientGroupPayload | UpdateIngredientGroupPayload;
-
-export const ingredientGroupDefaultValues: IngredientGroupForm = {
+export const ingredientGroupDefaultValues: IngredientGroupFormData = {
   id: "",
   name: "",
   description: "",
@@ -16,7 +10,7 @@ export const ingredientGroupDefaultValues: IngredientGroupForm = {
 };
 
 export function useIngredientGroupForm() {
-  return useForm<IngredientGroupForm>({
+  return useForm<IngredientGroupFormData>({
     resolver: zodResolver(CreateIngredientGroupPayloadSchema),
     defaultValues: ingredientGroupDefaultValues,
   });

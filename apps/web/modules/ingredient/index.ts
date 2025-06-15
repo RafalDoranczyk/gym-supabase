@@ -1,3 +1,3 @@
-export { createIngredient, createIngredientForSetup } from "./actions/createIngredient";
-export { fetchIngredients } from "./actions/fetchIngredients";
+export * from "./actions";
 export { IngredientPageContent } from "./components/IngredientPageContent";
+export * from "./schemas";

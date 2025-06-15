@@ -3,13 +3,13 @@
 import { PATHS } from "@/constants";
 import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
+import { revalidatePath } from "next/cache";
 import {
   type CreateFoodDiaryMealPayload,
   CreateFoodDiaryMealPayloadSchema,
   type CreateFoodDiaryMealResponse,
   FoodDiaryMealSchema,
-} from "@repo/schemas";
-import { revalidatePath } from "next/cache";
+} from "../schemas";
 
 export async function createFoodDiaryMeal(
   payload: CreateFoodDiaryMealPayload
@@ -73,5 +73,6 @@ export async function createFoodDiaryMeal(
   }
 
   revalidatePath(PATHS.NUTRITION.ROOT);
+
   return assertZodParse(FoodDiaryMealSchema, completeDiaryMeal);
 }

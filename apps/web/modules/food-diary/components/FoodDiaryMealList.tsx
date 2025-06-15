@@ -1,6 +1,7 @@
+import type { Ingredient } from "@/modules/ingredient";
 import { Grid, Stack } from "@mui/material";
-import type { CombinedMeal, Ingredient } from "@repo/schemas";
 import type { MealSaveHandler } from "../hooks/useFoodDiaryMealForm";
+import type { CombinedMeal } from "../schemas";
 import { FoodDiaryMealCard } from "./FoodDiaryMealCard";
 
 type FoodDiaryMealListProps = {

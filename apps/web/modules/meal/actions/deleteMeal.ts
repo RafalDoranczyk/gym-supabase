@@ -3,13 +3,13 @@
 import { PATHS } from "@/constants";
 import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
+import { revalidatePath } from "next/cache";
 import {
   type DeleteMealPayload,
   DeleteMealPayloadSchema,
   type DeleteMealResponse,
   MealSchema,
-} from "@repo/schemas";
-import { revalidatePath } from "next/cache";
+} from "../schemas";
 
 export async function deleteMeal(payload: DeleteMealPayload): Promise<DeleteMealResponse> {
   const validatedId = assertZodParse(DeleteMealPayloadSchema, payload);
@@ -28,6 +28,8 @@ export async function deleteMeal(payload: DeleteMealPayload): Promise<DeleteMeal
   if (error || !data) {
     throw mapSupabaseErrorToAppError(error);
   }
+
   revalidatePath(PATHS.LIBRARY.MEALS);
+
   return assertZodParse(MealSchema, data);
 }

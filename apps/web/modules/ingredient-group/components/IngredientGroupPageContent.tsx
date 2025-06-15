@@ -3,6 +3,7 @@
 import {
   CategoryCard,
   ConfirmActionDialog,
+  EditDeleteMenu,
   SearchableEmptyState,
   SearchFieldURL,
   SectionHeader,
@@ -10,16 +11,14 @@ import {
 import { useToast } from "@/providers";
 import { Add } from "@mui/icons-material";
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import type { IngredientGroup, IngredientGroupWithExamples } from "@repo/schemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-
-import { EditDeleteMenu } from "@/components/EditDeleteMenu";
-import { deleteIngredientGroup } from "../actions/deleteIngredientGroup";
+import { deleteIngredientGroup } from "../actions";
 import {
   ingredientGroupDefaultValues,
   useIngredientGroupForm,
 } from "../hooks/useIngredientGroupForm";
+import type { IngredientGroup, IngredientGroupWithExamples } from "../schemas";
 import { IngredientGroupDialog } from "./IngredientGroupDialog";
 
 type IngredientGroupsPageContentProps = {

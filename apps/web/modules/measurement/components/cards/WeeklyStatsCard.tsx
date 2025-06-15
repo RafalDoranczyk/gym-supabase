@@ -1,5 +1,5 @@
-import type { Measurement } from "@repo/schemas";
 import { useMemo } from "react";
+import type { Measurement } from "../../schemas";
 import { MeasurementStatCard } from "./MeasurementStatCard";
 
 type WeeklyStatsCardProps = {

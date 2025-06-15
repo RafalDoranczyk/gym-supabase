@@ -1,15 +1,15 @@
+import type { Ingredient } from "@/modules/ingredient";
 import { calculateIngredientNutrition } from "@/modules/meal";
 import { roundToTwoDecimals } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type {
-  CombinedMeal,
-  CreateFoodDiaryMealPayload,
-  Ingredient,
-  UpdateFoodDiaryMealPayload,
-} from "@repo/schemas";
 import { useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import type {
+  CombinedMeal,
+  CreateFoodDiaryMealPayload,
+  UpdateFoodDiaryMealPayload,
+} from "../schemas";
 
 export type MealSaveHandler = (
   data: CreateFoodDiaryMealPayload | UpdateFoodDiaryMealPayload,

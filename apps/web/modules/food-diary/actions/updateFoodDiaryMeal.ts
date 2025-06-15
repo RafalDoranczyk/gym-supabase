@@ -3,13 +3,13 @@
 import { PATHS } from "@/constants";
 import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
+import { revalidatePath } from "next/cache";
 import {
   FoodDiaryMealSchema,
   type UpdateFoodDiaryMealPayload,
   UpdateFoodDiaryMealPayloadSchema,
   type UpdateFoodDiaryMealResponse,
-} from "@repo/schemas";
-import { revalidatePath } from "next/cache";
+} from "../schemas";
 
 export async function updateFoodDiaryMeal(
   payload: UpdateFoodDiaryMealPayload

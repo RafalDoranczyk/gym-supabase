@@ -4,8 +4,8 @@ import { SearchFieldURL, TooltipIconButton } from "@/components";
 import { formatDate } from "@/utils";
 import { Add, Sort as SortIcon, Visibility as ViewIcon } from "@mui/icons-material";
 import { Box, Button, Divider, IconButton, Stack, Typography } from "@mui/material";
-import type { Measurement } from "@repo/schemas";
 import { useMemo, useState } from "react";
+import type { Measurement } from "../schemas";
 
 const MAX_MEASUREMENTS_TO_SHOW = 4;
 const DISPLAY_UNIT = "kg";

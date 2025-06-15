@@ -1,9 +1,10 @@
 "use client";
 
 import type { NutritionData } from "@/components";
+import type { Ingredient } from "@/modules/ingredient";
 import { Grid } from "@mui/material";
-import type { CombinedMeal, Ingredient } from "@repo/schemas";
 import { useFoodDiary } from "../hooks/useFoodDiary";
+import type { CombinedMeal } from "../schemas";
 import { FoodDiaryLeftColumn } from "./FoodDiaryLeftColumn";
 import { FoodDiarySidebar } from "./FoodDiarySidebar";
 

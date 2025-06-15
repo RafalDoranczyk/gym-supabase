@@ -1,5 +1,5 @@
-export * from "./actions/nutrition-goals";
-
+export * from "./actions";
+export * from "./schemas";
 export {
   calculatePhaseTargets,
   getMacroPercentages,

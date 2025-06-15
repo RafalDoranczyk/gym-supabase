@@ -13,9 +13,9 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import type { Measurement } from "@repo/schemas";
 import { useMemo, useState } from "react";
 import { FixedSizeList, type ListChildComponentProps } from "react-window";
+import type { Measurement } from "../schemas";
 
 type MeasurementListDialogProps = {
   open: boolean;

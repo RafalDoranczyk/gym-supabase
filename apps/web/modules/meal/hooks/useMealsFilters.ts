@@ -1,8 +1,9 @@
 import type { TableOrder } from "@/components";
 import { PATHS } from "@/constants";
-import { FetchMealsPayloadSchema, type MealTag } from "@repo/schemas";
+import type { MealTag } from "@/modules/meal-tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
+import { FetchMealsPayloadSchema } from "../schemas";
 
 // Constants
 const PAGINATION_RESET = "0";

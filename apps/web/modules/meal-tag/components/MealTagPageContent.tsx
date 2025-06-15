@@ -3,6 +3,7 @@
 import {
   CategoryCard,
   ConfirmActionDialog,
+  EditDeleteMenu,
   SearchableEmptyState,
   SearchFieldURL,
   SectionHeader,
@@ -10,13 +11,11 @@ import {
 import { useToast } from "@/providers";
 import { Add } from "@mui/icons-material";
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import type { MealTag, MealTagWithExamples } from "@repo/schemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-
-import { EditDeleteMenu } from "@/components/EditDeleteMenu";
-import { deleteMealTag } from "../actions/deleteMealTag";
+import { deleteMealTag } from "../actions";
 import { mealTagDefaultValues, useMealTagForm } from "../hooks/useMealTagForm";
+import type { MealTag, MealTagWithExamples } from "../schemas";
 import { MealTagDialog } from "./MealTagDialog";
 
 type MealTagPageContentProps = {

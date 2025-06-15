@@ -1,18 +1,83 @@
 "use server";
 
-import { getUserScopedQuery } from "@/core/supabase";
+import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import {
+  type DailyNutritionSummary,
   type FetchFoodDiaryDayPayload,
   FetchFoodDiaryDayPayloadSchema,
   type FetchFoodDiaryDayResponse,
   FoodDiaryDaySchema,
   type FoodDiaryIngredient,
   type MealNutritionSummary,
-} from "@repo/schemas";
-import { fetchDailyNutritionSummary } from "./fetchDailyNutritionSummary";
-import { fetchMealIngredients } from "./fetchMealIngredients";
-import { fetchMealSummaries } from "./fetchMealSummaries";
+} from "../schemas";
+
+async function fetchDailyNutritionSummary(
+  supabase: SupabaseClient,
+  userId: string,
+  entryDate: string
+): Promise<DailyNutritionSummary | null> {
+  const { data: dailySummary, error: dailyError } = await supabase
+    .from("daily_nutrition_summary")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("entry_date", entryDate)
+    .single();
+
+  // PGRST116 = no rows found, which is fine for empty days
+  if (dailyError && dailyError.code !== "PGRST116") {
+    throw mapSupabaseErrorToAppError(dailyError);
+  }
+
+  return dailySummary || null;
+}
+
+async function fetchMealIngredients(
+  supabase: SupabaseClient,
+  mealSummaries: MealNutritionSummary[]
+): Promise<FoodDiaryIngredient[]> {
+  // Early return if no meals
+  if (!mealSummaries || mealSummaries.length === 0) {
+    return [];
+  }
+
+  const mealIds = mealSummaries.map((meal) => meal.meal_id);
+
+  const { data: ingredients, error: ingredientsError } = await supabase
+    .from("food_diary_ingredients")
+    .select(`
+      *,
+      ingredient:ingredients (*)
+    `)
+    .in("diary_meal_id", mealIds);
+
+  if (ingredientsError) {
+    throw mapSupabaseErrorToAppError(ingredientsError);
+  }
+
+  return ingredients || [];
+}
+
+async function fetchMealSummaries(
+  supabase: SupabaseClient,
+  userId: string,
+  entryDate: string
+): Promise<MealNutritionSummary[]> {
+  const { data: mealSummaries, error: summaryError } = await supabase
+    .from("meal_nutrition_summary")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("entry_date", entryDate)
+    .order("meal_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (summaryError) {
+    throw mapSupabaseErrorToAppError(summaryError);
+  }
+
+  return mealSummaries || [];
+}
 
 function combineMealsWithIngredients(
   mealSummaries: MealNutritionSummary[],

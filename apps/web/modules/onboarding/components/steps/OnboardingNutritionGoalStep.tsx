@@ -1,4 +1,10 @@
-import { calculatePhaseTargets, getMacroPercentages } from "@/modules/nutrition-goals";
+import {
+  type ActivityLevel,
+  calculatePhaseTargets,
+  type FitnessPhase,
+  getMacroPercentages,
+  type NutritionGoalsForm,
+} from "@/modules/nutrition-goals";
 import {
   FitnessCenter,
   Grain,
@@ -24,7 +30,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import type { ActivityLevel, FitnessPhase, NutritionGoalsForm } from "@repo/schemas";
 import { ACTIVITY_LEVELS_UI, FITNESS_PHASES_UI } from "../../constants";
 
 type NutritionGoalsStepProps = {

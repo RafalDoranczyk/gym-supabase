@@ -1,8 +1,11 @@
+"use client";
+
 import { Table, TooltipIconButton, type TableHeadCell, type TableOrder } from "@/components";
 import { usePagination } from "@/hooks";
 import { Box, Typography } from "@mui/material";
-import { INGREDIENT_UNIT_TYPES, type Ingredient } from "@repo/schemas";
-import { INGREDIENTS_DEFAULT_PAGE_SIZE } from "../constants/pagination";
+import { INGREDIENTS_DEFAULT_PAGE_SIZE, INGREDIENT_UNIT_TYPES } from "../constants";
+import type { Ingredient } from "../schemas";
+import { formatNutritionValue } from "../utils/formatNutritionValue";
 
 const NUTRITION_CELL_WIDTH = 100;
 
@@ -26,17 +29,10 @@ type IngredientTableProps = {
   count: number;
 };
 
-const formatNumericValue = (value?: number | null): string => {
-  if (value === null || value === undefined || value === 0) {
-    return "—";
-  }
-  return value.toString();
-};
-
 const renderNutritionCell = (value?: number | null) => (
   <Table.Cell align="right" sx={{ width: NUTRITION_CELL_WIDTH }}>
     <Typography variant="body2" sx={{ color: value === 0 ? "text.disabled" : "inherit" }}>
-      {formatNumericValue(value)}
+      {formatNutritionValue(value)}
     </Typography>
   </Table.Cell>
 );

@@ -1,8 +1,9 @@
 import type { TableOrder } from "@/components";
 import { PATHS } from "@/constants";
-import { FetchIngredientsPayloadSchema, type IngredientGroup } from "@repo/schemas";
+import type { IngredientGroup } from "@/modules/ingredient-group";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { FetchIngredientsPayloadSchema } from "../schemas";
 
 // Constants
 const DEFAULT_GROUP = "All";

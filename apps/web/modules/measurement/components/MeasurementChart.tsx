@@ -8,8 +8,8 @@ import {
 } from "@/components";
 import { Analytics, ShowChart, TrendingDown, TrendingUp } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
-import type { Measurement } from "@repo/schemas";
 import { useState } from "react";
+import type { Measurement } from "../schemas";
 
 const MEASUREMENT_CHART_HEIGHT = 490;
 const MEASUREMENTS_MIN_TO_SHOW_CHART = 3;

@@ -1,3 +1,3 @@
-export { createMealTagForSetup } from "./actions/createMealTag";
-export { fetchMealTagsWithExamples } from "./actions/fetchMealTagsWithExamples";
+export * from "./actions";
 export { MealTagPageContent } from "./components/MealTagPageContent";
+export * from "./schemas";

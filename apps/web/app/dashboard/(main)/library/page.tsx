@@ -4,7 +4,6 @@ import {
   IngredientGroupPageContent,
 } from "@/modules/ingredient-group";
 import { fetchMealTagsWithExamples, MealTagPageContent } from "@/modules/meal-tag";
-
 import { Divider, Stack } from "@mui/material";
 import type { Metadata } from "next";
 

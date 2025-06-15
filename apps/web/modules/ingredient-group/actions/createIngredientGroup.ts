@@ -3,13 +3,13 @@
 import { PATHS } from "@/constants";
 import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
+import { revalidatePath } from "next/cache";
 import {
   type CreateIngredientGroupPayload,
   CreateIngredientGroupPayloadSchema,
   type CreateIngredientGroupResponse,
   IngredientGroupSchema,
-} from "@repo/schemas";
-import { revalidatePath } from "next/cache";
+} from "../schemas";
 
 export async function createIngredientGroup(
   payload: CreateIngredientGroupPayload
@@ -33,7 +33,6 @@ export async function createIngredientGroup(
   return assertZodParse(IngredientGroupSchema, data);
 }
 
-// New function dla setup (bez revalidation)
 export async function createIngredientGroupForSetup(payload: CreateIngredientGroupPayload) {
   const validatedPayload = assertZodParse(CreateIngredientGroupPayloadSchema, payload);
   const { user, supabase } = await getUserScopedQuery();
@@ -48,6 +47,5 @@ export async function createIngredientGroupForSetup(payload: CreateIngredientGro
     throw mapSupabaseErrorToAppError(error);
   }
 
-  // NO revalidatePath - bo to setup
   return assertZodParse(IngredientGroupSchema, data);
 }

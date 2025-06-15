@@ -1,3 +1,6 @@
+"use client";
+
+import type { Ingredient } from "@/modules/ingredient";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Autocomplete,
@@ -12,11 +15,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import type { Ingredient } from "@repo/schemas";
 import type { Control, FieldErrors } from "react-hook-form";
 import { useFieldArray } from "react-hook-form";
-
-import type { MealForm } from "../hooks/useMealForm";
+import type { MealFormData } from "../schemas";
 import {
   calculateIngredientNutrition,
   calculateTotalMealNutrition,
@@ -24,8 +25,8 @@ import {
 
 type MealIngredientTableProps = {
   ingredients: Ingredient[];
-  control: Control<MealForm>;
-  errors: FieldErrors<MealForm>;
+  control: Control<MealFormData>;
+  errors: FieldErrors<MealFormData>;
 };
 
 export function MealIngredientTable({ ingredients, control, errors }: MealIngredientTableProps) {

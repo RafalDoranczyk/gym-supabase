@@ -1,16 +1,17 @@
+"use client";
+
 import { ControlledTextField, Drawer, MultiSelect } from "@/components";
+import { PATHS } from "@/constants";
+import type { Ingredient } from "@/modules/ingredient";
+import type { MealTag } from "@/modules/meal-tag";
 import { useToast } from "@/providers";
 import { handleFormErrors } from "@/utils";
 import { Button, Paper, Stack, Typography } from "@mui/material";
-import type { Ingredient, MealTag } from "@repo/schemas";
 import Link from "next/link";
 import { useMemo, useTransition } from "react";
 import type { UseFormReturn } from "react-hook-form";
-
-import { PATHS } from "@/constants";
-import { createMeal } from "../actions/createMeal";
-import { updateMeal } from "../actions/updateMeal";
-import type { MealForm } from "../hooks/useMealForm";
+import { createMeal, updateMeal } from "../actions";
+import type { MealFormData } from "../schemas";
 import { MealIngredientTable } from "./MealIngredientTable";
 
 type SetupRequiredDrawerProps = {
@@ -57,7 +58,7 @@ function SetupRequiredDrawer({ onClose, open }: SetupRequiredDrawerProps) {
 }
 
 type MealDrawerProps = {
-  form: UseFormReturn<MealForm>;
+  form: UseFormReturn<MealFormData>;
   onClose: () => void;
   open: boolean;
   ingredients: Ingredient[];
@@ -102,6 +103,10 @@ export function MealDrawer({ form, onClose, open, ingredients, mealTags }: MealD
     startTransition(() => {
       if (mode === "edit") {
         const id = getValues("id");
+        if (!id) {
+          toast.error("Meal ID is missing.");
+          return;
+        }
         updateMeal({ ...payload, id })
           .then(() => handleSuccess(true))
           .catch(handleError);

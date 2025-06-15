@@ -1,19 +1,17 @@
 "use client";
 
 import { ControlledSelect, ControlledTextField, Drawer } from "@/components";
+import { PATHS } from "@/constants";
+import type { IngredientGroup } from "@/modules/ingredient-group";
 import { useToast } from "@/providers";
 import { handleFormErrors } from "@/utils";
 import { Button, Stack, Typography } from "@mui/material";
-import { INGREDIENT_UNIT_TYPES, type IngredientGroup } from "@repo/schemas";
 import Link from "next/link";
-
 import { useMemo, useTransition } from "react";
 import type { UseFormReturn } from "react-hook-form";
-
-import { PATHS } from "@/constants";
-import { createIngredient } from "../actions/createIngredient";
-import { updateIngredient } from "../actions/updateIngredient";
-import type { IngredientForm } from "../hooks/useIngredientForm";
+import { createIngredient, updateIngredient } from "../actions";
+import { INGREDIENT_UNIT_TYPES } from "../constants";
+import type { IngredientFormData } from "../schemas";
 import { IngredientNumberFields } from "./IngredientNumberFields";
 
 type SetupRequiredDrawerProps = {
@@ -66,7 +64,7 @@ const unitTypeOptions = Object.entries(INGREDIENT_UNIT_TYPES).map(([id, name]) =
 }));
 
 type IngredientDrawerProps = {
-  form: UseFormReturn<IngredientForm>;
+  form: UseFormReturn<IngredientFormData>;
   onClose: () => void;
   open: boolean;
   ingredientGroups: IngredientGroup[];

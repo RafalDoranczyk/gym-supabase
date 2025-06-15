@@ -1,4 +1,7 @@
+"use client";
+
 import { type NutritionData, TooltipIconButton } from "@/components";
+import type { Ingredient } from "@/modules/ingredient";
 import { AddRounded, EditRounded, RestaurantRounded } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -13,9 +16,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import type { CombinedMeal, Ingredient } from "@repo/schemas";
 import { useDebouncedCallback } from "use-debounce";
 import { type MealSaveHandler, useFoodDiaryMealForm } from "../hooks/useFoodDiaryMealForm";
+import type { CombinedMeal } from "../schemas";
 
 type FoodDiaryMealFormProps = {
   meal?: CombinedMeal;

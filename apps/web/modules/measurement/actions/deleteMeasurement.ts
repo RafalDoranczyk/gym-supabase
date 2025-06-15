@@ -3,15 +3,13 @@
 import { PATHS } from "@/constants";
 import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
+import { revalidatePath } from "next/cache";
 import {
   BasicMeasurementSchema,
   type DeleteMeasurementPayload,
   DeleteMeasurementPayloadSchema,
   type DeleteMeasurementResponse,
-  type DeleteMeasurementsPayload,
-  DeleteMeasurementsPayloadSchema,
-} from "@repo/schemas";
-import { revalidatePath } from "next/cache";
+} from "../schemas";
 
 export async function deleteMeasurement(
   payload: DeleteMeasurementPayload
@@ -35,24 +33,4 @@ export async function deleteMeasurement(
   revalidatePath(PATHS.MEASUREMENTS);
 
   return assertZodParse(BasicMeasurementSchema, data);
-}
-
-// Bulk delete measurements
-export async function deleteMeasurements(payload: DeleteMeasurementsPayload): Promise<void> {
-  const validatedPayload = assertZodParse(DeleteMeasurementsPayloadSchema, payload);
-  const { user, supabase } = await getUserScopedQuery();
-
-  if (validatedPayload.ids.length === 0) {
-    throw new Error("At least one ID is required for bulk delete");
-  }
-
-  const { error } = await supabase
-    .from("measurements")
-    .delete()
-    .in("id", validatedPayload.ids)
-    .eq("user_id", user.id);
-
-  if (error) {
-    throw mapSupabaseErrorToAppError(error);
-  }
 }

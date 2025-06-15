@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-
 import { DesktopNavigation } from "./DesktopNavigation/DesktopNavigation";
 import { MobileNavigation } from "./MobileNavigation/MobileNavigation";
 

@@ -1,7 +1,9 @@
+"use client";
+
 import { ControlledTextField } from "@/components";
 import { memo, useMemo } from "react";
 import type { Control, FieldErrors } from "react-hook-form";
-import type { IngredientForm } from "../hooks/useIngredientForm";
+import type { IngredientFormData } from "../schemas";
 
 const numberFields = [
   "calories",
@@ -9,11 +11,11 @@ const numberFields = [
   "protein",
   "fat",
   "price",
-] as const satisfies readonly (keyof IngredientForm)[];
+] as const satisfies readonly (keyof IngredientFormData)[];
 
 type NumberField = (typeof numberFields)[number];
 
-const FIELD_LABELS: Record<keyof Pick<IngredientForm, NumberField>, string> = {
+const FIELD_LABELS: Record<keyof Pick<IngredientFormData, NumberField>, string> = {
   calories: "Calories",
   carbs: "Carbohydrates",
   protein: "Protein",
@@ -22,13 +24,13 @@ const FIELD_LABELS: Record<keyof Pick<IngredientForm, NumberField>, string> = {
 } as const;
 
 type IngredientNumberFieldsProps = {
-  control: Control<IngredientForm>;
-  errors: FieldErrors<IngredientForm>;
+  control: Control<IngredientFormData>;
+  errors: FieldErrors<IngredientFormData>;
 };
 
 // Memoized individual field component to prevent unnecessary re-renders
 const NumberField = memo<{
-  control: Control<IngredientForm>;
+  control: Control<IngredientFormData>;
   fieldKey: NumberField;
   label: string;
   error?: string;

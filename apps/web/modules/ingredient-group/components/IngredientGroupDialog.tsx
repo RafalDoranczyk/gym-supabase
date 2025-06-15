@@ -1,4 +1,8 @@
+"use client";
+
 import { ColorPicker, ControlledTextField } from "@/components";
+import { useToast } from "@/providers";
+import { handleFormErrors } from "@/utils";
 import { Close } from "@mui/icons-material";
 import {
   Button,
@@ -11,18 +15,14 @@ import {
   Stack,
 } from "@mui/material";
 import { useTransition } from "react";
-
-import { useToast } from "@/providers";
-import { handleFormErrors } from "@/utils";
 import type { UseFormReturn } from "react-hook-form";
-import { createIngredientGroup } from "../actions/createIngredientGroup";
-import { updateIngredientGroup } from "../actions/updateIngredientGroup";
-import type { IngredientGroupForm } from "../hooks/useIngredientGroupForm";
+import { createIngredientGroup, updateIngredientGroup } from "../actions";
+import type { IngredientGroupFormData } from "../schemas";
 
 type IngredientGroupDialogProps = {
   open: boolean;
   onClose: () => void;
-  form: UseFormReturn<IngredientGroupForm>;
+  form: UseFormReturn<IngredientGroupFormData>;
 };
 
 export function IngredientGroupDialog({ open, onClose, form }: IngredientGroupDialogProps) {
@@ -39,6 +39,11 @@ export function IngredientGroupDialog({ open, onClose, form }: IngredientGroupDi
       try {
         if (isEditing) {
           const id = getValues("id");
+
+          if (!id) {
+            throw new Error("Ingredient group ID is missing.");
+          }
+
           await updateIngredientGroup({ ...payload, id });
           toast.success("Group updated successfully");
         } else {

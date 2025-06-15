@@ -8,7 +8,9 @@ import {
   TrendingDown,
   TrendingUp,
 } from "@mui/icons-material";
-import type { CreateIngredientGroupPayload, Ingredient, MealTag } from "@repo/schemas";
+import type { Ingredient } from "../ingredient";
+import type { CreateIngredientGroupPayload } from "../ingredient-group";
+import type { MealTag } from "../meal-tag";
 
 // ========================================
 // ONBOARDING STEPS

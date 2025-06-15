@@ -1,4 +1,4 @@
-import type { CreateMeasurementsPayload } from "@repo/schemas";
+import type { CreateMeasurementsPayload } from "../schemas";
 
 export const ExampleWeightMeasurements: CreateMeasurementsPayload = {
   measurements: [

@@ -1,5 +1,4 @@
 import { AppBar, Box, Toolbar } from "@mui/material";
-
 import { NavigationActionButtons } from "../NavigationActionButtons";
 import MobileDrawerToggler from "./MobileDrawerToggler";
 

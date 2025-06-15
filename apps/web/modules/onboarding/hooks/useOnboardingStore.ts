@@ -1,9 +1,8 @@
-import { markOnboardingComplete } from "@/modules/user-settings/actions/updateUserSettings";
-import type {
-  CreateIngredientGroupPayload,
-  CreateMealTagPayload,
-  NutritionGoalsForm,
-} from "@repo/schemas";
+import type { CreateIngredientGroupPayload } from "@/modules/ingredient-group";
+import type { CreateMealTagPayload } from "@/modules/meal-tag";
+import type { NutritionGoalsForm } from "@/modules/nutrition-goals";
+import { markOnboardingComplete } from "@/modules/user-settings";
+
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 

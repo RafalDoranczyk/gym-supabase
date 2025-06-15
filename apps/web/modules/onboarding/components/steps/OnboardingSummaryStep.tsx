@@ -1,4 +1,11 @@
-import { calculatePhaseTargets, getMacroPercentages } from "@/modules/nutrition-goals";
+import type { CreateIngredientGroupPayload } from "@/modules/ingredient-group";
+import type { CreateMealTagPayload } from "@/modules/meal-tag";
+import {
+  calculatePhaseTargets,
+  type FitnessPhase,
+  getMacroPercentages,
+  type NutritionGoalsForm,
+} from "@/modules/nutrition-goals";
 import {
   AccessTime,
   CheckCircle,
@@ -15,12 +22,6 @@ import {
   TrendingUp,
 } from "@mui/icons-material";
 import { Alert, Avatar, Box, Chip, Grid, LinearProgress, Paper, Typography } from "@mui/material";
-import type {
-  CreateIngredientGroupPayload,
-  CreateMealTagPayload,
-  FitnessPhase,
-  NutritionGoalsForm,
-} from "@repo/schemas";
 import { useMemo } from "react";
 import {
   ACTIVITY_LEVELS_UI,

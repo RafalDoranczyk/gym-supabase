@@ -1,9 +1,7 @@
 import { useToast } from "@/providers";
-import type { CombinedMeal } from "@repo/schemas";
 import { useEffect, useState, useTransition } from "react";
-import { createFoodDiaryMeal } from "../actions/createFoodDiary";
-import { deleteFoodDiaryMeals } from "../actions/deleteFoodDiaryMeal";
-import { updateFoodDiaryMeal } from "../actions/updateFoodDiaryMeal";
+import { createFoodDiaryMeal, deleteFoodDiaryMeals, updateFoodDiaryMeal } from "../actions";
+import type { CombinedMeal } from "../schemas";
 import type { MealSaveHandler } from "./useFoodDiaryMealForm";
 
 type UseFoodDiaryProps = {
@@ -83,7 +81,7 @@ export function useFoodDiary({ selectedDate, initialMeals }: UseFoodDiaryProps) 
           meal_name: mealData.meal_name,
           meal_order: mealData.meal_order || getNextMealOrder(),
           created_at: new Date().toISOString(),
-          // updated_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
           food_diary_ingredients:
             mealData.ingredients?.map((ing) => ({
               id: `temp-ing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,

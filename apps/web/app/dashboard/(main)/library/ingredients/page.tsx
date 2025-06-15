@@ -1,8 +1,11 @@
 import { PageHeader } from "@/components";
-import { IngredientPageContent, fetchIngredients } from "@/modules/ingredient";
+import {
+  FetchIngredientsPayloadSchema,
+  IngredientPageContent,
+  fetchIngredients,
+} from "@/modules/ingredient";
 import { fetchIngredientGroups } from "@/modules/ingredient-group";
 import { cleanSearchParams } from "@/utils";
-import { FetchIngredientsPayloadSchema } from "@repo/schemas";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

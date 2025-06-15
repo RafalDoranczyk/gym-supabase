@@ -1,4 +1,6 @@
-import { getUserScopedQuery } from "@/core/supabase";
+import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
+import { assertZodParse } from "@/utils";
+import { FetchUserSettingsResponseSchema } from "../schemas";
 
 export async function fetchUserSettings() {
   const { supabase, user } = await getUserScopedQuery();
@@ -9,6 +11,9 @@ export async function fetchUserSettings() {
     .eq("id", user.id)
     .single();
 
-  if (error) throw error;
-  return data;
+  if (error) {
+    throw mapSupabaseErrorToAppError(error);
+  }
+
+  return assertZodParse(FetchUserSettingsResponseSchema, data);
 }

@@ -1,9 +1,10 @@
+"use client";
+
 import { Table, TooltipIconButton, type TableHeadCell, type TableOrder } from "@/components";
 import { usePagination } from "@/hooks";
 import { Box, TableCell, TablePagination, Typography } from "@mui/material";
-import type { Meal } from "@repo/schemas";
-
-import { MEALS_DEFAULT_PAGE_SIZE } from "../constants/pagination";
+import { MEALS_DEFAULT_PAGE_SIZE } from "../constants";
+import type { Meal } from "../schemas";
 import { calculateTotalMealNutrition } from "../utils/calculateMealNutrition";
 
 const NUTRITION_CELL_WIDTH = 100;

@@ -1,6 +1,6 @@
+import type { CreateIngredientGroupPayload } from "@/modules/ingredient-group";
 import { Category, CheckCircle, RestaurantMenu } from "@mui/icons-material";
 import { Avatar, Badge, Box, Card, CardContent, Chip, Grid, Typography } from "@mui/material";
-import type { CreateIngredientGroupPayload } from "@repo/schemas";
 import {
   getStarterIngredientsByGroup,
   INGREDIENT_STARTER_GROUPS,

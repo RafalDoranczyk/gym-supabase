@@ -1,14 +1,14 @@
 import { type NutritionData, TooltipIconButton } from "@/components";
+import type { Ingredient } from "@/modules/ingredient";
 import { Avatar, Box, Card, Chip, Typography } from "@mui/material";
+import { useState } from "react";
+import type { MealSaveHandler } from "../hooks/useFoodDiaryMealForm";
 import type {
   CombinedMeal,
   CreateFoodDiaryMealPayload,
   FoodDiaryIngredient,
-  Ingredient,
   UpdateFoodDiaryMealPayload,
-} from "@repo/schemas";
-import { useState } from "react";
-import type { MealSaveHandler } from "../hooks/useFoodDiaryMealForm";
+} from "../schemas";
 import { FoodDiaryMealForm } from "./FoodDiaryMealForm";
 
 function NutritionChipSummary({ calories, protein, carbs, fat }: NutritionData) {

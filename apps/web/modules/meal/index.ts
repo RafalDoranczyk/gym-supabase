@@ -1,5 +1,6 @@
-export { fetchMeals } from "./actions/fetchMeals";
+export * from "./actions";
 export { MealPageContent } from "./components/MealPageContent";
+export * from "./schemas";
 export {
   calculateIngredientNutrition,
   calculateTotalMealNutrition,

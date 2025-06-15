@@ -1,5 +1,5 @@
 import { roundToTwoDecimals } from "@/utils";
-import type { MealIngredient } from "@repo/schemas";
+import type { MealIngredient } from "../schemas";
 
 /**
  * Unit conversion multipliers for scaling nutrition values

@@ -3,13 +3,13 @@
 import { PATHS } from "@/constants";
 import { getUserScopedQuery, mapSupabaseErrorToAppError } from "@/core/supabase";
 import { assertZodParse } from "@/utils";
+import { revalidatePath } from "next/cache";
 import {
   type CreateMealTagPayload,
   CreateMealTagPayloadSchema,
   type CreateMealTagResponse,
   MealTagSchema,
-} from "@repo/schemas";
-import { revalidatePath } from "next/cache";
+} from "../schemas";
 
 export async function createMealTag(payload: CreateMealTagPayload): Promise<CreateMealTagResponse> {
   const validatedPayload = assertZodParse(CreateMealTagPayloadSchema, payload);

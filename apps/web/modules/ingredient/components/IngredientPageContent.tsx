@@ -1,14 +1,14 @@
 "use client";
 
 import { ConfirmActionDialog, ListToolbar, SearchableEmptyState } from "@/components";
-import { useToast } from "@/providers";
-import type { Ingredient, IngredientGroup } from "@repo/schemas";
-import { useState, useTransition } from "react";
-
 import { AppError } from "@/core";
+import type { IngredientGroup } from "@/modules/ingredient-group";
+import { useToast } from "@/providers";
+import { useState, useTransition } from "react";
 import { deleteIngredient } from "../actions/deleteIngredient";
 import { useIngredientFilters } from "../hooks/useIngredientFilters";
 import { ingredientDefaultValues, useIngredientForm } from "../hooks/useIngredientForm";
+import type { Ingredient } from "../schemas";
 import { IngredientDrawer } from "./IngredientDrawer";
 import { IngredientTable } from "./IngredientTable";
 

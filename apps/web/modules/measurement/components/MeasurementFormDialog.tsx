@@ -1,3 +1,4 @@
+import { useToast } from "@/providers";
 import {
   Button,
   Dialog,
@@ -9,22 +10,17 @@ import {
   TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import type { MeasurementType } from "@repo/schemas";
 import dayjs from "dayjs";
-
-import { useToast } from "@/providers";
-
 import { useTransition } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
-import { createMeasurement } from "../actions/createMeasurement";
-import { updateMeasurement } from "../actions/updateMeasurement";
-import type { MeasurementForm } from "../hooks/useMeasurementForm";
+import { createMeasurement, updateMeasurement } from "../actions";
+import type { MeasurementFormData, MeasurementType } from "../schemas";
 
 type MeasurementFormDialogProps = {
   open: boolean;
   onClose: () => void;
   measurementTypes: MeasurementType[];
-  form: UseFormReturn<MeasurementForm>;
+  form: UseFormReturn<MeasurementFormData>;
 };
 
 export function MeasurementFormDialog({
@@ -46,7 +42,7 @@ export function MeasurementFormDialog({
   const id = getValues("id");
   const isEditing = !!id;
 
-  const handleFormSubmit = handleSubmit((data: MeasurementForm) => {
+  const handleFormSubmit = handleSubmit((data: MeasurementFormData) => {
     startTransition(async () => {
       try {
         if (isEditing) {

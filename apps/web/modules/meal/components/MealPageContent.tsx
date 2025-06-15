@@ -1,14 +1,15 @@
 "use client";
 
 import { ConfirmActionDialog, ListToolbar, SearchableEmptyState } from "@/components";
-import { useToast } from "@/providers";
-import type { Ingredient, Meal, MealTag } from "@repo/schemas";
-import { useState, useTransition } from "react";
-
 import { AppError } from "@/core";
+import type { Ingredient } from "@/modules/ingredient";
+import type { MealTag } from "@/modules/meal-tag";
+import { useToast } from "@/providers";
+import { useState, useTransition } from "react";
 import { deleteMeal } from "../actions/deleteMeal";
 import { mealDefaultValues, useMealForm } from "../hooks/useMealForm";
 import { useMealsFilters } from "../hooks/useMealsFilters";
+import type { Meal } from "../schemas";
 import { MealDrawer } from "./MealDrawer";
 import { MealTable } from "./MealTable";
 

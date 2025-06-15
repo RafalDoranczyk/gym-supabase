@@ -1,4 +1,3 @@
-// src/components/ui/loading/FoodDiaryLeftColumnSkeleton.tsx
 import { Box, Skeleton, Stack } from "@mui/material";
 import { FoodDiaryMealCardSkeleton } from "./FoodDiaryMealCardSkeleton";
 
